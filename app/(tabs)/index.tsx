@@ -1,4 +1,4 @@
-import StatCard from "@/components/Card/StatCard";
+import MetricsSection from "@/components/MetricsSection";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import {
   SafeAreaView,
@@ -57,61 +57,61 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        <View style={styles.metricsSection}>
-          <Text style={styles.sectionTitle}>Key Metrics</Text>
-          <View style={styles.cardsGrid}>
-            <StatCard
-              label="Total Events"
-              value={12}
-              iconName="house.fill"
-              trend={{
+        <MetricsSection
+          title="Key Metrics"
+          cards={[
+            {
+              label: "Total Events",
+              value: 12,
+              iconName: "house.fill",
+              trend: {
                 value: "+12.5%",
                 isPositive: true,
-              }}
-              iconBg="#e0e7ff"
-              iconColor="#4338ca"
-            />
-            <StatCard
-              label="Total Bookings"
-              value={1847}
-              iconName="ticket.fill"
-              trend={{
+              },
+              iconBg: "#e0e7ff",
+              iconColor: "#4338ca",
+            },
+            {
+              label: "Total Bookings",
+              value: 1847,
+              iconName: "ticket.fill",
+              trend: {
                 value: "+18%",
                 isPositive: true,
-              }}
-              iconBg="#fef3c7"
-              iconColor="#b45309"
-            />
-          </View>
-        </View>
+              },
+              iconBg: "#fef3c7",
+              iconColor: "#b45309",
+            },
+          ]}
+        />
 
-        <View style={styles.performanceSection}>
-          <Text style={styles.sectionTitle}>Performance</Text>
-          <View style={styles.cardsGrid}>
-            <StatCard
-              label="Revenue"
-              value="$89,420"
-              iconName="dollarsign.circle.fill"
-              trend={{
+        <MetricsSection
+          title="Performance"
+          cards={[
+            {
+              label: "Revenue",
+              value: "$89,420",
+              iconName: "dollarsign.circle.fill",
+              trend: {
                 value: "+23%",
                 isPositive: true,
-              }}
-              iconBg="#dcfce7"
-              iconColor="#16a34a"
-            />
-            <StatCard
-              label="Avg Attendance"
-              value={77}
-              iconName="person.2.fill"
-              trend={{
+              },
+              iconBg: "#dcfce7",
+              iconColor: "#16a34a",
+            },
+            {
+              label: "Avg Attendance",
+              value: 77,
+              iconName: "person.2.fill",
+              trend: {
                 value: "-5%",
                 isPositive: false,
-              }}
-              iconBg="#fee2e2"
-              iconColor="#dc2626"
-            />
-          </View>
-        </View>
+              },
+              iconBg: "#fee2e2",
+              iconColor: "#dc2626",
+            },
+          ]}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -234,8 +234,5 @@ const styles = StyleSheet.create({
   },
   performanceSection: {
     marginBottom: 16,
-  },
-  cardsGrid: {
-    gap: 12,
   },
 });
