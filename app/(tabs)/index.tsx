@@ -1,4 +1,6 @@
+import BookingTrends from "@/components/BookingTrends";
 import MetricsSection from "@/components/MetricsSection";
+import RevenueOverview from "@/components/RevenueOverview";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import {
   SafeAreaView,
@@ -84,6 +86,9 @@ export default function HomeScreen() {
             },
           ]}
         />
+
+        <BookingTrends />
+        <RevenueOverview />
 
         <MetricsSection
           title="Performance"
