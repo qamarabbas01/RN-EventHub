@@ -2,7 +2,9 @@ import BookingTrends from "@/components/BookingTrends";
 import MetricsSection from "@/components/MetricsSection";
 import RevenueOverview from "@/components/RevenueOverview";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -13,6 +15,25 @@ import {
 } from "react-native";
 
 export default function HomeScreen() {
+  const [greeting, setGreeting] = useState("Good Evening");
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setGreeting("Good Morning");
+    } else if (hour < 18) {
+      setGreeting("Good Afternoon");
+    } else {
+      setGreeting("Good Evening");
+    }
+
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -20,23 +41,29 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
       >
-        <View style={styles.topBar}>
+        <Animated.View style={[styles.topBar, { opacity: fadeAnim }]}>
           <View>
-            <Text style={styles.greeting}>Good Evening</Text>
+            <Text style={styles.greeting}>{greeting}</Text>
             <Text style={styles.userName}>Youijero</Text>
           </View>
           <View style={styles.topBarActions}>
-            <TouchableOpacity style={styles.searchIconButton}>
+            <TouchableOpacity
+              style={styles.searchIconButton}
+              activeOpacity={0.6}
+            >
               <IconSymbol name="magnifyingglass" color="#6b7280" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.notificationButton}>
+            <TouchableOpacity
+              style={styles.notificationButton}
+              activeOpacity={0.6}
+            >
               <IconSymbol name="bell.fill" color="#6b7280" />
               <View style={styles.notificationBadge}>
                 <Text style={styles.badgeText}>3</Text>
               </View>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
 
         <View style={styles.searchContainer}>
           <View style={styles.searchInputWrapper}>
@@ -47,15 +74,18 @@ export default function HomeScreen() {
               placeholderTextColor="#d1d5db"
             />
           </View>
-          <TouchableOpacity style={styles.filterButton}>
-            <IconSymbol name="slider.horizontal.3" color="#4338ca" />
+          <TouchableOpacity
+            style={styles.filterButton}
+            activeOpacity={0.7}
+          >
+            <IconSymbol name="slider.horizontal.3" color="#fff" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.headerSection}>
-          <Text style={styles.title}>Dashboard Overview</Text>
+          <Text style={styles.title}>Dashboard</Text>
           <Text style={styles.subtitle}>
-            Welcome back! Here is your event summary.
+            Your event & booking overview
           </Text>
         </View>
 
@@ -142,14 +172,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   greeting: {
-    fontSize: 12,
+    fontSize: 13,
     color: "#9ca3af",
-    fontWeight: "400",
+    fontWeight: "500",
     marginBottom: 4,
+    letterSpacing: 0.5,
   },
   userName: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "800",
     color: "#1f2937",
   },
   topBarActions: {
@@ -159,6 +190,7 @@ const styles = StyleSheet.create({
   },
   searchIconButton: {
     padding: 8,
+    borderRadius: 10,
   },
   notificationButton: {
     padding: 8,
@@ -166,26 +198,31 @@ const styles = StyleSheet.create({
   },
   notificationBadge: {
     position: "absolute",
-    top: 0,
-    right: 0,
+    top: -4,
+    right: -4,
     backgroundColor: "#ef4444",
     borderRadius: 10,
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
+    borderWidth: 2.5,
     borderColor: "#f9fafb",
+    shadowColor: "#ef4444",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   badgeText: {
     color: "white",
-    fontSize: 10,
-    fontWeight: "700",
+    fontSize: 11,
+    fontWeight: "800",
   },
   searchContainer: {
     flexDirection: "row",
-    gap: 8,
-    marginBottom: 24,
+    gap: 10,
+    marginBottom: 28,
     alignItems: "center",
   },
   searchInputWrapper: {
@@ -193,44 +230,56 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    borderWidth: 1.5,
     borderColor: "#e5e7eb",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   searchInput: {
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 8,
-    fontSize: 14,
+    paddingHorizontal: 10,
+    fontSize: 15,
     color: "#1f2937",
   },
   filterButton: {
-    width: 44,
-    height: 44,
-    backgroundColor: "#e0e7ff",
-    borderRadius: 12,
+    width: 48,
+    height: 48,
+    backgroundColor: "#4338ca",
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#4338ca",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   headerSection: {
-    marginBottom: 28,
+    marginBottom: 32,
+    marginTop: 8,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "700",
+    fontSize: 32,
+    fontWeight: "800",
     color: "#1f2937",
     marginBottom: 8,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 15,
     color: "#6b7280",
-    fontWeight: "400",
-    lineHeight: 20,
+    fontWeight: "500",
+    lineHeight: 22,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 17,
+    fontWeight: "700",
     color: "#374151",
     marginBottom: 16,
   },

@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, useColorScheme, View } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { IconSymbol, type IconSymbolName } from '../ui/icon-symbol';
 
@@ -21,18 +21,34 @@ interface StatCardProps {
 export default function StatCard(props: StatCardProps) {
     const { label, value, valueColor, iconName, iconColor, iconBg, trend } = props;
     const colorScheme = useColorScheme();
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+
+    const handlePressIn = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 0.98,
+            useNativeDriver: true,
+        }).start();
+    };
+
+    const handlePressOut = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            useNativeDriver: true,
+        }).start();
+    };
 
     const styles = StyleSheet.create({
         card: {
             backgroundColor: valueColor || 'white',
-            borderRadius: 16,
-            padding: 24,
-            borderWidth: 1,
-            borderColor: colorScheme === 'dark' ? '#374151' : '#e5e7eb',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.2,
-            shadowRadius: 1,
-            elevation: 1,
+            borderRadius: 18,
+            padding: 20,
+            borderWidth: 1.5,
+            borderColor: colorScheme === 'dark' ? '#374151' : '#f0f0f0',
+            shadowColor: colorScheme === 'dark' ? '#000' : '#1f2937',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: colorScheme === 'dark' ? 0.3 : 0.08,
+            shadowRadius: 12,
+            elevation: 4,
         },
         flexRow: {
             flexDirection: 'row',
@@ -40,35 +56,38 @@ export default function StatCard(props: StatCardProps) {
             justifyContent: 'space-between',
         },
         label: {
-            fontSize: 14,
-            color: colorScheme === 'dark' ? '#9ca3af' : '#ADA295',
-            marginBottom: 4,
+            fontSize: 13,
+            color: colorScheme === 'dark' ? '#9ca3af' : '#9ca3af',
+            marginBottom: 8,
+            fontWeight: '500',
+            letterSpacing: 0.3,
         },
         value: {
-            fontSize: 30,
-            fontWeight: 'bold',
-            color: (colorScheme === 'dark' ? 'white' : 'black'),
+            fontSize: 32,
+            fontWeight: '800',
+            color: (colorScheme === 'dark' ? 'white' : '#1f2937'),
+            letterSpacing: -0.5,
         },
         iconContainer: {
-            padding: 12,
+            padding: 14,
             backgroundColor: iconBg || '#f3f4f6',
-            borderRadius: 9999,
+            borderRadius: 14,
         },
         trendContainer: {
             flexDirection: 'row',
             alignItems: 'center',
             gap: 4,
-            marginTop: 8,
+            marginTop: 10,
         },
         trendText: {
             fontSize: 12,
-            fontWeight: '500',
+            fontWeight: '600',
         },
     });
 
     return (
-        <View>
-            <View style={styles.card}>
+        <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut}>
+            <Animated.View style={[styles.card, { transform: [{ scale: scaleAnim }] }]}>
                 <View style={styles.flexRow}>
                     <View>
                         <Text style={styles.label}>{label}</Text>
@@ -88,11 +107,11 @@ export default function StatCard(props: StatCardProps) {
                         )}
                     </View>
                     <View style={styles.iconContainer}>
-                        <IconSymbol name={iconName} color={iconColor || '#000'} />
+                        <IconSymbol name={iconName} color={iconColor || '#000'} size={28} />
                     </View>
                 </View>
-            </View>
-        </View>
+            </Animated.View>
+        </Pressable>
     );
 }
 
