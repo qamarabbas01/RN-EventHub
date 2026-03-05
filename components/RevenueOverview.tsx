@@ -6,10 +6,10 @@ const chartWidth = 700;
 
 export default function RevenueOverview() {
   const data = {
-    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    labels: ['Jan','Feb','Mar'],
     datasets: [
       {
-        data: [171000,342000,20000,250000,300000,350000,400000,450000,500000,550000,600000,650000],
+        data: [171000,342000,20000],
       },
     ],
   };

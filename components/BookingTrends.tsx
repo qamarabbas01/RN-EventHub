@@ -7,14 +7,12 @@ const chartWidth = 700;
 export default function BookingTrends() {
   const data = {
     labels: [
-      'Jan','Feb','Mar','Apr','May','Jun',
-      'Jul','Aug','Sep','Oct','Nov','Dec'
+      'Jan', 'Feb', 'Mar'
     ],
     datasets: [
       {
         data: [
-          734, 978, 1120, 1250, 1380, 1500,
-          1620, 1740, 1860, 1980, 2100, 2220
+          734, 978, 1120,
         ],
         strokeWidth: 3,
       },
@@ -25,7 +23,6 @@ export default function BookingTrends() {
 
   return (
     <View style={styles.section}>
-
       <View style={styles.headerContainer}>
         <View style={styles.header}>
           <Text style={styles.sectionTitle}>Booking Trends</Text>
@@ -52,7 +49,6 @@ export default function BookingTrends() {
           />
         </ScrollView>
       </View>
-
     </View>
   );
 }

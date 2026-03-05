@@ -5,7 +5,6 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [greeting, setGreeting] = useState("Good Evening");
@@ -44,15 +44,9 @@ export default function HomeScreen() {
         <Animated.View style={[styles.topBar, { opacity: fadeAnim }]}>
           <View>
             <Text style={styles.greeting}>{greeting}</Text>
-            <Text style={styles.userName}>Youijero</Text>
+            <Text style={styles.userName}>John Doe</Text>
           </View>
           <View style={styles.topBarActions}>
-            <TouchableOpacity
-              style={styles.searchIconButton}
-              activeOpacity={0.6}
-            >
-              <IconSymbol name="magnifyingglass" color="#6b7280" />
-            </TouchableOpacity>
             <TouchableOpacity
               style={styles.notificationButton}
               activeOpacity={0.6}
@@ -83,7 +77,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.headerSection}>
-          <Text style={styles.title}>Dashboard</Text>
+          <Text style={styles.title}>Welcome back, John Doe!</Text>
           <Text style={styles.subtitle}>
             Your event & booking overview
           </Text>
@@ -198,12 +192,12 @@ const styles = StyleSheet.create({
   },
   notificationBadge: {
     position: "absolute",
-    top: -4,
-    right: -4,
+    top: 0,
+    right: 0,
     backgroundColor: "#ef4444",
     borderRadius: 10,
-    width: 22,
-    height: 22,
+    width: 20,
+    height: 20,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2.5,
@@ -222,7 +216,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     gap: 10,
-    marginBottom: 28,
+    marginBottom: 24,
     alignItems: "center",
   },
   searchInputWrapper: {
@@ -261,11 +255,10 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   headerSection: {
-    marginBottom: 32,
-    marginTop: 8,
+    marginBottom: 24,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "800",
     color: "#1f2937",
     marginBottom: 8,
