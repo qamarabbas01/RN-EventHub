@@ -22,7 +22,10 @@ interface MetricsSectionProps {
 export default function MetricsSection({ title, cards }: MetricsSectionProps) {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <Text style={styles.viewAll}>View All →</Text>
+      </View>
       <View style={styles.cardsGrid}>
         {cards.map((card, index) => (
           <StatCard
@@ -42,15 +45,26 @@ export default function MetricsSection({ title, cards }: MetricsSectionProps) {
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 28,
+    marginBottom: 32,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#1f2937',
+    letterSpacing: -0.3,
+  },
+  viewAll: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#4338ca',
+  },
   cardsGrid: {
-    gap: 12,
+    gap: 14,
   },
 });
