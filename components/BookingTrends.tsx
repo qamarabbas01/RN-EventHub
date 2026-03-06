@@ -7,12 +7,12 @@ const chartWidth = 700;
 export default function BookingTrends() {
   const data = {
     labels: [
-      'Jan', 'Feb', 'Mar'
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ],
     datasets: [
       {
         data: [
-          734, 978, 1120,
+          734, 978, 1120, 1050, 980, 1100, 1200, 1150, 1080, 1250, 1300, 1120
         ],
         strokeWidth: 3,
       },
@@ -42,7 +42,7 @@ export default function BookingTrends() {
           <LineChart
             data={data}
             width={chartWidth}
-            height={230}
+            height={300}
             chartConfig={chartConfig}
             bezier
             style={styles.chart}
@@ -110,33 +110,30 @@ const styles = StyleSheet.create({
   growthBadge: {
     backgroundColor: '#ecfdf5',
     paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: 10,
   },
 
   growthText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
     color: '#16a34a',
   },
 
   chartWrapper: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    paddingVertical: 14,
-    paddingHorizontal: 6,
-
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.06,
     shadowRadius: 12,
     elevation: 4,
-
     borderWidth: 1,
     borderColor: '#f1f5f9',
   },
 
   chart: {
-    borderRadius: 16,
+    borderRadius: 24,
+    marginRight: -40,
   },
 });

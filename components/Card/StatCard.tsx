@@ -1,7 +1,13 @@
-import React, { useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
-import { IconSymbol, type IconSymbolName } from '../ui/icon-symbol';
+import React, { useRef } from "react";
+import {
+    Animated,
+    Pressable,
+    StyleSheet,
+    Text,
+    useColorScheme,
+    View,
+} from "react-native";
+import Svg, { Path } from "react-native-svg";
 
 interface TrendData {
     value: string;
@@ -12,14 +18,12 @@ interface StatCardProps {
     label: string;
     value: string | number;
     valueColor?: string;
-    iconName: IconSymbolName;
-    iconColor?: string;
-    iconBg?: string;
     trend?: TrendData;
 }
 
 export default function StatCard(props: StatCardProps) {
-    const { label, value, valueColor, iconName, iconColor, iconBg, trend } = props;
+    const { label, value, valueColor, trend } =
+        props;
     const colorScheme = useColorScheme();
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -39,76 +43,70 @@ export default function StatCard(props: StatCardProps) {
 
     const styles = StyleSheet.create({
         card: {
-            backgroundColor: valueColor || 'white',
-            borderRadius: 18,
-            padding: 20,
+            backgroundColor: valueColor || "white",
+            borderRadius: 24,
+            paddingHorizontal: 20,
+            paddingVertical: 16,
             borderWidth: 1.5,
-            borderColor: colorScheme === 'dark' ? '#374151' : '#f0f0f0',
-            shadowColor: colorScheme === 'dark' ? '#000' : '#1f2937',
+            borderColor: colorScheme === "dark" ? "#374151" : "#f0f0f0",
+            shadowColor: colorScheme === "dark" ? "#000" : "#1f2937",
             shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: colorScheme === 'dark' ? 0.3 : 0.08,
+            shadowOpacity: colorScheme === "dark" ? 0.3 : 0.08,
             shadowRadius: 12,
             elevation: 4,
         },
         flexRow: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
         },
         label: {
-            fontSize: 13,
-            color: colorScheme === 'dark' ? '#9ca3af' : '#9ca3af',
+            fontSize: 12,
+            color: colorScheme === "dark" ? "#9ca3af" : "#9ca3af",
             marginBottom: 8,
-            fontWeight: '500',
+            fontWeight: "700",
             letterSpacing: 0.3,
         },
         value: {
-            fontSize: 32,
-            fontWeight: '800',
-            color: (colorScheme === 'dark' ? 'white' : '#1f2937'),
+            fontSize: 24,
+            fontWeight: "800",
+            color: colorScheme === "dark" ? "white" : "#1f2937",
             letterSpacing: -0.5,
         },
-        iconContainer: {
-            padding: 14,
-            backgroundColor: iconBg || '#f3f4f6',
-            borderRadius: 14,
-        },
         trendContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 4,
-            marginTop: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 2,
         },
         trendText: {
             fontSize: 12,
-            fontWeight: '600',
+            fontWeight: "700",
         },
     });
 
     return (
         <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut}>
-            <Animated.View style={[styles.card, { transform: [{ scale: scaleAnim }] }]}>
+            <Animated.View
+                style={[styles.card, { transform: [{ scale: scaleAnim }] }]}
+            >
                 <View style={styles.flexRow}>
                     <View>
                         <Text style={styles.label}>{label}</Text>
                         <Text style={styles.value}>{value}</Text>
-                        {trend && (
-                            <View style={styles.trendContainer}>
-                                <Text
-                                    style={[
-                                        styles.trendText,
-                                        { color: trend.isPositive ? '#16a34a' : '#dc2626' },
-                                    ]}
-                                >
-                                    {trend.value}
-                                </Text>
-                                <TrendIcon isPositive={trend.isPositive} />
-                            </View>
-                        )}
                     </View>
-                    <View style={styles.iconContainer}>
-                        <IconSymbol name={iconName} color={iconColor || '#000'} size={28} />
-                    </View>
+                    {trend && (
+                        <View style={styles.trendContainer}>
+                            <Text
+                                style={[
+                                    styles.trendText,
+                                    { color: trend.isPositive ? "#16a34a" : "#dc2626" },
+                                ]}
+                            >
+                                {trend.value}
+                            </Text>
+                            <TrendIcon isPositive={trend.isPositive} />
+                        </View>
+                    )}
                 </View>
             </Animated.View>
         </Pressable>

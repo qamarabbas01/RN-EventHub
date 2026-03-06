@@ -1,17 +1,16 @@
+import { Link } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import StatCard from './Card/StatCard';
+import { IconSymbol } from './ui/icon-symbol';
 
 interface MetricCard {
   label: string;
   value: string | number;
-  iconName: string;
   trend?: {
     value: string;
     isPositive: boolean;
   };
-  iconBg?: string;
-  iconColor?: string;
 }
 
 interface MetricsSectionProps {
@@ -24,7 +23,12 @@ export default function MetricsSection({ title, cards }: MetricsSectionProps) {
     <View style={styles.section}>
       <View style={styles.headerRow}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <Text style={styles.viewAll}>View All →</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+          <Link href={'/(tabs)/attendee-insights'} style={styles.viewAll}>
+            View All
+          </Link>
+          <IconSymbol name="arrow.forward" size={12} color="#4338ca" />
+        </View>
       </View>
       <View style={styles.cardsGrid}>
         {cards.map((card, index) => (
@@ -32,10 +36,7 @@ export default function MetricsSection({ title, cards }: MetricsSectionProps) {
             key={index}
             label={card.label}
             value={card.value}
-            iconName={card.iconName as any}
             trend={card.trend}
-            iconBg={card.iconBg}
-            iconColor={card.iconColor}
           />
         ))}
       </View>

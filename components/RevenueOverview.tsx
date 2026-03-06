@@ -6,10 +6,10 @@ const chartWidth = 700;
 
 export default function RevenueOverview() {
   const data = {
-    labels: ['Jan','Feb','Mar'],
+    labels: ['Jan','Feb','Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     datasets: [
       {
-        data: [171000,342000,20000],
+        data: [100,500, 0, 2500, 3000, 2500, 2800, 3200, 3500, 3800, 4000, 3600],
       },
     ],
   };
@@ -36,10 +36,10 @@ export default function RevenueOverview() {
           <BarChart
             data={data}
             width={chartWidth}
-            height={260}
+            height={300}
             chartConfig={chartConfig}
             verticalLabelRotation={35}
-            yAxisLabel=""
+            yAxisLabel="$"
             yAxisSuffix=""
             showValuesOnTopOfBars={false}
             withInnerLines
@@ -120,16 +120,13 @@ const styles = StyleSheet.create({
 
   chartWrapper: {
     backgroundColor: '#ffffff',
-    borderRadius: 20,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
-
+    borderRadius: 24,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.06,
     shadowRadius: 12,
     elevation: 4,
-
     borderWidth: 1,
     borderColor: '#f1f5f9',
   },

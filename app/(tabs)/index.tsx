@@ -89,30 +89,21 @@ export default function HomeScreen() {
             {
               label: "Total Events",
               value: 12,
-              iconName: "house.fill",
               trend: {
                 value: "+12.5%",
                 isPositive: true,
               },
-              iconBg: "#e0e7ff",
-              iconColor: "#4338ca",
             },
             {
               label: "Total Bookings",
               value: 1847,
-              iconName: "ticket.fill",
               trend: {
                 value: "+18%",
                 isPositive: true,
               },
-              iconBg: "#fef3c7",
-              iconColor: "#b45309",
             },
           ]}
         />
-
-        <BookingTrends />
-        <RevenueOverview />
 
         <MetricsSection
           title="Performance"
@@ -120,27 +111,23 @@ export default function HomeScreen() {
             {
               label: "Revenue",
               value: "$89,420",
-              iconName: "dollarsign.circle.fill",
               trend: {
                 value: "+23%",
                 isPositive: true,
               },
-              iconBg: "#dcfce7",
-              iconColor: "#16a34a",
             },
             {
               label: "Avg Attendance",
               value: 77,
-              iconName: "person.2.fill",
               trend: {
                 value: "-5%",
                 isPositive: false,
               },
-              iconBg: "#fee2e2",
-              iconColor: "#dc2626",
             },
           ]}
         />
+        <BookingTrends />
+        <RevenueOverview />
       </ScrollView>
     </SafeAreaView>
   );
@@ -156,7 +143,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 32,
   },
   topBar: {
     flexDirection: "row",
