@@ -2,6 +2,7 @@ import BookingTrends from "@/components/BookingTrends";
 import MetricsSection from "@/components/MetricsSection";
 import RevenueOverview from "@/components/RevenueOverview";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Link } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -46,17 +47,19 @@ export default function HomeScreen() {
             <Text style={styles.greeting}>{greeting}</Text>
             <Text style={styles.userName}>John Doe</Text>
           </View>
-          <View style={styles.topBarActions}>
+          <Link href="/notification" style={styles.topBarActions}>
             <TouchableOpacity
               style={styles.notificationButton}
               activeOpacity={0.6}
             >
-              <IconSymbol name="bell.fill" color="#6b7280" />
+              <Link href="/notification">
+                <IconSymbol name="bell.fill" color="#6b7280" />
+              </Link>
               <View style={styles.notificationBadge}>
-                <Text style={styles.badgeText}>3</Text>
+                <Text style={styles.badgeText}>1</Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </Link> 
         </Animated.View>
 
         <View style={styles.searchContainer}>

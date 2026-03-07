@@ -17,6 +17,14 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen
+          name="notification"
+          options={{
+            title: "Notifications",
+            headerBackButtonDisplayMode: "minimal",
+            headerStyle: { backgroundColor: '#fff' }, headerTitleStyle: { color: '#111827', fontWeight: '600' }, headerShadowVisible: false,
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
