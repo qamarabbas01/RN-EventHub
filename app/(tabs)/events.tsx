@@ -31,7 +31,7 @@ const mockEvents: Event[] = [
         id: '2',
         title: 'Web Development Workshop',
         date: 'Mar 12, 2026',
-        time: '02:00 PM',
+        time: 'Live Now',
         location: 'Online - Zoom',
         attendees: 120,
         capacity: 150,
@@ -76,10 +76,10 @@ const mockEvents: Event[] = [
 const filterTags = ['All', 'Upcoming', 'Live', 'Ended'];
 
 export default function Events() {
-    const [activeFilter, setActiveFilter] = useState('Live');
+    const [activeFilter, setActiveFilter] = useState('All');
 
     const filteredEvents = mockEvents.filter((event) => {
-        if (activeFilter === 'live') return true;
+        if (activeFilter === 'All') return true;
         return event.status === activeFilter.toLowerCase();
     });
 
