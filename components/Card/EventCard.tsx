@@ -126,13 +126,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: 'relative',
     width: '100%',
-    height: 140,
+    height: 200,
   },
 
   image: {
     width: '100%',
     height: '100%',
     backgroundColor: '#f9fafb',
+    objectFit: 'cover',
   },
 
   imagePlaceholder: {

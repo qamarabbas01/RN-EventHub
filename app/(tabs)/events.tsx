@@ -1,6 +1,6 @@
 import EventCard from '@/components/Card/EventCard';
-import React from 'react';
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Event {
@@ -73,7 +73,16 @@ const mockEvents: Event[] = [
     },
 ];
 
+const filterTags = ['All', 'Upcoming', 'Live', 'Ended'];
+
 export default function Events() {
+    const [activeFilter, setActiveFilter] = useState('Live');
+
+    const filteredEvents = mockEvents.filter((event) => {
+        if (activeFilter === 'live') return true;
+        return event.status === activeFilter.toLowerCase();
+    });
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView
@@ -87,22 +96,21 @@ export default function Events() {
                 </View>
 
                 <View style={styles.filterContainer}>
-                    <View style={[styles.filterTag, styles.filterTagActive]}>
-                        <Text style={styles.filterTagTextActive}>All</Text>
-                    </View>
-                    <View style={styles.filterTag}>
-                        <Text style={styles.filterTagText}>Upcoming</Text>
-                    </View>
-                    <View style={styles.filterTag}>
-                        <Text style={styles.filterTagText}>Live</Text>
-                    </View>
-                    <View style={styles.filterTag}>
-                        <Text style={styles.filterTagText}>Ended</Text>
-                    </View>
+                    {filterTags.map((tag) => (
+                        <Pressable
+                            key={tag}
+                            onPress={() => setActiveFilter(tag)}
+                            style={[styles.filterTag, activeFilter === tag && styles.filterTagActive]}
+                        >
+                            <Text style={[styles.filterTagText, activeFilter === tag && styles.filterTagTextActive]}>
+                                {tag}
+                            </Text>
+                        </Pressable>
+                    ))}
                 </View>
 
                 <FlatList
-                    data={mockEvents}
+                    data={filteredEvents}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
                         <EventCard
@@ -162,7 +170,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 8,
         marginBottom: 20,
-        paddingBottom: 12,
     },
 
     filterTag: {
