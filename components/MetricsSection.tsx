@@ -2,7 +2,6 @@ import { Link } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import StatCard from './Card/StatCard';
-import { IconSymbol } from './ui/icon-symbol';
 
 interface MetricCard {
   label: string;
@@ -15,19 +14,28 @@ interface MetricCard {
 
 interface MetricsSectionProps {
   title: string;
+  viewAlllabel?: string;
+  viewAllLink?: any;
+  viewAllIcon?: React.ReactNode;
   cards: MetricCard[];
 }
 
-export default function MetricsSection({ title, cards }: MetricsSectionProps) {
+export default function MetricsSection({ title, viewAlllabel, viewAllLink, viewAllIcon, cards }: MetricsSectionProps) {
   return (
     <View style={styles.section}>
       <View style={styles.headerRow}>
         <Text style={styles.sectionTitle}>{title}</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-          <Link href={'/(tabs)/attendee-insights'} style={styles.viewAll}>
-            View All
-          </Link>
-          <IconSymbol name="arrow.forward" size={12} color="#4338ca" />
+          {viewAllLink ? (
+            <Link href={viewAllLink} asChild>
+              <Text style={styles.viewAll}>
+                {viewAlllabel || ''}
+              </Text>
+            </Link>
+          ) : (
+            <Text style={styles.viewAll}>{viewAlllabel || ''}</Text>
+          )}
+          {viewAllIcon || ''}
         </View>
       </View>
       <View style={styles.cardsGrid}>
