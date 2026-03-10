@@ -88,6 +88,9 @@ export default function HomeScreen() {
 
         <MetricsSection
           title="Key Metrics"
+          viewAllIcon={<IconSymbol name="arrow.forward" size={12} color="#4338ca" />}
+          viewAllLink={'(tabs)/attendee-insights'}
+          viewAlllabel="View All"
           cards={[
             {
               label: "Total Events",
