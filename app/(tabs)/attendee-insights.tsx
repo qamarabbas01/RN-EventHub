@@ -264,7 +264,7 @@ export default function AttendeeInsights() {
           <MetricsSection title="Key Metrics" cards={attendeeStats} />
         </View>
 
-        <InsightsGrid cards={insightCards} styles={styles} />
+        <InsightsGrid cards={insightCards} />
 
         <View style={styles.section}>
           <View style={styles.headerContainer}>
@@ -321,15 +321,15 @@ export default function AttendeeInsights() {
           </View>
         </View>
 
-        <DataPerformanceGrid title="Event Type Performance" data={eventTypeData} styles={styles} />
+        <DataPerformanceGrid title="Event Type Performance" data={eventTypeData} />
 
-        <DataPerformanceGrid title="Age Demographics" data={demographicsData} styles={styles} />
+        <DataPerformanceGrid title="Age Demographics" data={demographicsData} />
 
-        <StatsGrid stats={statsData} styles={styles} />
+        <StatsGrid stats={statsData} />
 
-        <FeedbackSentiment data={feedbackData} styles={styles} />
+        <FeedbackSentiment data={feedbackData} />
 
-        <TopPerformingEvents events={topEvents} styles={styles} />
+        <TopPerformingEvents events={topEvents} />
 
         <View style={styles.section}>
           <View style={styles.engagementCard}>
@@ -407,37 +407,6 @@ const styles = StyleSheet.create({
   periodButtonActive: { backgroundColor: "#4f46e5" },
   periodText: { fontSize: 12, fontWeight: "600", color: "#6b7280" },
   periodTextActive: { color: "#fff" },
-  insightsGrid: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 10,
-  },
-  insightCard: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#f3f4f6",
-  },
-  insightIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 6,
-  },
-  insightLabel: {
-    fontSize: 10,
-    fontWeight: "600",
-    color: "#6b7280",
-    marginBottom: 3,
-    textAlign: "center",
-  },
-  insightValue: { fontSize: 14, fontWeight: "800", color: "#111827" },
   section: {
     marginHorizontal: 16,
     marginVertical: 16,
@@ -487,105 +456,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   chart: { marginVertical: 8, borderRadius: 12 },
-  statsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    paddingHorizontal: 16,
-    marginVertical: 16,
-    gap: 10,
-  },
-  statBox: {
-    flex: 1,
-    minWidth: "48%",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#f3f4f6",
-  },
-  statHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 8,
-  },
-  statLabel: { fontSize: 10, fontWeight: "600", color: "#6b7280" },
-  statNumber: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#111827",
-    marginBottom: 2,
-  },
-  statDesc: { fontSize: 10, color: "#9ca3af", fontWeight: "500" },
-  feedbackRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    gap: 8,
-  },
-  feedbackDot: { width: 8, height: 8, borderRadius: 4 },
-  feedbackLabel: { fontSize: 12, fontWeight: "600", color: "#111827" },
-  feedbackCount: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "#6b7280",
-    minWidth: 30,
-  },
-  feedbackBarContainer: {
-    flex: 1,
-    height: 6,
-    backgroundColor: "#f3f4f6",
-    borderRadius: 3,
-    overflow: "hidden",
-    marginHorizontal: 8,
-  },
-  feedbackBar: { height: "100%", borderRadius: 3 },
-  feedbackPercent: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "#6b7280",
-    minWidth: 25,
-    textAlign: "right",
-  },
-  eventCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
-    paddingHorizontal: 16,
-    gap: 10,
-  },
-  eventRank: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#4f46e5",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  rankText: { fontSize: 13, fontWeight: "700", color: "#fff" },
-  eventContent: { flex: 1 },
-  eventTitle: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 5,
-  },
-  eventMetrics: { flexDirection: "row", alignItems: "center", gap: 5 },
-  metric: { flexDirection: "row", alignItems: "center", gap: 3 },
-  metricText: { fontSize: 10, fontWeight: "500", color: "#6b7280" },
-  separator: { fontSize: 7, color: "#d1d5db" },
-  attendanceRating: {
-    backgroundColor: "#f0f4ff",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "#c7d2fe",
-  },
-  attendanceText: { fontSize: 11, fontWeight: "700", color: "#4f46e5" },
   engagementCard: {
     backgroundColor: "#f0f4ff",
     borderRadius: 12,
@@ -627,48 +497,4 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   metricValue: { fontSize: 14, fontWeight: "800", color: "#4f46e5" },
-  dataGrid: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-  },
-  dataCard: {
-    backgroundColor: "#f9fafb",
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#f3f4f6",
-  },
-  dataColorDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  dataLabel: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "#6b7280",
-  },
-  dataValue: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#111827",
-    marginTop: 2,
-  },
-  dataPercent: {
-    fontSize: 13,
-    fontWeight: "800",
-    color: "#4f46e5",
-  },
-  dataBar: {
-    width: "100%",
-    height: 6,
-    backgroundColor: "#e5e7eb",
-    borderRadius: 3,
-    overflow: "hidden",
-  },
-  dataBarFill: {
-    height: "100%",
-    borderRadius: 3,
-  },
 });

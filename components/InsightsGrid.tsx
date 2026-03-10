@@ -1,6 +1,6 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import React from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 interface InsightCard {
   icon: string;
@@ -12,10 +12,9 @@ interface InsightCard {
 
 interface InsightsGridProps {
   cards: InsightCard[];
-  styles: any;
 }
 
-export default function InsightsGrid({ cards, styles }: InsightsGridProps) {
+export default function InsightsGrid({ cards }: InsightsGridProps) {
   return (
     <View style={styles.insightsGrid}>
       {cards.map((card, index) => (
@@ -36,3 +35,37 @@ export default function InsightsGrid({ cards, styles }: InsightsGridProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  insightsGrid: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 10,
+  },
+  insightCard: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#f3f4f6",
+  },
+  insightIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  insightLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "#6b7280",
+    marginBottom: 3,
+    textAlign: "center",
+  },
+  insightValue: { fontSize: 14, fontWeight: "800", color: "#111827" },
+});
