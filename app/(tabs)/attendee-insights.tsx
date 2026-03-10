@@ -1,7 +1,9 @@
+import DataPerformanceGrid from "@/components/DataPerformanceGrid";
+import FeedbackSentiment from "@/components/FeedbackSentiment";
 import InsightsGrid from "@/components/InsightsGrid";
 import MetricsSection from "@/components/MetricsSection";
+import StatsGrid from "@/components/StatsGrid";
 import TopPerformingEvents from "@/components/TopPerformingEvents";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { BarChart, LineChart } from "react-native-chart-kit";
@@ -43,7 +45,7 @@ export default function AttendeeInsights() {
 
   const attendanceByDay = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [{ data: [320, 380, 420, 510, 485, 620, 380] }],
+    datasets: [{ data: [320, 380, 420, 510, 485, 820, 380] }],
   };
 
   const eventTypeData = [
@@ -195,6 +197,37 @@ export default function AttendeeInsights() {
     },
   ];
 
+  const statsData = [
+    {
+      icon: "arrow.up.right",
+      label: "Growth Rate",
+      number: "+21.5%",
+      desc: "vs last period",
+      iconColor: "#22c55e",
+    },
+    {
+      icon: "calendar",
+      label: "Avg Events/Attendee",
+      number: "3.2",
+      desc: "per quarter",
+      iconColor: "#f59e0b",
+    },
+    {
+      icon: "person.badge.plus",
+      label: "ACQ Cost",
+      number: "$12.50",
+      desc: "per attendee",
+      iconColor: "#3b82f6",
+    },
+    {
+      icon: "checkmark.circle",
+      label: "Completion Rate",
+      number: "92.3%",
+      desc: "fully attended",
+      iconColor: "#8b5cf6",
+    },
+  ];
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -288,127 +321,13 @@ export default function AttendeeInsights() {
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Event Type Performance</Text>
-          <View style={styles.dataGrid}>
-            {eventTypeData.map((item, index) => {
-              const total = eventTypeData.reduce((sum, d) => sum + d.value, 0);
-              const percentage = ((item.value / total) * 100).toFixed(0);
-              return (
-                <View key={index} style={styles.dataCard}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                    <View style={[styles.dataColorDot, { backgroundColor: item.color }]} />
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.dataLabel}>{item.name}</Text>
-                      <Text style={styles.dataValue}>{item.value.toLocaleString()}</Text>
-                    </View>
-                    <Text style={styles.dataPercent}>{percentage}%</Text>
-                  </View>
-                  <View style={styles.dataBar}>
-                    <View style={[styles.dataBarFill, { width: (parseInt(percentage) + '%') as any, backgroundColor: item.color }]} />
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-        </View>
+        <DataPerformanceGrid title="Event Type Performance" data={eventTypeData} styles={styles} />
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Age Demographics</Text>
-          <View style={styles.dataGrid}>
-            {demographicsData.map((item, index) => {
-              const total = demographicsData.reduce((sum, d) => sum + d.value, 0);
-              const percentage = ((item.value / total) * 100).toFixed(0);
-              return (
-                <View key={index} style={styles.dataCard}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                    <View style={[styles.dataColorDot, { backgroundColor: item.color }]} />
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.dataLabel}>{item.name}</Text>
-                      <Text style={styles.dataValue}>{item.value.toLocaleString()}</Text>
-                    </View>
-                    <Text style={styles.dataPercent}>{percentage}%</Text>
-                  </View>
-                  <View style={styles.dataBar}>
-                    <View style={[styles.dataBarFill, { width: (parseInt(percentage) + '%') as any, backgroundColor: item.color }]} />
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-        </View>
+        <DataPerformanceGrid title="Age Demographics" data={demographicsData} styles={styles} />
 
-        <View style={styles.statsGrid}>
-          <View style={styles.statBox}>
-            <View style={styles.statHeader}>
-              <IconSymbol name="arrow.up.right" size={16} color="#22c55e" />
-              <Text style={styles.statLabel}>Growth Rate</Text>
-            </View>
-            <Text style={styles.statNumber}>+21.5%</Text>
-            <Text style={styles.statDesc}>vs last period</Text>
-          </View>
+        <StatsGrid stats={statsData} styles={styles} />
 
-          <View style={styles.statBox}>
-            <View style={styles.statHeader}>
-              <IconSymbol name="calendar" size={16} color="#f59e0b" />
-              <Text style={styles.statLabel}>Avg Events/Attendee</Text>
-            </View>
-            <Text style={styles.statNumber}>3.2</Text>
-            <Text style={styles.statDesc}>per quarter</Text>
-          </View>
-
-          <View style={styles.statBox}>
-            <View style={styles.statHeader}>
-              <IconSymbol name="person.badge.plus" size={16} color="#3b82f6" />
-              <Text style={styles.statLabel}>ACQ Cost</Text>
-            </View>
-            <Text style={styles.statNumber}>$12.50</Text>
-            <Text style={styles.statDesc}>per attendee</Text>
-          </View>
-
-          <View style={styles.statBox}>
-            <View style={styles.statHeader}>
-              <IconSymbol name="checkmark.circle" size={16} color="#8b5cf6" />
-              <Text style={styles.statLabel}>Completion Rate</Text>
-            </View>
-            <Text style={styles.statNumber}>92.3%</Text>
-            <Text style={styles.statDesc}>fully attended</Text>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Feedback Sentiment</Text>
-          {feedbackData.map((item, index) => (
-            <View key={index} style={styles.feedbackRow}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 8,
-                  flex: 1,
-                }}
-              >
-                <View
-                  style={[styles.feedbackDot, { backgroundColor: item.color }]}
-                />
-                <Text style={styles.feedbackLabel}>{item.name}</Text>
-              </View>
-              <Text style={styles.feedbackCount}>{item.count}</Text>
-              <View style={styles.feedbackBarContainer}>
-                <View
-                  style={[
-                    styles.feedbackBar,
-                    {
-                      width: `${item.percentage}%`,
-                      backgroundColor: item.color,
-                    },
-                  ]}
-                />
-              </View>
-              <Text style={styles.feedbackPercent}>{item.percentage}%</Text>
-            </View>
-          ))}
-        </View>
+        <FeedbackSentiment data={feedbackData} styles={styles} />
 
         <TopPerformingEvents events={topEvents} styles={styles} />
 
