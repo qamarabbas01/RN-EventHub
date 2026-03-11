@@ -1,40 +1,75 @@
-import BookingTrends from "@/components/BookingTrends";
-import MetricsSection from "@/components/MetricsSection";
-import RevenueOverview from "@/components/RevenueOverview";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Link } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useRef } from "react";
 import {
   Animated,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const eventCategories = [
+  { label: "Music", icon: "🎵" },
+  { label: "Business", icon: "💼" },
+  { label: "Workshop", icon: "🎓" },
+  { label: "Sports", icon: "⚽" },
+  { label: "Food", icon: "🍔" },
+  { label: "Festival", icon: "🎭" },
+];
+
+const featuredEvents = [
+  {
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
+    title: "Music Concert",
+    date: "20 March",
+    location: "Lahore",
+    price: "$15 Ticket",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
+    title: "Food Festival",
+    date: "22 March",
+    location: "Rawalpindi",
+    price: "Free",
+  },
+];
+
+const upcomingEvents = [
+  {
+    title: "Startup Meetup",
+    date: "25 March",
+    location: "Islamabad",
+  },
+  {
+    title: "AI Workshop",
+    date: "28 March",
+    location: "Karachi",
+  },
+];
+
+const nearbyEvents = [
+  {
+    image: "https://images.unsplash.com/photo-1515168833906-d2a3b82b1a48?auto=format&fit=crop&w=400&q=80",
+    title: "Tech Conference",
+    location: "Islamabad",
+  },
+];
+
 export default function HomeScreen() {
-  const [greeting, setGreeting] = useState("Good Evening");
   const fadeAnim = useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) {
-      setGreeting("Good Morning");
-    } else if (hour < 18) {
-      setGreeting("Good Afternoon");
-    } else {
-      setGreeting("Good Evening");
-    }
-
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 600,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -42,98 +77,130 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
       >
-        <Animated.View style={[styles.topBar, { opacity: fadeAnim }]}>
-          <View>
-            <Text style={styles.greeting}>{greeting}</Text>
-            <Text style={styles.userName}>John Doe</Text>
+        <LinearGradient
+          colors={["#6366f1", "#a5b4fc"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerGradient}
+        >
+          <View style={styles.headerRow}>
+            <View>
+              <Text style={styles.greeting}>Hello Ahmed 👋</Text>
+              <Text style={styles.headerTitle}>Find Your Next Event</Text>
+            </View>
+            <View style={styles.headerIcons}>
+              <TouchableOpacity style={styles.headerIconBtn}>
+                <IconSymbol name="bell.fill" color="#6366f1" size={22} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.headerIconBtn}>
+                <Image
+                  source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+                  style={styles.profilePic}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-          <Link href="/notification" style={styles.topBarActions}>
-            <TouchableOpacity
-              style={styles.notificationButton}
-              activeOpacity={0.6}
-            >
-              <Link href="/notification">
-                <IconSymbol name="bell.fill" color="#6b7280" />
-              </Link>
-              <View style={styles.notificationBadge}>
-                <Text style={styles.badgeText}>1</Text>
-              </View>
-            </TouchableOpacity>
-          </Link> 
+        </LinearGradient>
+
+        <Animated.View style={{ opacity: fadeAnim }}>
+          <View style={styles.searchBarSection}>
+            <View style={styles.searchInputWrapper}>
+              <IconSymbol name="magnifyingglass" color="#9ca3af" />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search events, concerts, workshops..."
+                placeholderTextColor="#d1d5db"
+              />
+            </View>
+          </View>
         </Animated.View>
 
-        <View style={styles.searchContainer}>
-          <View style={styles.searchInputWrapper}>
-            <IconSymbol name="magnifyingglass" color="#9ca3af" />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search events, bookings..."
-              placeholderTextColor="#d1d5db"
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.filterButton}
-            activeOpacity={0.7}
+        <View style={styles.sectionSpacing}>
+          <Text style={styles.sectionTitle}>Categories</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.categoriesRow}>
+              {eventCategories.map((cat) => (
+                <LinearGradient
+                  key={cat.label}
+                  colors={["#a5b4fc", "#6366f1"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.categoryBtn}
+                >
+                  <Text style={styles.categoryIcon}>{cat.icon}</Text>
+                  <Text style={styles.categoryLabel}>{cat.label}</Text>
+                </LinearGradient>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+
+        <View style={styles.sectionSpacing}>
+          <Text style={styles.sectionTitle}>⭐ Featured Events</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.featuredRow}>
+              {featuredEvents.map((event, idx) => (
+                <View key={idx} style={styles.featuredCard}>
+                  <Image source={{ uri: event.image }} style={styles.featuredImg} />
+                  <LinearGradient
+                    colors={["rgba(99,102,241,0.7)", "rgba(255,255,255,0.1)"]}
+                    style={styles.featuredOverlay}
+                  />
+                  <View style={styles.featuredContent}>
+                    <Text style={styles.featuredTitle}>{event.title}</Text>
+                    <Text style={styles.featuredMeta}>{event.date} • {event.location}</Text>
+                    <Text style={styles.featuredPrice}>{event.price}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+
+        <View style={styles.sectionSpacing}>
+          <Text style={styles.sectionTitle}>📅 Upcoming Events</Text>
+          {upcomingEvents.map((event, idx) => (
+            <View key={idx} style={styles.upcomingCard}>
+              <View style={styles.upcomingAccent} />
+              <View style={styles.upcomingContent}>
+                <Text style={styles.upcomingTitle}>{event.title}</Text>
+                <Text style={styles.upcomingMeta}>{event.date} • {event.location}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.sectionSpacing}>
+          <Text style={styles.sectionTitle}>📍 Events Near You</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.featuredRow}>
+              {nearbyEvents.map((event, idx) => (
+                <View key={idx} style={styles.nearbyCard}>
+                  <Image source={{ uri: event.image }} style={styles.nearbyImg} />
+                  <View style={styles.nearbyContent}>
+                    <Text style={styles.nearbyTitle}>{event.title}</Text>
+                    <Text style={styles.nearbyMeta}>{event.location}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+
+        <View style={styles.sectionSpacing}>
+          <LinearGradient
+            colors={["#6366f1", "#a5b4fc"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.ticketsCard}
           >
-            <IconSymbol name="slider.horizontal.3" color="#fff" />
-          </TouchableOpacity>
+            <Text style={styles.ticketsIcon}>🎟</Text>
+            <View>
+              <Text style={styles.ticketsTitle}>My Tickets</Text>
+              <Text style={styles.ticketsSubtitle}>View your booked events</Text>
+            </View>
+          </LinearGradient>
         </View>
-
-        <View style={styles.headerSection}>
-          <Text style={styles.title}>Welcome back, John Doe!</Text>
-          <Text style={styles.subtitle}>
-            Your event & booking overview
-          </Text>
-        </View>
-
-        <MetricsSection
-          title="Key Metrics"
-          viewAllIcon={<IconSymbol name="arrow.forward" size={12} color="#4338ca" />}
-          viewAllLink={'(tabs)/attendee-insights'}
-          viewAlllabel="View All"
-          cards={[
-            {
-              label: "Total Events",
-              value: 12,
-              trend: {
-                value: "+12.5%",
-                isPositive: true,
-              },
-            },
-            {
-              label: "Total Bookings",
-              value: 1847,
-              trend: {
-                value: "+18%",
-                isPositive: true,
-              },
-            },
-          ]}
-        />
-
-        <MetricsSection
-          title="Performance"
-          cards={[
-            {
-              label: "Revenue",
-              value: "$89,420",
-              trend: {
-                value: "+23%",
-                isPositive: true,
-              },
-            },
-            {
-              label: "Avg Attendance",
-              value: 77,
-              trend: {
-                value: "-5%",
-                isPositive: false,
-              },
-            },
-          ]}
-        />
-        <BookingTrends />
-        <RevenueOverview />
       </ScrollView>
     </SafeAreaView>
   );
@@ -142,136 +209,276 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#eef2ff",
   },
   scrollView: {
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    paddingBottom: 32,
   },
-  topBar: {
+  headerGradient: {
+    borderRadius: 28,
+    marginBottom: 18,
+    padding: 0,
+    overflow: 'hidden',
+  },
+  headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 0,
+    paddingVertical: 24,
+    paddingHorizontal: 22,
+    borderRadius: 28,
+    backgroundColor: 'transparent',
   },
   greeting: {
-    fontSize: 13,
-    color: "#9ca3af",
-    fontWeight: "500",
-    marginBottom: 4,
-    letterSpacing: 0.5,
+    fontSize: 16,
+    color: "#fff",
+    fontWeight: "700",
+    marginBottom: 2,
+    textShadowColor: "#6366f1",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
-  userName: {
+  headerTitle: {
     fontSize: 24,
-    fontWeight: "800",
-    color: "#1f2937",
+    fontWeight: "900",
+    color: "#fff",
+    marginBottom: 0,
+    textShadowColor: "#6366f1",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
-  topBarActions: {
+  headerIcons: {
     flexDirection: "row",
-    gap: 12,
     alignItems: "center",
-  },
-  searchIconButton: {
-    padding: 8,
-    borderRadius: 10,
-  },
-  notificationButton: {
-    padding: 8,
-    position: "relative",
-  },
-  notificationBadge: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    backgroundColor: "#ef4444",
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2.5,
-    borderColor: "#f9fafb",
-    shadowColor: "#ef4444",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  badgeText: {
-    color: "white",
-    fontSize: 11,
-    fontWeight: "800",
-  },
-  searchContainer: {
-    flexDirection: "row",
     gap: 10,
-    marginBottom: 24,
-    alignItems: "center",
+  },
+  headerIconBtn: {
+    backgroundColor: "#fff",
+    borderRadius: 50,
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  profilePic: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  searchBarSection: {
+    marginBottom: 18,
   },
   searchInputWrapper: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 14,
-    paddingHorizontal: 14,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    paddingHorizontal: 16,
     borderWidth: 1.5,
-    borderColor: "#e5e7eb",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+    borderColor: "#e2e8f0",
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 6,
+    elevation: 3,
   },
   searchInput: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    fontSize: 15,
-    color: "#1f2937",
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    color: "#1e293b",
   },
-  filterButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: "#4338ca",
-    borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#4338ca",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  headerSection: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#1f2937",
-    marginBottom: 8,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: "#6b7280",
-    fontWeight: "500",
-    lineHeight: 22,
-  },
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#374151",
-    marginBottom: 16,
-  },
-  metricsSection: {
+  sectionSpacing: {
     marginBottom: 28,
   },
-  performanceSection: {
-    marginBottom: 16,
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "900",
+    color: "#6366f1",
+    marginBottom: 14,
+    letterSpacing: 0.2,
+  },
+  categoriesRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  categoryBtn: {
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 22,
+    marginRight: 8,
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 8,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.10,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  categoryIcon: {
+    fontSize: 18,
+    marginRight: 6,
+  },
+  categoryLabel: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#fff",
+    textShadowColor: "#6366f1",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  featuredRow: {
+    flexDirection: "row",
+    gap: 18,
+  },
+  featuredCard: {
+    backgroundColor: "#fff",
+    borderRadius: 22,
+    marginRight: 16,
+    width: 200,
+    padding: 0,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
+    overflow: "hidden",
+    position: "relative",
+  },
+  featuredImg: {
+    width: "100%",
+    height: 110,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+  },
+  featuredOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 22,
+  },
+  featuredContent: {
+    padding: 14,
+  },
+  featuredTitle: {
+    fontSize: 16,
+    fontWeight: "900",
+    color: "#1e293b",
+    marginBottom: 2,
+  },
+  featuredMeta: {
+    fontSize: 13,
+    color: "#64748b",
+    marginBottom: 2,
+  },
+  featuredPrice: {
+    fontSize: 14,
+    color: "#22c55e",
+    fontWeight: "800",
+  },
+  upcomingCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 0,
+    marginBottom: 12,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    overflow: "hidden",
+  },
+  upcomingAccent: {
+    width: 6,
+    height: "100%",
+    backgroundColor: "#6366f1",
+  },
+  upcomingContent: {
+    padding: 16,
+    flex: 1,
+  },
+  upcomingTitle: {
+    fontSize: 15,
+    fontWeight: "800",
+    color: "#1e293b",
+    marginBottom: 2,
+  },
+  upcomingMeta: {
+    fontSize: 13,
+    color: "#64748b",
+  },
+  nearbyCard: {
+    backgroundColor: "#fff",
+    borderRadius: 22,
+    marginRight: 16,
+    width: 220,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
+    overflow: "hidden",
+  },
+  nearbyImg: {
+    width: "100%",
+    height: 120,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+  },
+  nearbyContent: {
+    padding: 16,
+  },
+  nearbyTitle: {
+    fontSize: 16,
+    fontWeight: "900",
+    color: "#1e293b",
+    marginBottom: 2,
+  },
+  nearbyMeta: {
+    fontSize: 13,
+    color: "#64748b",
+  },
+  ticketsCard: {
+    borderRadius: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 18,
+    gap: 16,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 3,
+    marginBottom: 8,
+  },
+  ticketsIcon: {
+    fontSize: 32,
+    marginRight: 10,
+    color: "#fff",
+    textShadowColor: "#6366f1",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  ticketsTitle: {
+    fontSize: 17,
+    fontWeight: "900",
+    color: "#fff",
+  },
+  ticketsSubtitle: {
+    fontSize: 14,
+    color: "#e0e7ff",
   },
 });
