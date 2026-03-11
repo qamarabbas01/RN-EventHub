@@ -1,3 +1,4 @@
+import SettingsSections from "@/components/SettingsSections";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import UserStatsGrid from "@/components/UserStatsGrid";
 import React from "react";
@@ -5,7 +6,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   View,
 } from "react-native";
@@ -61,9 +61,9 @@ export default function Profile() {
     {
       title: "Account",
       items: [
-        { icon: "key.fill", label: "Change Password", action: true },
-        { icon: "lock.fill", label: "Privacy Settings", action: true },
-        { icon: "doc.fill", label: "Terms & Conditions", action: true },
+        { icon: "key.fill", label: "Change Password", action: true as const },
+        { icon: "lock.fill", label: "Privacy Settings", action: true as const },
+        { icon: "doc.fill", label: "Terms & Conditions", action: true as const },
       ],
     },
   ];
@@ -89,46 +89,7 @@ export default function Profile() {
 
         <UserStatsGrid stats={stats} />
 
-        {sections.map((section, sectionIndex) => (
-          <View key={sectionIndex} style={styles.section}>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
-            <View style={styles.sectionContent}>
-              {section.items.map((item, itemIndex) => (
-                <View key={itemIndex}>
-                  <Pressable style={styles.settingItem}>
-                    <View style={styles.settingLeft}>
-                      <View style={styles.settingIconBg}>
-                        <IconSymbol
-                          name={item.icon as any}
-                          size={18}
-                          color="#4f46e5"
-                        />
-                      </View>
-                      <Text style={styles.settingLabel}>{item.label}</Text>
-                    </View>
-                    {item.value !== undefined ? (
-                      <Switch
-                        value={item.value}
-                        onValueChange={item.onToggle}
-                        trackColor={{ false: "#d1d5db", true: "#c7d2fe" }}
-                        thumbColor={item.value ? "#4f46e5" : "#9ca3af"}
-                      />
-                    ) : (
-                      <IconSymbol
-                        name="chevron.right"
-                        size={20}
-                        color="#d1d5db"
-                      />
-                    )}
-                  </Pressable>
-                  {itemIndex < section.items.length - 1 && (
-                    <View style={styles.divider} />
-                  )}
-                </View>
-              ))}
-            </View>
-          </View>
-        ))}
+        <SettingsSections sections={sections} />
 
         <Pressable style={styles.logoutButton}>
           <IconSymbol name="arrow.right.square" size={18} color="#ef4444" />
@@ -207,55 +168,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3f4f6",
     justifyContent: "center",
     alignItems: "center",
-  },
-  section: {
-    marginHorizontal: 16,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#6b7280",
-    letterSpacing: 0.5,
-    marginBottom: 8,
-    textTransform: "uppercase",
-  },
-  sectionContent: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#f3f4f6",
-    overflow: "hidden",
-  },
-  settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-  },
-  settingLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  settingIconBg: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: "#ede9fe",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  settingLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#f3f4f6",
-    marginHorizontal: 16,
   },
   logoutButton: {
     flexDirection: "row",
