@@ -1,5 +1,6 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { LinearGradient } from 'expo-linear-gradient';
+import { Link } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -86,15 +87,19 @@ export default function HomeScreen() {
           <View style={styles.headerRow}>
             <View>
               <Text style={styles.greeting}>Hello Ahmed 👋</Text>
-              <Text style={styles.headerTitle}>Find Your Next Event</Text>
+              <Text style={styles.headerTitle}>
+                Discover Events Around You
+              </Text>
             </View>
             <View style={styles.headerIcons}>
               <TouchableOpacity style={styles.headerIconBtn}>
-                <IconSymbol name="bell.fill" color="#6366f1" size={22} />
+                <Link href="/notification">
+                  <IconSymbol name="bell.fill" size={18} color="#4f46e5" />
+                </Link>
               </TouchableOpacity>
               <TouchableOpacity style={styles.headerIconBtn}>
                 <Image
-                  source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+                  source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
                   style={styles.profilePic}
                 />
               </TouchableOpacity>
@@ -136,7 +141,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.sectionSpacing}>
-          <Text style={styles.sectionTitle}>⭐ Featured Events</Text>
+          <Text style={styles.sectionTitle}>Featured Events</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.featuredRow}>
               {featuredEvents.map((event, idx) => (
@@ -158,7 +163,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.sectionSpacing}>
-          <Text style={styles.sectionTitle}>📅 Upcoming Events</Text>
+          <Text style={styles.sectionTitle}>Upcoming Events</Text>
           {upcomingEvents.map((event, idx) => (
             <View key={idx} style={styles.upcomingCard}>
               <View style={styles.upcomingAccent} />
@@ -171,7 +176,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.sectionSpacing}>
-          <Text style={styles.sectionTitle}>📍 Events Near You</Text>
+          <Text style={styles.sectionTitle}>Events Near You</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.featuredRow}>
               {nearbyEvents.map((event, idx) => (
@@ -243,8 +248,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: "900",
+    fontSize: 14,
+    fontWeight: "500",
     color: "#fff",
     marginBottom: 0,
     textShadowColor: "#6366f1",
@@ -254,7 +259,7 @@ const styles = StyleSheet.create({
   headerIcons: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 2,
   },
   headerIconBtn: {
     backgroundColor: "#fff",
@@ -271,9 +276,9 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   profilePic: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
   },
   searchBarSection: {
     marginBottom: 18,
@@ -306,7 +311,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "900",
-    color: "#6366f1",
+    color: "#000",
     marginBottom: 14,
     letterSpacing: 0.2,
   },
