@@ -25,6 +25,14 @@ export default function RootLayout() {
             headerStyle: { backgroundColor: '#fff' }, headerTitleStyle: { color: '#111827', fontWeight: '600' }, headerShadowVisible: false,
           }}
         />
+        <Stack.Screen
+          name="events/[id]"
+          options={{
+            title: "Event Details",
+            headerBackButtonDisplayMode: "minimal",
+            headerStyle: { backgroundColor: '#fff' }, headerTitleStyle: { color: '#111827', fontWeight: '600' }, headerShadowVisible: false,
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

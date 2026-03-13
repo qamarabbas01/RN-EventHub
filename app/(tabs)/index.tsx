@@ -86,7 +86,7 @@ export default function HomeScreen() {
         >
           <View style={styles.headerRow}>
             <View>
-              <Text style={styles.greeting}>Hello Ahmed 👋</Text>
+              <Text style={styles.greeting}>Hello Ahmed</Text>
               <Text style={styles.headerTitle}>
                 Discover Events Around You
               </Text>
@@ -94,7 +94,7 @@ export default function HomeScreen() {
             <View style={styles.headerIcons}>
               <TouchableOpacity style={styles.headerIconBtn}>
                 <Link href="/notification">
-                  <IconSymbol name="bell.fill" size={18} color="#4f46e5" />
+                  <IconSymbol name="bell.fill" size={24} color="#4f46e5" />
                 </Link>
               </TouchableOpacity>
               <TouchableOpacity style={styles.headerIconBtn}>
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 24,
-    paddingHorizontal: 22,
+    paddingHorizontal: 24,
     borderRadius: 28,
     backgroundColor: 'transparent',
   },

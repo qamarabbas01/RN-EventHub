@@ -376,7 +376,7 @@ export default function AttendeeInsights() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fffcfc" },
+  container: { flex: 1, backgroundColor: "#eef2ff" },
   header: {
     paddingHorizontal: 16,
     paddingVertical: 16,

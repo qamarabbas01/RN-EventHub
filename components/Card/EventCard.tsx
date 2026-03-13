@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
@@ -35,52 +36,48 @@ export default function EventCard({
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.imageContainer}>
         {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
+          <>
+            <Image source={{ uri: image }} style={styles.image} />
+            <LinearGradient
+              colors={["rgba(99,102,241,0.55)", "rgba(255,255,255,0.05)"]}
+              style={styles.imageOverlay}
+            />
+          </>
         ) : (
           <View style={[styles.image, styles.imagePlaceholder]}>
             <IconSymbol name="calendar" size={48} color="#9ca3af" />
           </View>
         )}
-
         <View
           style={[
             styles.statusBadge,
             { backgroundColor: statusColors[status].bg },
           ]}
         >
-          <Text style={[styles.statusText, { color: statusColors[status].text }]}>
+          <Text style={[styles.statusText, { color: statusColors[status].text }]}> 
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </Text>
         </View>
       </View>
-
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={2}>
           {title}
         </Text>
-
         <View style={styles.detailRow}>
           <IconSymbol name="calendar" size={14} color="#6b7280" />
-          <Text style={styles.detailText}>
-            {date}
-          </Text>
+          <Text style={styles.detailText}>{date}</Text>
         </View>
-
         <View style={styles.detailRow}>
           <IconSymbol name="clock" size={14} color="#6b7280" />
           <Text style={styles.detailText}>{time}</Text>
         </View>
-
         <View style={styles.detailRow}>
           <IconSymbol name="location.fill" size={14} color="#6b7280" />
-          <Text style={styles.detailText} numberOfLines={1}>
-            {location}
-          </Text>
+          <Text style={styles.detailText} numberOfLines={1}>{location}</Text>
         </View>
-
         <View style={styles.footerRow}>
           <View style={styles.attendeesSection}>
             <View style={styles.attendeeIcon}>
@@ -91,7 +88,6 @@ export default function EventCard({
               {capacity && ` / ${capacity}`}
             </Text>
           </View>
-
           {capacity && (
             <View style={styles.capacityBar}>
               <View
@@ -111,114 +107,113 @@ export default function EventCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
-    borderRadius: 16,
+    borderRadius: 22,
     overflow: 'hidden',
-    marginBottom: 12,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#f3f4f6',
+    marginBottom: 18,
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 18,
+    elevation: 8,
+    borderWidth: 0,
   },
-
   imageContainer: {
     position: 'relative',
     width: '100%',
-    height: 200,
+    height: 210,
   },
-
   image: {
     width: '100%',
     height: '100%',
     backgroundColor: '#f9fafb',
-    objectFit: 'cover',
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
   },
-
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+  },
   imagePlaceholder: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   statusBadge: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    top: 14,
+    right: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 12,
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.10,
+    shadowRadius: 4,
+    elevation: 2,
   },
-
   statusText: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.2,
   },
-
   content: {
-    padding: 12,
+    padding: 18,
   },
-
   title: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
-    lineHeight: 20,
+    fontSize: 17,
+    fontWeight: '900',
+    color: '#1e293b',
+    marginBottom: 10,
+    lineHeight: 22,
   },
-
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
-    gap: 6,
+    marginBottom: 7,
+    gap: 8,
   },
-
   detailText: {
-    fontSize: 12,
-    color: '#6b7280',
+    fontSize: 13,
+    color: '#64748b',
     flex: 1,
   },
-
   footerRow: {
-    marginTop: 10,
+    marginTop: 14,
     borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
-    paddingTop: 10,
+    borderTopColor: '#e0e7ff',
+    paddingTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-
   attendeesSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 8,
+    gap: 8,
   },
-
   attendeeIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#4f46e5',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#6366f1',
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   attendeeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#374151',
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1e293b',
   },
-
   capacityBar: {
-    height: 4,
-    backgroundColor: '#e5e7eb',
-    borderRadius: 2,
+    height: 5,
+    width: 60,
+    backgroundColor: '#e0e7ff',
+    borderRadius: 3,
     overflow: 'hidden',
   },
-
   capacityFill: {
     height: '100%',
-    backgroundColor: '#4f46e5',
-    borderRadius: 2,
+    backgroundColor: '#6366f1',
+    borderRadius: 3,
   },
 });
