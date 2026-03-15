@@ -27,11 +27,7 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="events/[id]"
-          options={{
-            title: "Event Details",
-            headerBackButtonDisplayMode: "minimal",
-            headerStyle: { backgroundColor: '#fff' }, headerTitleStyle: { color: '#111827', fontWeight: '600' }, headerShadowVisible: false,
-          }}
+          options={{ headerShown: false }}
         />
       </Stack>
       <StatusBar style="auto" />

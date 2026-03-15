@@ -5,75 +5,8 @@ import React, { useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-interface Event {
-    id: string;
-    title: string;
-    date: string;
-    time: string;
-    location: string;
-    attendees: number;
-    capacity: number;
-    status: 'upcoming' | 'live' | 'ended';
-    imageUrl?: string;
-}
-
-const mockEvents: Event[] = [
-    {
-        id: '1',
-        title: 'Tech Conference 2026',
-        date: 'Mar 15, 2026',
-        time: '10:00 AM',
-        location: 'San Francisco Convention Center',
-        attendees: 450,
-        capacity: 500,
-        status: 'upcoming',
-        imageUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-        id: '2',
-        title: 'Web Development Workshop',
-        date: 'Mar 12, 2026',
-        time: 'Live Now',
-        location: 'Online - Zoom',
-        attendees: 120,
-        capacity: 150,
-        status: 'live',
-        imageUrl: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-        id: '3',
-        title: 'Design Thinking Bootcamp',
-        date: 'Mar 08, 2026',
-        time: '09:00 AM',
-        location: 'New York Creative Hub',
-        attendees: 85,
-        capacity: 100,
-        status: 'ended',
-        imageUrl: 'https://event-manager-three-eta.vercel.app/_app/immutable/assets/music.DareFaYV.png',
-    },
-    {
-        id: '4',
-        title: 'AI & Machine Learning Summit',
-        date: 'Mar 22, 2026',
-        time: '11:30 AM',
-        location: 'Boston Tech Park',
-        attendees: 320,
-        capacity: 400,
-        status: 'upcoming',
-        imageUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-        id: '5',
-        title: 'Startup Networking Night',
-        date: 'Mar 18, 2026',
-        time: '06:00 PM',
-        location: 'Downtown Lounge, Chicago',
-        attendees: 95,
-        capacity: 150,
-        status: 'upcoming',
-        imageUrl: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80',
-    },
-];
+import { mockEvents } from '../../data/mockEvents';
+// If you want to keep the Event type, you can export it from mockEvents.ts and import here as well.
 
 const filterTags = ['All', 'Upcoming', 'Live', 'Ended'];
 
