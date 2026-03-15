@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { mockEvents } from '../../data/mockEvents';
 
 export default function EventDetails() {
@@ -24,15 +25,15 @@ export default function EventDetails() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.imageWrapper}>
           <Image source={{ uri: event.imageUrl }} style={styles.image} />
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
-          <View style={[styles.statusBadge, { backgroundColor: statusColors[event.status as keyof typeof statusColors].bg }]}> 
-            <Text style={[styles.statusText, { color: statusColors[event.status as keyof typeof statusColors].text }]}> 
+          <View style={[styles.statusBadge, { backgroundColor: statusColors[event.status as keyof typeof statusColors].bg }]}>
+            <Text style={[styles.statusText, { color: statusColors[event.status as keyof typeof statusColors].text }]}>
               {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
             </Text>
           </View>
@@ -57,9 +58,43 @@ export default function EventDetails() {
             )}
           </View>
           <Text style={styles.description}>{event.description}</Text>
+
+          <View style={styles.detailsSection}>
+            <View style={styles.detailRow}>
+              <Ionicons name="person" size={18} color="#6366f1" style={styles.icon} />
+              <Text style={styles.detailLabel}>Organizer:</Text>
+              <Text style={styles.detailValue}>Tech Innovators Inc.</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Ionicons name="pricetag" size={18} color="#6366f1" style={styles.icon} />
+              <Text style={styles.detailLabel}>Tags:</Text>
+              <Text style={styles.detailValue}>Technology, Networking, Innovation</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Ionicons name="cash" size={18} color="#6366f1" style={styles.icon} />
+              <Text style={styles.detailLabel}>Price:</Text>
+              <Text style={styles.detailValue}>Free</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Ionicons name="call" size={18} color="#6366f1" style={styles.icon} />
+              <Text style={styles.detailLabel}>Contact:</Text>
+              <Text style={styles.detailValue}>info@techconf.com</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Ionicons name="globe" size={18} color="#6366f1" style={styles.icon} />
+              <Text style={styles.detailLabel}>Website:</Text>
+              <Text style={styles.detailValue}>www.techconf2026.com</Text>
+            </View>
+          </View>
         </View>
       </ScrollView>
-    </View>
+      <View style={styles.ticketsBtnWrapper}>
+        <TouchableOpacity style={styles.ticketsBtn}>
+          <Ionicons name="ticket-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+          <Text style={styles.ticketsBtnText}>Get Tickets</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -67,6 +102,61 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#eef2ff',
+  },
+  ticketsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#6366f1',
+    borderRadius: 16,
+    paddingVertical: 14,
+    marginTop: 0,
+    marginBottom: 0,
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  ticketsBtnWrapper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 18,
+    backgroundColor: 'rgba(238,242,255,0.95)',
+    zIndex: 10,
+  },
+  ticketsBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 17,
+    letterSpacing: 0.2,
+  },
+  detailsSection: {
+    marginTop: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e7ef',
+    paddingTop: 18,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    justifyContent: 'flex-start',
+  },
+  detailLabel: {
+    fontSize: 15,
+    color: '#64748b',
+    fontWeight: '700',
+    marginLeft: 6,
+    marginRight: 4,
+  },
+  detailValue: {
+    fontSize: 15,
+    color: '#334155',
+    fontWeight: '500',
+    marginLeft: 2,
   },
   scrollContent: {
     paddingBottom: 32,
@@ -87,7 +177,7 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     position: 'absolute',
-    top: 36,
+    top: 12,
     left: 18,
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 20,
@@ -96,7 +186,7 @@ const styles = StyleSheet.create({
   },
   statusBadge: {
     position: 'absolute',
-    top: 36,
+    top: 12,
     right: 18,
     paddingHorizontal: 14,
     paddingVertical: 6,
