@@ -66,7 +66,6 @@ export default function Profile() {
     },
   ];
 
-  // Open modal and prefill fields
   const handleEditPress = () => {
     setEditName(userData.name);
     setEditRole(userData.role);
@@ -74,7 +73,6 @@ export default function Profile() {
     setEditModalVisible(true);
   };
 
-  // Save changes
   const handleSaveEdit = () => {
     setUserData((prev) => ({
       ...prev,
