@@ -7,12 +7,10 @@ interface EventCardProps {
   id: string;
   title: string;
   date: string;
-  time: string;
+  time: any;
   location: string;
-  attendees: number;
   image?: string;
   status?: 'upcoming' | 'live' | 'ended';
-  capacity?: number;
   onPress?: () => void;
 }
 
@@ -21,13 +19,10 @@ export default function EventCard({
   date,
   time,
   location,
-  attendees,
   image,
   status = 'upcoming',
-  capacity,
   onPress,
 }: EventCardProps) {
-  const occupancyPercent = capacity ? (attendees / capacity) * 100 : 0;
 
   const statusColors = {
     upcoming: { bg: '#dbeafe', text: '#0369a1' },
@@ -57,7 +52,7 @@ export default function EventCard({
             { backgroundColor: statusColors[status].bg },
           ]}
         >
-          <Text style={[styles.statusText, { color: statusColors[status].text }]}> 
+          <Text style={[styles.statusText, { color: statusColors[status].text }]}>
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </Text>
         </View>
@@ -77,27 +72,6 @@ export default function EventCard({
         <View style={styles.detailRow}>
           <IconSymbol name="location.fill" size={14} color="#6b7280" />
           <Text style={styles.detailText} numberOfLines={1}>{location}</Text>
-        </View>
-        <View style={styles.footerRow}>
-          <View style={styles.attendeesSection}>
-            <View style={styles.attendeeIcon}>
-              <IconSymbol name="person.fill" size={12} color="#fff" />
-            </View>
-            <Text style={styles.attendeeText}>
-              {attendees}
-              {capacity && ` / ${capacity}`}
-            </Text>
-          </View>
-          {capacity && (
-            <View style={styles.capacityBar}>
-              <View
-                style={[
-                  styles.capacityFill,
-                  { width: `${Math.min(occupancyPercent, 100)}%` },
-                ]}
-              />
-            </View>
-          )}
         </View>
       </View>
     </TouchableOpacity>
