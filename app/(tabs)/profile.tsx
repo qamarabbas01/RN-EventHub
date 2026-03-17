@@ -1,6 +1,7 @@
 import SettingsSections from "@/components/SettingsSections";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import UserStatsGrid from "@/components/UserStatsGrid";
+import { router } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -83,6 +84,10 @@ export default function Profile() {
     setEditModalVisible(false);
   };
 
+  const handleLogout = () => {
+    router.navigate("/Login");
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -106,7 +111,7 @@ export default function Profile() {
 
         <SettingsSections sections={sections} />
 
-        <Pressable style={styles.logoutButton}>
+        <Pressable style={styles.logoutButton} onPress={() => handleLogout()}>
           <IconSymbol name="arrow.right.square" size={18} color="#ef4444" />
           <Text style={styles.logoutText}>Logout</Text>
         </Pressable>
