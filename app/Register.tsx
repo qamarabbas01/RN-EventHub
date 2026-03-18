@@ -1,9 +1,18 @@
+import { router } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { auth } from "../firebase";
 
-export default function RegisterScreen({ navigation }: any) {
+export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,37 +21,44 @@ export default function RegisterScreen({ navigation }: any) {
     setError("");
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      navigation.navigate("Profile");
+      router.replace("/profile");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Registration failed");
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Pressable style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
-      </Pressable>
-      <Pressable onPress={() => navigation?.navigate("Login")}>
-        <Text style={styles.link}>Already have an account? Login</Text>
-      </Pressable>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <View style={styles.innerBox}>
+        <Text style={styles.title}>Create Account</Text>
+        <Text style={styles.subtitle}>Sign up to get started</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <Pressable style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Register</Text>
+        </Pressable>
+        <Pressable onPress={() => router.push("/Login")}>
+          <Text style={styles.link}>Already have an account? Login</Text>
+        </Pressable>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -50,29 +66,68 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 24,
+    alignItems: "center",
+    backgroundColor: "#f8fafc",
+  },
+  innerBox: {
+    width: "100%",
+    maxWidth: 380,
     backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 28,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+    marginHorizontal: 16,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#6b7280",
     marginBottom: 24,
     textAlign: "center",
   },
   input: {
+    height: 48,
+    borderColor: "#e5e7eb",
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
+    paddingHorizontal: 14,
+    marginBottom: 16,
+    backgroundColor: "#f1f5f9",
+    fontSize: 16,
+    color: "#111827",
   },
   button: {
-    backgroundColor: "#4f46e5",
-    padding: 14,
+    backgroundColor: "#2563eb",
+    paddingVertical: 14,
     borderRadius: 8,
-    marginBottom: 12,
+    alignItems: "center",
+    marginTop: 8,
+    marginBottom: 8,
   },
-  buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
-  error: { color: "red", marginBottom: 8, textAlign: "center" },
-  link: { color: "#4f46e5", textAlign: "center", marginTop: 8 },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  error: {
+    color: "#dc2626",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  link: {
+    color: "#2563eb",
+    textAlign: "center",
+    marginTop: 8,
+    fontSize: 15,
+  },
 });
