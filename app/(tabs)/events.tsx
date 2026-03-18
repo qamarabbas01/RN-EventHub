@@ -30,10 +30,36 @@ export default function Events() {
             setLoading(true);
             try {
                 const querySnapshot = await getDocs(collection(db, "events"));
-                const eventsData = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
+                const now = new Date();
+                const eventsData = querySnapshot.docs.map((doc) => {
+                    const data = doc.data();
+                    let eventDate;
+                    if (data.time && typeof data.time === "object" && data.time.seconds) {
+                        eventDate = new Date(data.time.seconds * 1000);
+                    } else if (data.time) {
+                        eventDate = new Date(data.time);
+                    } else {
+                        eventDate = null;
+                    }
+                    let status = "upcoming";
+                    if (eventDate) {
+                        const start = eventDate;
+                        const end = new Date(eventDate);
+                        end.setHours(end.getHours() + 2);
+                        if (now < start) {
+                            status = "upcoming";
+                        } else if (now >= start && now <= end) {
+                            status = "live";
+                        } else {
+                            status = "ended";
+                        }
+                    }
+                    return {
+                        id: doc.id,
+                        ...data,
+                        status,
+                    };
+                });
                 setEvents(eventsData);
             } catch (error) {
                 console.error("Error fetching events:", error);

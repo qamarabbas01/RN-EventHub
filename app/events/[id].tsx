@@ -18,7 +18,36 @@ export default function EventDetails() {
     );
   }
 
-  const statusColors = {
+  let eventDate;
+  if (event.time && event.date) {
+    const dateString = `${event.date} ${event.time}`;
+    eventDate = new Date(dateString);
+    if (isNaN(eventDate.getTime())) {
+      eventDate = new Date(event.date);
+    }
+  } else {
+    eventDate = null;
+  }
+  const now = new Date();
+  let status: "upcoming" | "live" | "ended" = "upcoming";
+  if (eventDate) {
+    const start = eventDate;
+    const end = new Date(eventDate);
+    end.setHours(end.getHours() + 2);
+    if (now < start) {
+      status = "upcoming";
+    } else if (now >= start && now <= end) {
+      status = "live";
+    } else {
+      status = "ended";
+    }
+  } else if (event.time && typeof event.time === "string" && event.time.toLowerCase().includes("live")) {
+    status = "live";
+  } else if (event.status) {
+    status = event.status;
+  }
+
+  const statusColors: Record<"upcoming" | "live" | "ended", { bg: string; text: string }> = {
     upcoming: { bg: '#dbeafe', text: '#0369a1' },
     live: { bg: '#fecaca', text: '#991b1b' },
     ended: { bg: '#e5e7eb', text: '#6b7280' },
@@ -32,10 +61,8 @@ export default function EventDetails() {
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
-          <View style={[styles.statusBadge, { backgroundColor: statusColors[event.status as keyof typeof statusColors].bg }]}>
-            <Text style={[styles.statusText, { color: statusColors[event.status as keyof typeof statusColors].text }]}>
-              {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-            </Text>
+          <View style={[styles.statusBadge, { backgroundColor: statusColors[status].bg }]}>
+            <Text style={[styles.statusText, { color: statusColors[status].text }]}> {status.charAt(0).toUpperCase() + status.slice(1)} </Text>
           </View>
         </View>
         <View style={styles.card}>
@@ -58,7 +85,6 @@ export default function EventDetails() {
             )}
           </View>
           <Text style={styles.description}>{event.description}</Text>
-
           <View style={styles.detailsSection}>
             <View style={styles.detailRow}>
               <Ionicons name="person" size={18} color="#6366f1" style={styles.icon} />
