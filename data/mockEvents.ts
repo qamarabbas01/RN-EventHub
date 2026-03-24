@@ -4,27 +4,36 @@ export type Event = {
   date: string;
   time: string;
   location: string;
-  attendees: number;
-  capacity: number;
-  status: "upcoming" | "live" | "ended";
+  attendees?: number;
+  capacity?: number;
+  status?: "upcoming" | "live" | "ended";
   imageUrl?: string;
   description?: string;
+  organizer?: string;
+  price?: string;
+  tags?: string;
+  contact?: string;
+  website?: string;
 };
 
 export const mockEvents: Event[] = [
   {
     id: "1",
-    title: "Tech Conference 2026",
-    date: "Mar 15, 2026",
-    time: "10:00 AM",
-    location: "San Francisco Convention Center",
-    attendees: 450,
-    capacity: 500,
+    title: "Music Concert",
+    date: "2026-03-20",
+    time: "March 17, 2026 at 1:43:57 PM UTC+3",
+    location: "Gilgit",
+    attendees: 0,
+    capacity: undefined,
     status: "upcoming",
     imageUrl:
       "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
-    description:
-      "Join the leading minds in tech for a day of innovation, networking, and learning at the Tech Conference 2026.",
+    description: "A live music event in Gilgit",
+    organizer: "Tech Innovators Inc.",
+    price: "Free",
+    tags: "Technology",
+    contact: "info@techconf.com",
+    website: "www.techconf2026.com",
   },
   {
     id: "2",
