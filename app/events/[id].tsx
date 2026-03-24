@@ -175,12 +175,6 @@ export default function EventDetails() {
           </View>
         </View>
       </ScrollView>
-      <View style={styles.ticketsBtnWrapper}>
-        <TouchableOpacity style={styles.ticketsBtn}>
-          <Ionicons name="ticket-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.ticketsBtnText}>Get Tickets</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
