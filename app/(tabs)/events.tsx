@@ -151,18 +151,48 @@ export default function Events() {
                     <FlatList
                         data={filteredEvents}
                         keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <EventCard
-                                id={item.id}
-                                title={item.title}
-                                date={renderDate(item.date, item.time)}
-                                time={renderTime(item.time)}
-                                location={item.location}
-                                status={item.status}
-                                onPress={() => router.push(`/events/${item.id}`)}
-                                image={item.imageUrl}
-                            />
-                        )}
+                        renderItem={({ item }) => {
+                            let eventDate: Date | null = null;
+                            if (item.time && typeof item.time === 'object' && item.time.seconds) {
+                                eventDate = new Date(item.time.seconds * 1000);
+                            } else if (typeof item.time === 'string' && item.time.trim() !== '') {
+                                const parsed = new Date(item.time);
+                                if (!isNaN(parsed.getTime())) eventDate = parsed;
+                            } else if (item.date && typeof item.date === 'object' && item.date.seconds) {
+                                eventDate = new Date(item.date.seconds * 1000);
+                            } else if (typeof item.date === 'string' && item.date.trim() !== '') {
+                                const parsed = new Date(item.date);
+                                if (!isNaN(parsed.getTime())) eventDate = parsed;
+                            }
+
+                            type StatusType = 'upcoming' | 'live' | 'ended';
+                            let status: StatusType = 'upcoming';
+                            if (eventDate) {
+                                const now = new Date();
+                                const eventDay = eventDate.setHours(0, 0, 0, 0);
+                                const today = now.setHours(0, 0, 0, 0);
+                                if (eventDay < today) {
+                                    status = 'ended';
+                                } else if (eventDay === today) {
+                                    status = 'live';
+                                } else {
+                                    status = 'upcoming';
+                                }
+                            }
+
+                            return (
+                                <EventCard
+                                    id={item.id}
+                                    title={item.title}
+                                    date={renderDate(item.date, item.time)}
+                                    time={renderTime(item.time)}
+                                    location={item.location}
+                                    status={status}
+                                    onPress={() => router.push(`/events/${item.id}`)}
+                                    image={item.imageUrl}
+                                />
+                            );
+                        }}
                         scrollEnabled={false}
                         nestedScrollEnabled={true}
                     />
