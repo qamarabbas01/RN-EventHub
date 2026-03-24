@@ -1,15 +1,100 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { doc, getDoc } from 'firebase/firestore';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { mockEvents } from '../../data/mockEvents';
+import { db } from '../../firebase';
 
 export default function EventDetails() {
+  const renderDate = (dateVal: any, timeVal?: any) => {
+    if (timeVal && typeof timeVal === 'object' && timeVal.seconds) {
+      const dateObj = new Date(timeVal.seconds * 1000);
+      return dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    if (typeof timeVal === 'string' && timeVal.trim() !== '') {
+      const parsed = new Date(timeVal);
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+      }
+    }
+
+    if (dateVal && typeof dateVal === 'object' && dateVal.seconds) {
+      const dateObj = new Date(dateVal.seconds * 1000);
+      return dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    if (typeof dateVal === 'string' && dateVal.trim() !== '') {
+      const parsed = new Date(dateVal);
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+      }
+      return dateVal;
+    }
+    return 'N/A';
+  };
+
+  const renderTime = (val: any) => {
+    if (!val) return 'N/A';
+    if (typeof val === 'object' && val.seconds) {
+      const dateObj = new Date(val.seconds * 1000);
+      return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    const dateObj = new Date(val);
+    if (!isNaN(dateObj.getTime())) {
+      return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    return 'N/A';
+  };
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const event = mockEvents.find(e => e.id === id);
+  const [event, setEvent] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState("");
 
+  React.useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    setError("");
+    getDoc(doc(db, "events", String(id)))
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          setEvent({ id, ...docSnap.data() });
+        } else {
+          setEvent(null);
+        }
+      })
+      .catch((err) => {
+        setError("Failed to load event");
+        setEvent(null);
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  const safe = (val: any, fallback = 'N/A') => {
+    if (val === null || val === undefined || val === '') return fallback;
+    if (typeof val === 'object' && val.seconds) {
+      const dateObj = new Date(val.seconds * 1000);
+      if (val.nanoseconds !== undefined) {
+        return dateObj.toLocaleString();
+      }
+    }
+    return val;
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.notFound}>Loading event...</Text>
+      </View>
+    );
+  }
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.notFound}>{error}</Text>
+      </View>
+    );
+  }
   if (!event) {
     return (
       <View style={styles.centered}>
@@ -28,72 +113,68 @@ export default function EventDetails() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.imageWrapper}>
-          <Image source={{ uri: event.imageUrl }} style={styles.image} />
+          <Image source={{ uri: safe(event.imageUrl, 'https://via.placeholder.com/800x260?text=No+Image') }} style={styles.image} />
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
-          <View style={[styles.statusBadge, { backgroundColor: statusColors[event.status as keyof typeof statusColors].bg }]}>
-            <Text style={[styles.statusText, { color: statusColors[event.status as keyof typeof statusColors].text }]}>
-              {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-            </Text>
-          </View>
+          {event.status && statusColors[event.status as keyof typeof statusColors] && (
+            <View style={[styles.statusBadge, { backgroundColor: statusColors[event.status as keyof typeof statusColors].bg }]}>
+              <Text style={[styles.statusText, { color: statusColors[event.status as keyof typeof statusColors].text }]}>
+                {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+              </Text>
+            </View>
+          )}
         </View>
         <View style={styles.card}>
-          <Text style={styles.title}>{event.title}</Text>
+          <Text style={styles.title}>{safe(event.title)}</Text>
           <View style={styles.row}>
             <Ionicons name="calendar" size={18} color="#6366f1" style={styles.icon} />
-            <Text style={styles.meta}>{event.date}</Text>
+            <Text style={styles.meta}>{renderDate(event.date, event.time)}</Text>
             <Ionicons name="time" size={18} color="#6366f1" style={styles.icon} />
-            <Text style={styles.meta}>{event.time}</Text>
+            <Text style={styles.meta}>{renderTime(event.time)}</Text>
           </View>
           <View style={styles.row}>
             <Ionicons name="location" size={18} color="#6366f1" style={styles.icon} />
-            <Text style={styles.meta}>{event.location}</Text>
+            <Text style={styles.meta}>{safe(event.location)}</Text>
           </View>
           <View style={styles.row}>
             <Ionicons name="people" size={18} color="#6366f1" style={styles.icon} />
-            <Text style={styles.meta}>{event.attendees} Attending</Text>
+            <Text style={styles.meta}>{safe(event.attendees, '0')} Attending</Text>
             {event.capacity && (
-              <Text style={styles.meta}>/ {event.capacity} Capacity</Text>
+              <Text style={styles.meta}>/ {safe(event.capacity)} Capacity</Text>
             )}
           </View>
-          <Text style={styles.description}>{event.description}</Text>
+          <Text style={styles.description}>{safe(event.description)}</Text>
 
           <View style={styles.detailsSection}>
             <View style={styles.detailRow}>
               <Ionicons name="person" size={18} color="#6366f1" style={styles.icon} />
               <Text style={styles.detailLabel}>Organizer:</Text>
-              <Text style={styles.detailValue}>Tech Innovators Inc.</Text>
+              <Text style={styles.detailValue}>{safe(event.organizer)}</Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="pricetag" size={18} color="#6366f1" style={styles.icon} />
               <Text style={styles.detailLabel}>Tags:</Text>
-              <Text style={styles.detailValue}>Technology, Networking, Innovation</Text>
+              <Text style={styles.detailValue}>{safe(event.tags)}</Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="cash" size={18} color="#6366f1" style={styles.icon} />
               <Text style={styles.detailLabel}>Price:</Text>
-              <Text style={styles.detailValue}>Free</Text>
+              <Text style={styles.detailValue}>{safe(event.price)}</Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="call" size={18} color="#6366f1" style={styles.icon} />
               <Text style={styles.detailLabel}>Contact:</Text>
-              <Text style={styles.detailValue}>info@techconf.com</Text>
+              <Text style={styles.detailValue}>{safe(event.contact)}</Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="globe" size={18} color="#6366f1" style={styles.icon} />
               <Text style={styles.detailLabel}>Website:</Text>
-              <Text style={styles.detailValue}>www.techconf2026.com</Text>
+              <Text style={styles.detailValue}>{safe(event.website)}</Text>
             </View>
           </View>
         </View>
       </ScrollView>
-      <View style={styles.ticketsBtnWrapper}>
-        <TouchableOpacity style={styles.ticketsBtn}>
-          <Ionicons name="ticket-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.ticketsBtnText}>Get Tickets</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }

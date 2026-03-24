@@ -16,6 +16,46 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 
+function renderDate(date: any, time?: any): string {
+    if (time && typeof time === "object" && time.seconds) {
+        const dateObj = new Date(time.seconds * 1000);
+        return dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    if (typeof time === "string" && time.trim() !== "") {
+        const parsed = new Date(time);
+        if (!isNaN(parsed.getTime())) {
+            return parsed.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+    }
+    if (date && typeof date === "object" && date.seconds) {
+        const dateObj = new Date(date.seconds * 1000);
+        return dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    if (typeof date === "string" && date.trim() !== "") {
+        const parsed = new Date(date);
+        if (!isNaN(parsed.getTime())) {
+            return parsed.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        return date;
+    }
+    return "N/A";
+}
+
+function renderTime(time: any): string {
+    if (time && typeof time === "object" && time.seconds) {
+        const dateObj = new Date(time.seconds * 1000);
+        return dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+    if (typeof time === "string" && time.trim() !== "") {
+        const parsed = new Date(time);
+        if (!isNaN(parsed.getTime())) {
+            return parsed.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        }
+        return time;
+    }
+    return "N/A";
+}
+
 const filterTags = ["All", "Upcoming", "Live", "Ended"];
 
 export default function Events() {
@@ -112,26 +152,42 @@ export default function Events() {
                         data={filteredEvents}
                         keyExtractor={(item) => item.id}
                         renderItem={({ item }) => {
-                            let timeString = "";
-                            if (item.time) {
-                                if (typeof item.time === "object" && item.time.seconds) {
-                                    const dateObj = new Date(item.time.seconds * 1000);
-                                    timeString = dateObj.toLocaleTimeString([], {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    });
+                            let eventDate: Date | null = null;
+                            if (item.time && typeof item.time === 'object' && item.time.seconds) {
+                                eventDate = new Date(item.time.seconds * 1000);
+                            } else if (typeof item.time === 'string' && item.time.trim() !== '') {
+                                const parsed = new Date(item.time);
+                                if (!isNaN(parsed.getTime())) eventDate = parsed;
+                            } else if (item.date && typeof item.date === 'object' && item.date.seconds) {
+                                eventDate = new Date(item.date.seconds * 1000);
+                            } else if (typeof item.date === 'string' && item.date.trim() !== '') {
+                                const parsed = new Date(item.date);
+                                if (!isNaN(parsed.getTime())) eventDate = parsed;
+                            }
+
+                            type StatusType = 'upcoming' | 'live' | 'ended';
+                            let status: StatusType = 'upcoming';
+                            if (eventDate) {
+                                const now = new Date();
+                                const eventDay = eventDate.setHours(0, 0, 0, 0);
+                                const today = now.setHours(0, 0, 0, 0);
+                                if (eventDay < today) {
+                                    status = 'ended';
+                                } else if (eventDay === today) {
+                                    status = 'live';
                                 } else {
-                                    timeString = String(item.time);
+                                    status = 'upcoming';
                                 }
                             }
+
                             return (
                                 <EventCard
                                     id={item.id}
                                     title={item.title}
-                                    date={item.date}
-                                    time={timeString}
+                                    date={renderDate(item.date, item.time)}
+                                    time={renderTime(item.time)}
                                     location={item.location}
-                                    status={item.status}
+                                    status={status}
                                     onPress={() => router.push(`/events/${item.id}`)}
                                     image={item.imageUrl}
                                 />
