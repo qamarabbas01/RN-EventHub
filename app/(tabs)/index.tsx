@@ -1,7 +1,9 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from "expo-router";
-import { useEffect, useRef } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Image,
@@ -13,6 +15,19 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { db } from "../../firebase";
+
+type Event = {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  price?: string;
+  imageUrl?: string;
+  image?: string;
+  featured?: boolean;
+  [key: string]: any;
+};
 
 const eventCategories = [
   { label: "Music", icon: "🎵" },
@@ -23,46 +38,22 @@ const eventCategories = [
   { label: "Festival", icon: "🎭" },
 ];
 
-const featuredEvents = [
-  {
-    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
-    title: "Music Concert",
-    date: "20 March",
-    location: "Lahore",
-    price: "$15 Ticket",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
-    title: "Food Festival",
-    date: "22 March",
-    location: "Rawalpindi",
-    price: "Free",
-  },
-];
+function isUpcoming(date: string) {
+  const now = new Date();
+  const d = new Date(date);
+  return d > now;
+}
+function isNearby(location: string) {
+  // TODO: Implement real location logic
+  return true;
+}
 
-const upcomingEvents = [
-  {
-    title: "Startup Meetup",
-    date: "25 March",
-    location: "Islamabad",
-  },
-  {
-    title: "AI Workshop",
-    date: "28 March",
-    location: "Karachi",
-  },
-];
-
-const nearbyEvents = [
-  {
-    image: "https://images.unsplash.com/photo-1515168833906-d2a3b82b1a48?auto=format&fit=crop&w=400&q=80",
-    title: "Tech Conference",
-    location: "Islamabad",
-  },
-];
 
 export default function HomeScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -70,6 +61,24 @@ export default function HomeScreen() {
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      try {
+        const querySnapshot = await getDocs(collection(db, "events"));
+        const eventsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Event[];
+        setEvents(eventsData);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+      setLoading(false);
+    };
+    fetchEvents();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -144,50 +153,68 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Featured Events</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.featuredRow}>
-              {featuredEvents.map((event, idx) => (
-                <View key={idx} style={styles.featuredCard}>
-                  <Image source={{ uri: event.image }} style={styles.featuredImg} />
-                  <LinearGradient
-                    colors={["rgba(99,102,241,0.7)", "rgba(255,255,255,0.1)"]}
-                    style={styles.featuredOverlay}
-                  />
-                  <View style={styles.featuredContent}>
-                    <Text style={styles.featuredTitle}>{event.title}</Text>
-                    <Text style={styles.featuredMeta}>{event.date} • {event.location}</Text>
-                    <Text style={styles.featuredPrice}>{event.price}</Text>
-                  </View>
-                </View>
-              ))}
+              {loading ? (
+                <Text>Loading...</Text>
+              ) : (
+                events
+                  .filter(e => e.featured)
+                  .map((event, idx) => (
+                    <View key={event.id || idx} style={styles.featuredCard}>
+                      <Image source={{ uri: event.imageUrl || event.image }} style={styles.featuredImg} />
+                      <LinearGradient
+                        colors={["rgba(99,102,241,0.7)", "rgba(255,255,255,0.1)"]}
+                        style={styles.featuredOverlay}
+                      />
+                      <View style={styles.featuredContent}>
+                        <Text style={styles.featuredTitle}>{event.title}</Text>
+                        <Text style={styles.featuredMeta}>{event.date} • {event.location}</Text>
+                        <Text style={styles.featuredPrice}>{event.price}</Text>
+                      </View>
+                    </View>
+                  ))
+              )}
             </View>
           </ScrollView>
         </View>
 
         <View style={styles.sectionSpacing}>
           <Text style={styles.sectionTitle}>Upcoming Events</Text>
-          {upcomingEvents.map((event, idx) => (
-            <View key={idx} style={styles.upcomingCard}>
-              <View style={styles.upcomingAccent} />
-              <View style={styles.upcomingContent}>
-                <Text style={styles.upcomingTitle}>{event.title}</Text>
-                <Text style={styles.upcomingMeta}>{event.date} • {event.location}</Text>
-              </View>
-            </View>
-          ))}
+          {loading ? (
+            <Text>Loading...</Text>
+          ) : (
+            events
+              .filter(e => isUpcoming(e.date))
+              .map((event, idx) => (
+                <View key={event.id || idx} style={styles.upcomingCard}>
+                  <View style={styles.upcomingAccent} />
+                  <View style={styles.upcomingContent}>
+                    <Text style={styles.upcomingTitle}>{event.title}</Text>
+                    <Text style={styles.upcomingMeta}>{event.date} • {event.location}</Text>
+                  </View>
+                </View>
+              ))
+          )}
         </View>
 
         <View style={styles.sectionSpacing}>
           <Text style={styles.sectionTitle}>Events Near You</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.featuredRow}>
-              {nearbyEvents.map((event, idx) => (
-                <View key={idx} style={styles.nearbyCard}>
-                  <Image source={{ uri: event.image }} style={styles.nearbyImg} />
-                  <View style={styles.nearbyContent}>
-                    <Text style={styles.nearbyTitle}>{event.title}</Text>
-                    <Text style={styles.nearbyMeta}>{event.location}</Text>
-                  </View>
-                </View>
-              ))}
+              {loading ? (
+                <Text>Loading...</Text>
+              ) : (
+                events
+                  .filter(e => isNearby(e.location))
+                  .map((event, idx) => (
+                    <View key={event.id || idx} style={styles.nearbyCard}>
+                      <Image source={{ uri: event.imageUrl || event.image }} style={styles.nearbyImg} />
+                      <View style={styles.nearbyContent}>
+                        <Text style={styles.nearbyTitle}>{event.title}</Text>
+                        <Text style={styles.nearbyMeta}>{event.location}</Text>
+                      </View>
+                    </View>
+                  ))
+              )}
             </View>
           </ScrollView>
         </View>
@@ -207,11 +234,37 @@ export default function HomeScreen() {
           </LinearGradient>
         </View>
       </ScrollView>
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => {
+          alert('Add Event button pressed! Implement event creation logic.');
+        }}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="add" size={32} color="#fff" />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    right: 24,
+    bottom: 36,
+    backgroundColor: '#6366f1',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 6,
+    zIndex: 100,
+  },
   container: {
     flex: 1,
     backgroundColor: "#eef2ff",
