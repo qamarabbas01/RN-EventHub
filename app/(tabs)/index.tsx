@@ -1,5 +1,4 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
@@ -234,37 +233,11 @@ export default function HomeScreen() {
           </LinearGradient>
         </View>
       </ScrollView>
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => {
-          alert('Add Event button pressed! Implement event creation logic.');
-        }}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="add" size={32} color="#fff" />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    right: 24,
-    bottom: 36,
-    backgroundColor: '#6366f1',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#6366f1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
-    elevation: 6,
-    zIndex: 100,
-  },
   container: {
     flex: 1,
     backgroundColor: "#eef2ff",

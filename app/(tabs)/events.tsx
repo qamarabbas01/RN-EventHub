@@ -1,6 +1,7 @@
 import EventCard from "@/components/Card/EventCard";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
     FlatList,
@@ -9,11 +10,10 @@ import {
     StyleSheet,
     Text,
     TextInput,
+    TouchableOpacity,
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 
 function renderDate(date: any, time?: any): string {
@@ -198,6 +198,16 @@ export default function Events() {
                     />
                 )}
             </ScrollView>
+
+            <TouchableOpacity
+                style={styles.fab}
+                onPress={() => {
+                    alert('Add Event button pressed! Implement event creation logic.');
+                }}
+                activeOpacity={0.8}
+            >
+                <Ionicons name="add" size={32} color="#fff" />
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }
@@ -287,5 +297,22 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: "#111827",
         backgroundColor: "transparent",
+    },
+    fab: {
+        position: 'absolute',
+        right: 24,
+        bottom: 36,
+        backgroundColor: '#6366f1',
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#6366f1',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.18,
+        shadowRadius: 8,
+        elevation: 6,
+        zIndex: 100,
     },
 });
