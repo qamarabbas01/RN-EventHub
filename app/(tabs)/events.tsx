@@ -1,10 +1,12 @@
 import EventCard from "@/components/Card/EventCard";
+import EventForm from "@/components/EventForm";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
     FlatList,
+    Modal,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -63,23 +65,25 @@ export default function Events() {
     const [search, setSearch] = useState("");
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
     const router = useRouter();
 
+    const fetchEvents = async () => {
+        setLoading(true);
+        try {
+            const querySnapshot = await getDocs(collection(db, "events"));
+            const eventsData = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setEvents(eventsData);
+        } catch (error) {
+            console.error("Error fetching events:", error);
+        }
+        setLoading(false);
+    };
+
     useEffect(() => {
-        const fetchEvents = async () => {
-            setLoading(true);
-            try {
-                const querySnapshot = await getDocs(collection(db, "events"));
-                const eventsData = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                setEvents(eventsData);
-            } catch (error) {
-                console.error("Error fetching events:", error);
-            }
-            setLoading(false);
-        };
         fetchEvents();
     }, []);
 
@@ -199,11 +203,28 @@ export default function Events() {
                 )}
             </ScrollView>
 
+            <Modal
+                visible={modalVisible}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.25)' }}>
+                    <View style={{ width: '90%', maxWidth: 400, backgroundColor: '#fff', borderRadius: 18, padding: 16, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}>
+                        <EventForm
+                            onSuccess={() => {
+                                setModalVisible(false);
+                                fetchEvents();
+                            }}
+                            onCancel={() => setModalVisible(false)}
+                        />
+                    </View>
+                </View>
+            </Modal>
+
             <TouchableOpacity
                 style={styles.fab}
-                onPress={() => {
-                    alert('Add Event button pressed! Implement event creation logic.');
-                }}
+                onPress={() => setModalVisible(true)}
                 activeOpacity={0.8}
             >
                 <Ionicons name="add" size={32} color="#fff" />
