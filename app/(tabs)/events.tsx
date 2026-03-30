@@ -209,8 +209,8 @@ export default function Events() {
                 transparent={true}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.25)' }}>
-                    <View style={{ width: '90%', maxWidth: 400, backgroundColor: '#fff', borderRadius: 18, padding: 16, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={{ width: '100%', backgroundColor: '#fff', borderRadius: 18, padding: 16, marginTop: 90, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}>
                         <EventForm
                             onSuccess={() => {
                                 setModalVisible(false);

@@ -252,8 +252,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
     objectFit: 'cover',
   },
   backBtn: {
