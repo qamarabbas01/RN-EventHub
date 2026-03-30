@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "X-clone",
-    "slug": "X-clone",
+    "name": "EventHub",
+    "slug": "EventHub",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "xclone",
+    "icon": "./assets/images/logo.jpeg",
+    "scheme": "eventhub",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
