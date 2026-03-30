@@ -239,7 +239,6 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                     </View>
                 </View>
 
-                {/* Description Section */}
                 <Text style={styles.sectionHeading}>Description</Text>
                 <View style={styles.sectionCard}>
                     <View style={styles.section}>
@@ -259,7 +258,6 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                     </View>
                 </View>
 
-                {/* Organizer Info Section */}
                 <Text style={styles.sectionHeading}>Organizer Info</Text>
                 <View style={styles.sectionCard}>
                     <View style={styles.section}>
@@ -307,7 +305,6 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                     </View>
                 </View>
 
-                {/* Additional Info Section */}
                 <Text style={styles.sectionHeading}>Additional Info</Text>
                 <View style={styles.sectionCard}>
                     <View style={styles.rowWrap}>
