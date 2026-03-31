@@ -39,6 +39,7 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [focusedInput, setFocusedInput] = useState<string | null>(null);
+    const [featured, setFeatured] = useState(false);
 
     const handleCreate = async () => {
         setError("");
@@ -66,6 +67,7 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                 tags: tags.split(",").map((t) => t.trim().toUpperCase()),
                 website,
                 status: "upcoming",
+                featured,
             });
             onSuccess();
             onCancel();
@@ -90,6 +92,11 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
             <View style={styles.container}>
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: -10 }}>
+                    <Pressable onPress={onCancel} style={{ padding: 8 }} accessibilityLabel="Close">
+                        <Ionicons name="close" size={26} color="#6366f1" />
+                    </Pressable>
+                </View>
                 <Text style={styles.title}>Create New Event</Text>
                 <Text style={styles.sectionHeading}>Event Details</Text>
                 <View style={styles.sectionCard}>
@@ -237,6 +244,34 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                             </View>
                         ) : null}
                     </View>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, marginTop: 4 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '600', color: '#6366f1', marginRight: 10 }}>Feature this event</Text>
+                    <Pressable
+                        onPress={() => setFeatured(f => !f)}
+                        style={{
+                            width: 44,
+                            height: 26,
+                            borderRadius: 13,
+                            backgroundColor: featured ? '#6366f1' : '#e5e7eb',
+                            justifyContent: 'center',
+                            padding: 2,
+                        }}
+                        accessibilityRole="switch"
+                        accessibilityState={{ checked: featured }}
+                    >
+                        <View style={{
+                            width: 22,
+                            height: 22,
+                            borderRadius: 11,
+                            backgroundColor: '#fff',
+                            marginLeft: featured ? 18 : 2,
+                            shadowColor: '#6366f1',
+                            shadowOffset: { width: 0, height: 1 },
+                            shadowOpacity: 0.12,
+                            shadowRadius: 2,
+                        }} />
+                    </Pressable>
                 </View>
 
                 <Text style={styles.sectionHeading}>Description</Text>
