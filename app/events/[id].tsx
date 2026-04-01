@@ -197,7 +197,13 @@ export default function EventDetails() {
                       style: 'destructive',
                       onPress: async () => {
                         await deleteDoc(doc(db, 'events', event.id));
-                        router.back();
+                        // Refetch events list if possible
+                        if (router.canGoBack()) {
+                          router.back();
+                        } else {
+                          router.replace('/(tabs)/events');
+                        }
+                        // Optionally: emit an event or use a global state/store for better sync
                       },
                     },
                   ]

@@ -1,6 +1,7 @@
 import EventCard from "@/components/Card/EventCard";
 import EventForm from "@/components/EventForm";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -84,9 +85,17 @@ export default function Events() {
         setLoading(false);
     };
 
+
     useEffect(() => {
         fetchEvents();
     }, []);
+
+    // Refetch events every time screen is focused
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchEvents();
+        }, [])
+    );
 
     const filteredEvents = events.filter((event) => {
         if (activeFilter === "All")
