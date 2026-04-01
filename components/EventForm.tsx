@@ -22,6 +22,7 @@ interface EventFormProps {
     event?: any;
 }
 
+
 export default function EventForm({ onSuccess, onCancel, event }: EventFormProps) {
     const [title, setTitle] = useState(event?.title || "");
     const [date, setDate] = useState<Date | null>(event?.date ? new Date(event.date) : null);
@@ -49,6 +50,66 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
     const [error, setError] = useState("");
     const [focusedInput, setFocusedInput] = useState<string | null>(null);
     const [featured, setFeatured] = useState(event?.featured || false);
+
+    // Track if any field has changed (for edit mode)
+    const isEdit = !!event;
+    const initialValues = React.useRef({
+        title: event?.title || "",
+        date: event?.date ? new Date(event.date) : null,
+        time: event?.time ? (typeof event.time === 'string' ? new Date(`${event.date}T${event.time}`) : null) : null,
+        location: event?.location || "",
+        imageUrl: event?.imageUrl || "",
+        description: event?.description || "",
+        organizer: event?.organizer || "",
+        contact: event?.contact || "",
+        price: event?.price ? String(event.price) : "",
+        tags: event?.tags
+            ? Array.isArray(event.tags)
+                ? event.tags.join(", ")
+                : typeof event.tags === 'string'
+                    ? event.tags
+                    : ""
+            : "",
+        website: event?.website || "",
+        featured: event?.featured || false,
+        uploadImage: null,
+    });
+
+    function isFieldChanged() {
+        const v = initialValues.current;
+        return (
+            title !== v.title ||
+            (date && (!v.date || date.getTime() !== v.date.getTime())) ||
+            (v.date && !date) ||
+            (time && (!v.time || time.getTime() !== v.time.getTime())) ||
+            (v.time && !time) ||
+            location !== v.location ||
+            (uploadImage !== null) ||
+            imageUrl !== v.imageUrl ||
+            description !== v.description ||
+            organizer !== v.organizer ||
+            contact !== v.contact ||
+            price !== v.price ||
+            tags !== v.tags ||
+            website !== v.website ||
+            featured !== v.featured
+        );
+    }
+
+    function isFormValid() {
+        return (
+            !!title &&
+            !!date &&
+            !!time &&
+            !!location &&
+            !!description &&
+            !!organizer &&
+            !!contact &&
+            !!price &&
+            !!tags &&
+            !!website
+        );
+    }
 
     const handleCreateOrUpdate = async () => {
         setError("");
@@ -395,13 +456,14 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                         style={({ pressed }) => [
                             styles.button,
                             styles.createButton,
-                            pressed && styles.buttonPressed
+                            pressed && styles.buttonPressed,
+                            (isEdit && (!isFormValid() || !isFieldChanged())) && { opacity: 0.5 }
                         ]}
                         onPress={handleCreateOrUpdate}
-                        disabled={loading}
+                        disabled={loading || (isEdit && (!isFormValid() || !isFieldChanged()))}
                     >
                         {loading ? (
-                            <ActivityIndicator color="#6366f1" />
+                            <ActivityIndicator color="#f2f2f2" />
                         ) : (
                             <Text style={styles.buttonText}>{event ? 'Update' : 'Create'}</Text>
                         )}
