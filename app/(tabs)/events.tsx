@@ -66,6 +66,7 @@ export default function Events() {
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const [editingEvent, setEditingEvent] = useState<any | null>(null);
     const router = useRouter();
 
     const fetchEvents = async () => {
@@ -185,16 +186,18 @@ export default function Events() {
                             }
 
                             return (
-                                <EventCard
-                                    id={item.id}
-                                    title={item.title}
-                                    date={renderDate(item.date, item.time)}
-                                    time={renderTime(item.time)}
-                                    location={item.location}
-                                    status={status}
-                                    onPress={() => router.push(`/events/${item.id}`)}
-                                    image={item.imageUrl}
-                                />
+                                <View style={{ marginBottom: 12 }}>
+                                    <EventCard
+                                        id={item.id}
+                                        title={item.title}
+                                        date={renderDate(item.date, item.time)}
+                                        time={renderTime(item.time)}
+                                        location={item.location}
+                                        status={status}
+                                        onPress={() => router.push(`/events/${item.id}`)}
+                                        image={item.imageUrl}
+                                    />
+                                </View>
                             );
                         }}
                         scrollEnabled={false}
@@ -207,16 +210,24 @@ export default function Events() {
                 visible={modalVisible}
                 animationType="slide"
                 transparent={true}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                    setEditingEvent(null);
+                }}
             >
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ width: '100%', backgroundColor: '#fff', borderRadius: 18, padding: 16, marginTop: 90, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}>
                         <EventForm
+                            event={editingEvent}
                             onSuccess={() => {
                                 setModalVisible(false);
+                                setEditingEvent(null);
                                 fetchEvents();
                             }}
-                            onCancel={() => setModalVisible(false)}
+                            onCancel={() => {
+                                setModalVisible(false);
+                                setEditingEvent(null);
+                            }}
                         />
                     </View>
                 </View>
@@ -224,7 +235,10 @@ export default function Events() {
 
             <TouchableOpacity
                 style={styles.fab}
-                onPress={() => setModalVisible(true)}
+                onPress={() => {
+                    setEditingEvent(null);
+                    setModalVisible(true);
+                }}
                 activeOpacity={0.8}
             >
                 <Ionicons name="add" size={32} color="#fff" />

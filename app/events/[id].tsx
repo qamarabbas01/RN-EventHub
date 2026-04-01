@@ -1,8 +1,9 @@
+import EventForm from '@/components/EventForm';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { doc, getDoc } from 'firebase/firestore';
-import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { deleteDoc, doc, getDoc } from 'firebase/firestore';
+import React, { useState } from 'react';
+import { Alert, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../../firebase';
 
@@ -50,6 +51,7 @@ export default function EventDetails() {
   const [event, setEvent] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
+  const [editModal, setEditModal] = useState(false);
 
   React.useEffect(() => {
     if (!id) return;
@@ -173,8 +175,63 @@ export default function EventDetails() {
               <Text style={styles.detailValue}>{safe(event.website)}</Text>
             </View>
           </View>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 24 }}>
+            <Pressable
+              style={{ backgroundColor: '#f3f4f6', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center', marginRight: 8 }}
+              onPress={() => setEditModal(true)}
+            >
+              <Ionicons name="pencil" size={18} color="#6366f1" style={{ marginRight: 6 }} />
+              <Text style={{ color: '#6366f1', fontWeight: '700', fontSize: 15 }}>Edit</Text>
+            </Pressable>
+            <Pressable
+              style={{ backgroundColor: '#fee2e2', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}
+              onPress={() => {
+                Alert.alert(
+                  'Delete Event',
+                  'Are you sure you want to delete this event?',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                      text: 'Delete',
+                      style: 'destructive',
+                      onPress: async () => {
+                        await deleteDoc(doc(db, 'events', event.id));
+                        router.back();
+                      },
+                    },
+                  ]
+                );
+              }}
+            >
+              <Ionicons name="trash" size={18} color="#ef4444" style={{ marginRight: 6 }} />
+              <Text style={{ color: '#ef4444', fontWeight: '700', fontSize: 15 }}>Delete</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
+
+      <Modal
+        visible={editModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setEditModal(false)}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ width: '100%', backgroundColor: '#fff', borderRadius: 18, padding: 16, marginTop: 90, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}>
+            <EventForm
+              event={event}
+              onSuccess={() => {
+                setEditModal(false);
+                getDoc(doc(db, "events", String(event.id))).then((docSnap) => {
+                  if (docSnap.exists()) setEvent({ id: event.id, ...docSnap.data() });
+                });
+              }}
+              onCancel={() => setEditModal(false)}
+            />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

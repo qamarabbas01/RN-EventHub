@@ -2,7 +2,7 @@ import { db } from "@/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import {
     ActivityIndicator,
@@ -19,29 +19,38 @@ import {
 interface EventFormProps {
     onSuccess: () => void;
     onCancel: () => void;
+    event?: any;
 }
 
-export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
-    const [title, setTitle] = useState("");
-    const [date, setDate] = useState<Date | null>(null);
+export default function EventForm({ onSuccess, onCancel, event }: EventFormProps) {
+    const [title, setTitle] = useState(event?.title || "");
+    const [date, setDate] = useState<Date | null>(event?.date ? new Date(event.date) : null);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [time, setTime] = useState<Date | null>(null);
+    const [time, setTime] = useState<Date | null>(event?.time ? (typeof event.time === 'string' ? new Date(`${event.date}T${event.time}`) : null) : null);
     const [showTimePicker, setShowTimePicker] = useState(false);
-    const [location, setLocation] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
-    const [description, setDescription] = useState("");
-    const [organizer, setOrganizer] = useState("");
-    const [contact, setContact] = useState("");
-    const [price, setPrice] = useState("");
-    const [tags, setTags] = useState("");
-    const [website, setWebsite] = useState("");
+    const [location, setLocation] = useState(event?.location || "");
+    const [imageUrl, setImageUrl] = useState(event?.imageUrl || "");
+    const [description, setDescription] = useState(event?.description || "");
+    const [organizer, setOrganizer] = useState(event?.organizer || "");
+    const [contact, setContact] = useState(event?.contact || "");
+    const [price, setPrice] = useState(event?.price ? String(event.price) : "");
+    const [tags, setTags] = useState(
+        event?.tags
+            ? Array.isArray(event.tags)
+                ? event.tags.join(", ")
+                : typeof event.tags === 'string'
+                    ? event.tags
+                    : ""
+            : ""
+    );
+    const [website, setWebsite] = useState(event?.website || "");
     const [uploadImage, setUploadImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [focusedInput, setFocusedInput] = useState<string | null>(null);
-    const [featured, setFeatured] = useState(false);
+    const [featured, setFeatured] = useState(event?.featured || false);
 
-    const handleCreate = async () => {
+    const handleCreateOrUpdate = async () => {
         setError("");
         if (!title || !date || !time || !location || !description || !organizer || !contact || !price || !tags || !website) {
             setError("Please fill all fields");
@@ -49,7 +58,7 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
         }
         setLoading(true);
         try {
-            await addDoc(collection(db, "events"), {
+            const eventData = {
                 title,
                 date: date?.toISOString().split("T")[0],
                 time: time
@@ -64,15 +73,20 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                 organizer,
                 contact,
                 price: Number(price),
-                tags: tags.split(",").map((t) => t.trim().toUpperCase()),
+                tags: tags.split(",").map((t: string) => t.trim().toUpperCase()),
                 website,
                 status: "upcoming",
                 featured,
-            });
+            };
+            if (event && event.id) {
+                await updateDoc(doc(db, "events", event.id), eventData);
+            } else {
+                await addDoc(collection(db, "events"), eventData);
+            }
             onSuccess();
             onCancel();
         } catch (err: any) {
-            setError(err.message || "Failed to create event");
+            setError(err.message || "Failed to save event");
         }
         setLoading(false);
     };
@@ -97,7 +111,7 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                         <Ionicons name="close" size={26} color="#6366f1" />
                     </Pressable>
                 </View>
-                <Text style={styles.title}>Create New Event</Text>
+                <Text style={styles.title}>{event ? 'Edit Event' : 'Create New Event'}</Text>
                 <Text style={styles.sectionHeading}>Event Details</Text>
                 <View style={styles.sectionCard}>
                     <View style={styles.section}>
@@ -248,7 +262,7 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, marginTop: 4 }}>
                     <Text style={{ fontSize: 15, fontWeight: '600', color: '#6366f1', marginRight: 10 }}>Feature this event</Text>
                     <Pressable
-                        onPress={() => setFeatured(f => !f)}
+                        onPress={() => setFeatured((f: boolean) => !f)}
                         style={{
                             width: 44,
                             height: 26,
@@ -383,13 +397,13 @@ export default function EventForm({ onSuccess, onCancel }: EventFormProps) {
                             styles.createButton,
                             pressed && styles.buttonPressed
                         ]}
-                        onPress={handleCreate}
+                        onPress={handleCreateOrUpdate}
                         disabled={loading}
                     >
                         {loading ? (
                             <ActivityIndicator color="#6366f1" />
                         ) : (
-                            <Text style={styles.buttonText}>Create</Text>
+                            <Text style={styles.buttonText}>{event ? 'Update' : 'Create'}</Text>
                         )}
                     </Pressable>
                     <Pressable
