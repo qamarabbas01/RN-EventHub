@@ -139,13 +139,6 @@ export default function EventDetails() {
             <Ionicons name="location" size={18} color="#6366f1" style={styles.icon} />
             <Text style={styles.meta}>{safe(event.location)}</Text>
           </View>
-          <View style={styles.row}>
-            <Ionicons name="people" size={18} color="#6366f1" style={styles.icon} />
-            <Text style={styles.meta}>{safe(event.attendees, '0')} Attending</Text>
-            {event.capacity && (
-              <Text style={styles.meta}>/ {safe(event.capacity)} Capacity</Text>
-            )}
-          </View>
           <Text style={styles.description}>{safe(event.description)}</Text>
 
           <View style={styles.detailsSection}>
@@ -197,13 +190,11 @@ export default function EventDetails() {
                       style: 'destructive',
                       onPress: async () => {
                         await deleteDoc(doc(db, 'events', event.id));
-                        // Refetch events list if possible
                         if (router.canGoBack()) {
                           router.back();
                         } else {
                           router.replace('/(tabs)/events');
                         }
-                        // Optionally: emit an event or use a global state/store for better sync
                       },
                     },
                   ]
