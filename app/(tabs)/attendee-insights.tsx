@@ -12,6 +12,35 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { db } from "../../firebase";
 
 const chartWidth = 700;
+const defaultInsightCards = [
+  { icon: "crown.fill", label: "Premium Members", value: "0", color: "#fbbf24", bgColor: "#fef3c7" },
+  { icon: "repeat.1", label: "Repeat Rate", value: "0%", color: "#3b82f6", bgColor: "#dbeafe" },
+  { icon: "clock.fill", label: "Avg Check-in", value: "0 min", color: "#8b5cf6", bgColor: "#ede9fe" },
+  { icon: "flag.fill", label: "Capacity", value: "0%", color: "#ec4899", bgColor: "#fce7f3" },
+];
+
+const defaultStatsData = [
+  { icon: "arrow.up.right", label: "Growth Rate", number: "0%", desc: "vs last period", iconColor: "#22c55e" },
+  { icon: "calendar", label: "Avg Events/Attendee", number: "0", desc: "per quarter", iconColor: "#f59e0b" },
+  { icon: "person.badge.plus", label: "ACQ Cost", number: "$0.00", desc: "per attendee", iconColor: "#3b82f6" },
+  { icon: "checkmark.circle", label: "Completion Rate", number: "0%", desc: "fully attended", iconColor: "#8b5cf6" },
+];
+
+const getPeakDay = (values: number[]) => {
+  if (!values.length) return "N/A";
+  const max = Math.max(...values);
+  if (max <= 0) return "N/A";
+  const idx = values.findIndex((v) => v === max);
+  return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][idx] ?? "N/A";
+};
+
+const getRetentionDelta = (values: number[]) => {
+  if (values.length < 2) return 0;
+  const first = values[0] ?? 0;
+  const last = values[values.length - 1] ?? 0;
+  if (first === 0) return 0;
+  return ((last - first) / first) * 100;
+};
 
 export default function AttendeeInsights() {
   const [selectedPeriod, setSelectedPeriod] = useState("6M");
@@ -208,19 +237,9 @@ export default function AttendeeInsights() {
     fetchTopEvents();
   }, []);
 
-  const [insightCards, setInsightCards] = useState([
-    { icon: "crown.fill", label: "Premium Members", value: "0", color: "#fbbf24", bgColor: "#fef3c7" },
-    { icon: "repeat.1", label: "Repeat Rate", value: "0%", color: "#3b82f6", bgColor: "#dbeafe" },
-    { icon: "clock.fill", label: "Avg Check-in", value: "0 min", color: "#8b5cf6", bgColor: "#ede9fe" },
-    { icon: "flag.fill", label: "Capacity", value: "0%", color: "#ec4899", bgColor: "#fce7f3" },
-  ]);
+  const [insightCards, setInsightCards] = useState(defaultInsightCards);
 
-  const [statsData, setStatsData] = useState([
-    { icon: "arrow.up.right", label: "Growth Rate", number: "0%", desc: "vs last period", iconColor: "#22c55e" },
-    { icon: "calendar", label: "Avg Events/Attendee", number: "0", desc: "per quarter", iconColor: "#f59e0b" },
-    { icon: "person.badge.plus", label: "ACQ Cost", number: "$0.00", desc: "per attendee", iconColor: "#3b82f6" },
-    { icon: "checkmark.circle", label: "Completion Rate", number: "0%", desc: "fully attended", iconColor: "#8b5cf6" },
-  ]);
+  const [statsData, setStatsData] = useState(defaultStatsData);
 
   useEffect(() => {
     async function fetchInsightCards() {
@@ -238,7 +257,7 @@ export default function AttendeeInsights() {
             bgColor: found.bgColor,
           };
         }
-        return insightCards.find(c => c.label === label)!;
+        return defaultInsightCards.find(c => c.label === label)!;
       });
       setInsightCards(mapped);
     }
@@ -257,13 +276,39 @@ export default function AttendeeInsights() {
             iconColor: found.iconColor,
           };
         }
-        return statsData.find(s => s.label === label)!;
+        return defaultStatsData.find(s => s.label === label)!;
       });
       setStatsData(mapped);
     }
     fetchInsightCards();
     fetchStatsData();
-  }, [insightCards, statsData]);
+  }, []);
+
+  const totalAttendees = Number(attendeeStats.find((s) => s.label === "Total Attendees")?.value ?? 0);
+  const returningAttendees = Number(attendeeStats.find((s) => s.label === "Returning")?.value ?? 0);
+  const repeatRate = totalAttendees > 0 ? (returningAttendees / totalAttendees) * 100 : 0;
+  const avgSatisfaction = parseFloat(
+    `${attendeeStats.find((s) => s.label === "Avg. Satisfaction")?.value ?? "0"}`
+  ) || 0;
+
+  const positiveFeedback = feedbackData
+    .filter((item) => item.name === "Excellent" || item.name === "Good")
+    .reduce((sum, item) => sum + item.percentage, 0);
+  const netRating = Math.min(100, Math.max(0, positiveFeedback));
+
+  const engagementScore = Math.round(
+    Math.min(100, Math.max(0, (repeatRate * 0.35) + (netRating * 0.45) + ((avgSatisfaction / 5) * 100 * 0.2)))
+  );
+  const engagementOutOf10 = (engagementScore / 10).toFixed(1);
+
+  const retentionDelta = getRetentionDelta(retentionData.datasets[0]?.data ?? []);
+  const peakDay = getPeakDay(attendanceByDay.datasets[0]?.data ?? []);
+  const engagementDescription =
+    engagementScore >= 80
+      ? "Attendees are highly engaged with strong repeat attendance, positive feedback, and consistent participation."
+      : engagementScore >= 60
+        ? "Attendee engagement is healthy overall, with room to improve repeat attendance and satisfaction consistency."
+        : "Engagement is currently low; focus on attendee experience, retention touchpoints, and post-event follow-up.";
 
   return (
     <SafeAreaView style={styles.container}>
@@ -312,7 +357,7 @@ export default function AttendeeInsights() {
               </Text>
             </View>
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>Peak: Sat</Text>
+              <Text style={styles.badgeText}>{`Peak: ${peakDay}`}</Text>
             </View>
           </View>
           <View style={styles.chartWrapper}>
@@ -325,7 +370,7 @@ export default function AttendeeInsights() {
                 verticalLabelRotation={0}
                 showValuesOnTopOfBars={true}
                 style={styles.chart}
-                yAxisLabel="$"
+                yAxisLabel=""
                 yAxisSuffix=""
               />
             </ScrollView>
@@ -341,7 +386,7 @@ export default function AttendeeInsights() {
               </Text>
             </View>
             <View style={styles.retentionBadge}>
-              <Text style={styles.retentionValue}>-35%</Text>
+              <Text style={styles.retentionValue}>{`${retentionDelta.toFixed(1)}%`}</Text>
             </View>
           </View>
           <View style={styles.chartWrapper}>
@@ -379,28 +424,27 @@ export default function AttendeeInsights() {
             >
               <View>
                 <Text style={styles.engagementTitle}>Overall Engagement</Text>
-                <Text style={styles.engagementSubtitle}>Score: 8.7/10</Text>
+                <Text style={styles.engagementSubtitle}>{`Score: ${engagementOutOf10}/10`}</Text>
               </View>
               <View style={styles.scoreCircle}>
-                <Text style={styles.scoreText}>87%</Text>
+                <Text style={styles.scoreText}>{`${engagementScore}%`}</Text>
               </View>
             </View>
             <Text style={styles.engagementDesc}>
-              Attendees are highly engaged with strong repeat attendance,
-              positive feedback & consistent participation.
+              {engagementDescription}
             </Text>
             <View style={styles.metricsRow}>
               <View style={styles.metricBox}>
                 <Text style={styles.metricLabel}>Repeat Rate</Text>
-                <Text style={styles.metricValue}>67.6%</Text>
+                <Text style={styles.metricValue}>{`${repeatRate.toFixed(1)}%`}</Text>
               </View>
               <View style={styles.metricBox}>
                 <Text style={styles.metricLabel}>Net Rating</Text>
-                <Text style={styles.metricValue}>87%</Text>
+                <Text style={styles.metricValue}>{`${netRating.toFixed(0)}%`}</Text>
               </View>
               <View style={styles.metricBox}>
                 <Text style={styles.metricLabel}>Satisfaction</Text>
-                <Text style={styles.metricValue}>4.8★</Text>
+                <Text style={styles.metricValue}>{`${avgSatisfaction.toFixed(1)}★`}</Text>
               </View>
             </View>
           </View>
