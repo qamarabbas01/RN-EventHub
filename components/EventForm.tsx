@@ -22,12 +22,102 @@ interface EventFormProps {
     event?: any;
 }
 
+function parseEventDate(rawDate: any): Date | null {
+    if (!rawDate) return null;
+
+    if (typeof rawDate?.toDate === "function") {
+        const parsed = rawDate.toDate();
+        return parsed instanceof Date && !Number.isNaN(parsed.getTime()) ? parsed : null;
+    }
+
+    if (typeof rawDate === "object" && typeof rawDate.seconds === "number") {
+        const parsed = new Date(rawDate.seconds * 1000);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    if (rawDate instanceof Date) {
+        return Number.isNaN(rawDate.getTime()) ? null : rawDate;
+    }
+
+    if (typeof rawDate === "string") {
+        const isoDateOnly = /^(\d{4})-(\d{2})-(\d{2})$/;
+        const match = rawDate.match(isoDateOnly);
+        if (match) {
+            const [, y, m, d] = match;
+            const parsed = new Date(Number(y), Number(m) - 1, Number(d));
+            return Number.isNaN(parsed.getTime()) ? null : parsed;
+        }
+    }
+
+    const parsed = new Date(rawDate);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function parseEventTime(rawTime: any, baseDate: Date | null): Date | null {
+    if (!rawTime) return null;
+
+    if (typeof rawTime?.toDate === "function") {
+        const parsed = rawTime.toDate();
+        if (parsed instanceof Date && !Number.isNaN(parsed.getTime())) {
+            return parsed;
+        }
+    }
+
+    if (typeof rawTime === "object" && typeof rawTime.seconds === "number") {
+        const parsed = new Date(rawTime.seconds * 1000);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    if (rawTime instanceof Date) {
+        return Number.isNaN(rawTime.getTime()) ? null : rawTime;
+    }
+
+    const seed = baseDate ? new Date(baseDate) : new Date();
+    seed.setSeconds(0, 0);
+
+    if (typeof rawTime === "string") {
+        const twelveHour = rawTime.match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);
+        if (twelveHour) {
+            let hours = Number(twelveHour[1]);
+            const minutes = Number(twelveHour[2]);
+            const period = twelveHour[3].toUpperCase();
+
+            if (period === "PM" && hours < 12) hours += 12;
+            if (period === "AM" && hours === 12) hours = 0;
+
+            seed.setHours(hours, minutes, 0, 0);
+            return seed;
+        }
+
+        const twentyFourHour = rawTime.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+        if (twentyFourHour) {
+            const hours = Number(twentyFourHour[1]);
+            const minutes = Number(twentyFourHour[2]);
+            const seconds = twentyFourHour[3] ? Number(twentyFourHour[3]) : 0;
+
+            seed.setHours(hours, minutes, seconds, 0);
+            return seed;
+        }
+    }
+
+    const parsed = new Date(rawTime);
+    if (Number.isNaN(parsed.getTime())) return null;
+
+    seed.setHours(parsed.getHours(), parsed.getMinutes(), parsed.getSeconds(), 0);
+    return seed;
+}
+
 
 export default function EventForm({ onSuccess, onCancel, event }: EventFormProps) {
+    const parsedDateFromDate = parseEventDate(event?.date);
+    const parsedDateFromTime = parseEventDate(event?.time);
+    const parsedInitialDate = parsedDateFromDate || parsedDateFromTime;
+    const parsedInitialTime = parseEventTime(event?.time, parsedInitialDate);
+
     const [title, setTitle] = useState(event?.title || "");
-    const [date, setDate] = useState<Date | null>(event?.date ? new Date(event.date) : null);
+    const [date, setDate] = useState<Date | null>(parsedInitialDate);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [time, setTime] = useState<Date | null>(event?.time ? (typeof event.time === 'string' ? new Date(`${event.date}T${event.time}`) : null) : null);
+    const [time, setTime] = useState<Date | null>(parsedInitialTime);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [location, setLocation] = useState(event?.location || "");
     const [imageUrl, setImageUrl] = useState(event?.imageUrl || "");
@@ -51,12 +141,11 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
     const [focusedInput, setFocusedInput] = useState<string | null>(null);
     const [featured, setFeatured] = useState(event?.featured || false);
 
-    // Track if any field has changed (for edit mode)
     const isEdit = !!event;
     const initialValues = React.useRef({
         title: event?.title || "",
-        date: event?.date ? new Date(event.date) : null,
-        time: event?.time ? (typeof event.time === 'string' ? new Date(`${event.date}T${event.time}`) : null) : null,
+        date: parsedInitialDate,
+        time: parsedInitialTime,
         location: event?.location || "",
         imageUrl: event?.imageUrl || "",
         description: event?.description || "",
