@@ -40,6 +40,17 @@ export default function EventDetails() {
       const dateObj = new Date(val.seconds * 1000);
       return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
+    if (typeof val === 'string' && val.trim() !== '') {
+      const timeOnlyMatch = val.trim().match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);
+      if (timeOnlyMatch) {
+        return `${timeOnlyMatch[1]}:${timeOnlyMatch[2]} ${timeOnlyMatch[3].toUpperCase()}`;
+      }
+      const dateFromString = new Date(val);
+      if (!isNaN(dateFromString.getTime())) {
+        return dateFromString.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      return val;
+    }
     const dateObj = new Date(val);
     if (!isNaN(dateObj.getTime())) {
       return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

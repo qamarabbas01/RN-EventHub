@@ -43,7 +43,6 @@ function isUpcoming(date: string) {
   return d > now;
 }
 function isNearby(location: string) {
-  // TODO: Implement real location logic
   return true;
 }
 

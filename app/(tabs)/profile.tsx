@@ -266,7 +266,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#9ca3af",
   },
-  // Modal styles
   modalOverlay: {
     position: 'absolute',
     top: 0,
