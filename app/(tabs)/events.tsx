@@ -90,7 +90,6 @@ export default function Events() {
         fetchEvents();
     }, []);
 
-    // Refetch events every time screen is focused
     useFocusEffect(
         React.useCallback(() => {
             fetchEvents();
