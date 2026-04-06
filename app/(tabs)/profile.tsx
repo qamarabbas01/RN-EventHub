@@ -7,7 +7,9 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function Profile() {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-  const [emailDigest, setEmailDigest] = React.useState(true);
+  const [eventUpdatesEnabled, setEventUpdatesEnabled] = React.useState(true);
+  const [eventRemindersEnabled, setEventRemindersEnabled] = React.useState(true);
+  const [newEventsEnabled, setNewEventsEnabled] = React.useState(true);
   const [darkMode, setDarkMode] = React.useState(false);
 
   const [userData, setUserData] = React.useState({
@@ -34,15 +36,36 @@ export default function Profile() {
       items: [
         {
           icon: "bell.fill",
-          label: "Push Notifications",
+          label: "Enable Notifications",
           value: notificationsEnabled,
           onToggle: setNotificationsEnabled,
         },
         {
-          icon: "envelope.fill",
-          label: "Email Digest",
-          value: emailDigest,
-          onToggle: setEmailDigest,
+          icon: "arrow.triangle.2.circlepath",
+          label: "Event Updates",
+          value: notificationsEnabled && eventUpdatesEnabled,
+          onToggle: (value: boolean) => {
+            setEventUpdatesEnabled(value);
+            if (value) setNotificationsEnabled(true);
+          },
+        },
+        {
+          icon: "clock.fill",
+          label: "Event Reminders",
+          value: notificationsEnabled && eventRemindersEnabled,
+          onToggle: (value: boolean) => {
+            setEventRemindersEnabled(value);
+            if (value) setNotificationsEnabled(true);
+          },
+        },
+        {
+          icon: "sparkles",
+          label: "New Event Alerts",
+          value: notificationsEnabled && newEventsEnabled,
+          onToggle: (value: boolean) => {
+            setNewEventsEnabled(value);
+            if (value) setNotificationsEnabled(true);
+          },
         },
       ],
     },
