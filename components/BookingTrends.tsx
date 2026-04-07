@@ -1,10 +1,13 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 const chartWidth = 700;
 
 export default function BookingTrends() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const data = {
     labels: [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -21,11 +24,32 @@ export default function BookingTrends() {
 
   const growth = ((1120 - 734) / 734 * 100).toFixed(1);
 
+  const chartConfig = {
+    backgroundGradientFrom: isDark ? "#0b1220" : "#ffffff",
+    backgroundGradientTo: isDark ? "#0b1220" : "#ffffff",
+    color: (opacity = 1) => `rgba(79,70,229,${opacity})`,
+    strokeWidth: 3,
+    labelColor: (opacity = 1) =>
+      isDark ? `rgba(156,163,175,${opacity})` : `rgba(107,114,128,${opacity})`,
+    propsForDots: {
+      r: '5',
+      strokeWidth: '2',
+      stroke: '#4f46e5',
+      fill: isDark ? "#0b1220" : '#ffffff',
+    },
+    propsForBackgroundLines: {
+      strokeWidth: 1,
+      stroke: isDark ? "#111827" : '#f1f5f9',
+      strokeDasharray: '4,4',
+    },
+    decimalPlaces: 0,
+  };
+
   return (
     <View style={styles.section}>
       <View style={styles.headerContainer}>
         <View style={styles.header}>
-          <Text style={styles.sectionTitle}>Booking Trends</Text>
+          <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>Booking Trends</Text>
           <Text style={styles.subtitle}>Last 12 months performance</Text>
         </View>
 
@@ -34,7 +58,15 @@ export default function BookingTrends() {
         </View>
       </View>
 
-      <View style={styles.chartWrapper}>
+      <View
+        style={[
+          styles.chartWrapper,
+          {
+            backgroundColor: isDark ? "#0b1220" : "#fff",
+            borderColor: isDark ? "#111827" : "#f1f5f9",
+          },
+        ]}
+      >
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -52,31 +84,6 @@ export default function BookingTrends() {
     </View>
   );
 }
-
-const chartConfig = {
-  backgroundGradientFrom: '#ffffff',
-  backgroundGradientTo: '#ffffff',
-
-  color: (opacity = 1) => `rgba(79,70,229,${opacity})`,
-  strokeWidth: 3,
-
-  labelColor: (opacity = 1) => `rgba(107,114,128,${opacity})`,
-
-  propsForDots: {
-    r: '5',
-    strokeWidth: '2',
-    stroke: '#4f46e5',
-    fill: '#ffffff',
-  },
-
-  propsForBackgroundLines: {
-    strokeWidth: 1,
-    stroke: '#f1f5f9',
-    strokeDasharray: '4,4',
-  },
-
-  decimalPlaces: 0,
-};
 
 const styles = StyleSheet.create({
   section: {
@@ -97,7 +104,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#111827',
     letterSpacing: -0.2,
   },
 
@@ -120,7 +126,6 @@ const styles = StyleSheet.create({
   },
 
   chartWrapper: {
-    backgroundColor: '#fff',
     borderRadius: 24,
     overflow: 'hidden',
     shadowColor: '#000',

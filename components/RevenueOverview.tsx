@@ -1,10 +1,13 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 const chartWidth = 700;
 
 export default function RevenueOverview() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const data = {
     labels: ['Jan','Feb','Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     datasets: [
@@ -17,12 +20,32 @@ export default function RevenueOverview() {
   const totalRevenue = data.datasets[0].data.reduce((sum, value) => sum + value, 0);
   const formattedTotal = `$${(totalRevenue / 1000).toFixed(0)}K`;
 
+  const chartConfig = {
+    backgroundGradientFrom: isDark ? "#0b1220" : "#ffffff",
+    backgroundGradientTo: isDark ? "#0b1220" : "#ffffff",
+    color: (opacity = 1) => `rgba(124,58,237,${opacity})`,
+    labelColor: (opacity = 1) =>
+      isDark ? `rgba(156,163,175,${opacity})` : `rgba(107,114,128,${opacity})`,
+    propsForBackgroundLines: {
+      stroke: isDark ? "#111827" : "#f1f5f9",
+      strokeDasharray: '4,4',
+    },
+    fillShadowGradient: '#7c3aed',
+    fillShadowGradientOpacity: 0.35,
+    decimalPlaces: 0,
+    barPercentage: 0.55,
+  };
+
   return (
     <View style={styles.section}>
       <View style={styles.headerContainer}>
         <View>
-          <Text style={styles.sectionTitle}>Revenue Overview</Text>
-          <Text style={styles.subtitle}>Monthly earnings breakdown</Text>
+          <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+            Revenue Overview
+          </Text>
+          <Text style={[styles.subtitle, { color: isDark ? "#9ca3af" : "#9ca3af" }]}>
+            Monthly earnings breakdown
+          </Text>
         </View>
 
         <View style={styles.totalBadge}>
@@ -31,7 +54,15 @@ export default function RevenueOverview() {
         </View>
       </View>
 
-      <View style={styles.chartWrapper}>
+      <View
+        style={[
+          styles.chartWrapper,
+          {
+            borderColor: isDark ? "#111827" : "#f1f5f9",
+            backgroundColor: isDark ? "#0b1220" : "#ffffff",
+          },
+        ]}
+      >
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <BarChart
             data={data}
@@ -51,25 +82,6 @@ export default function RevenueOverview() {
   );
 }
 
-const chartConfig = {
-  backgroundGradientFrom: '#ffffff',
-  backgroundGradientTo: '#ffffff',
-
-  color: (opacity = 1) => `rgba(124,58,237,${opacity})`,
-  labelColor: (opacity = 1) => `rgba(107,114,128,${opacity})`,
-
-  propsForBackgroundLines: {
-    stroke: '#f1f5f9',
-    strokeDasharray: '4,4',
-  },
-
-  fillShadowGradient: '#7c3aed',
-  fillShadowGradientOpacity: 0.35,
-
-  decimalPlaces: 0,
-  barPercentage: 0.55,
-};
-
 const styles = StyleSheet.create({
   section: {
     marginBottom: 28,
@@ -85,7 +97,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#111827',
     letterSpacing: -0.2,
   },
 
@@ -119,7 +130,7 @@ const styles = StyleSheet.create({
   },
 
   chartWrapper: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'transparent',
     borderRadius: 24,
     overflow: 'hidden',
     shadowColor: '#000',

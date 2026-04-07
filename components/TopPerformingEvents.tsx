@@ -1,4 +1,5 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -15,16 +16,31 @@ interface TopPerformingEventsProps {
 }
 
 export default function TopPerformingEvents({ events }: TopPerformingEventsProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Top Performing Events</Text>
+    <View
+      style={[
+        styles.section,
+        { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#f3f4f6" },
+      ]}
+    >
+      <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+        Top Performing Events
+      </Text>
       {events.map((event, index) => (
-        <View key={index} style={styles.eventCard}>
+        <View
+          key={index}
+          style={[
+            styles.eventCard,
+            { borderBottomColor: isDark ? "#111827" : "#f3f4f6" },
+          ]}
+        >
           <View style={styles.eventRank}>
             <Text style={styles.rankText}>{index + 1}</Text>
           </View>
           <View style={styles.eventContent}>
-            <Text style={styles.eventTitle} numberOfLines={1}>
+            <Text style={[styles.eventTitle, { color: isDark ? "#e5e7eb" : "#111827" }]} numberOfLines={1}>
               {event.title}
             </Text>
             <View style={styles.eventMetrics}>
@@ -32,23 +48,23 @@ export default function TopPerformingEvents({ events }: TopPerformingEventsProps
                 <IconSymbol
                   name="person.2.fill"
                   size={11}
-                  color="#6b7280"
+                  color={isDark ? "#9ca3af" : "#6b7280"}
                 />
-                <Text style={styles.metricText}>{event.attendees}</Text>
+                <Text style={[styles.metricText, { color: isDark ? "#9ca3af" : "#6b7280" }]}>{event.attendees}</Text>
               </View>
               <Text style={styles.separator}>•</Text>
               <View style={styles.metric}>
                 <IconSymbol
                   name="dollarsign.circle"
                   size={11}
-                  color="#6b7280"
+                  color={isDark ? "#9ca3af" : "#6b7280"}
                 />
-                <Text style={styles.metricText}>{event.revenue}</Text>
+                <Text style={[styles.metricText, { color: isDark ? "#9ca3af" : "#6b7280" }]}>{event.revenue}</Text>
               </View>
               <Text style={styles.separator}>•</Text>
               <View style={styles.metric}>
-                <IconSymbol name="star.fill" size={11} color="#6b7280" />
-                <Text style={styles.metricText}>{event.satisfaction}</Text>
+                <IconSymbol name="star.fill" size={11} color={isDark ? "#9ca3af" : "#6b7280"} />
+                <Text style={[styles.metricText, { color: isDark ? "#9ca3af" : "#6b7280" }]}>{event.satisfaction}</Text>
               </View>
             </View>
           </View>
@@ -65,19 +81,20 @@ const styles = StyleSheet.create({
   section: {
     marginHorizontal: 16,
     marginVertical: 16,
-    backgroundColor: "#fff",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#f3f4f6",
     paddingTop: 16,
     paddingBottom: 16,
     paddingLeft: 0,
     paddingRight: 0,
+    shadowColor: "#63f23",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#111827",
     letterSpacing: -0.2,
     paddingHorizontal: 16,
   },
@@ -86,7 +103,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
     paddingHorizontal: 16,
     gap: 10,
   },
@@ -103,12 +119,11 @@ const styles = StyleSheet.create({
   eventTitle: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#111827",
     marginBottom: 5,
   },
   eventMetrics: { flexDirection: "row", alignItems: "center", gap: 5 },
   metric: { flexDirection: "row", alignItems: "center", gap: 3 },
-  metricText: { fontSize: 10, fontWeight: "500", color: "#6b7280" },
+  metricText: { fontSize: 10, fontWeight: "500" },
   separator: { fontSize: 7, color: "#d1d5db" },
   attendanceRating: {
     backgroundColor: "#f0f4ff",

@@ -1,3 +1,23 @@
+# RN-EventHub
+
+## Docs
+
+- User guide: `docs/USER_GUIDE.md`
+- Admin guide: `docs/ADMIN_GUIDE.md`
+
+## Development
+
+```bash
+npm install
+npm run ios
+```
+
+## Tests
+
+```bash
+npm test
+```
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

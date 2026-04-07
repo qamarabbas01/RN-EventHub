@@ -1,7 +1,11 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { toFriendlyError } from "@/utils/errors";
 import { router } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -13,48 +17,90 @@ import {
 import { auth } from "../firebase";
 
 export default function RegisterScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleRegister = async () => {
     setError("");
     try {
+      setSubmitting(true);
       await createUserWithEmailAndPassword(auth, email, password);
       router.replace("/profile");
     } catch (err: any) {
-      setError(err.message || "Registration failed");
+      const friendly = toFriendlyError(err, "Registration failed");
+      setError(friendly.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={styles.innerBox}>
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Sign up to get started</Text>
+      <View style={[styles.innerBox, { backgroundColor: isDark ? "#0b1220" : "#fff" }]}>
+        <Text style={[styles.title, { color: isDark ? "#e5e7eb" : "#111827" }]}>Create Account</Text>
+        <Text style={[styles.subtitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>Sign up to get started</Text>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? "#0f172a" : "#f1f5f9",
+              borderColor: isDark ? "#1f2937" : "#e5e7eb",
+              color: isDark ? "#e5e7eb" : "#111827",
+            },
+          ]}
           placeholder="Email"
+          placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
+          accessibilityLabel="Email"
+          textContentType="emailAddress"
+          autoComplete="email"
+          editable={!submitting}
         />
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? "#0f172a" : "#f1f5f9",
+              borderColor: isDark ? "#1f2937" : "#e5e7eb",
+              color: isDark ? "#e5e7eb" : "#111827",
+            },
+          ]}
           placeholder="Password"
+          placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          accessibilityLabel="Password"
+          textContentType="newPassword"
+          autoComplete="password-new"
+          editable={!submitting}
         />
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Pressable style={styles.button} onPress={handleRegister}>
-          <Text style={styles.buttonText}>Register</Text>
+        {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
+        <Pressable
+          style={[styles.button, submitting && { opacity: 0.7 }]}
+          onPress={handleRegister}
+          disabled={submitting}
+          accessibilityRole="button"
+          accessibilityLabel={submitting ? "Registering" : "Register"}
+        >
+          {submitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Register</Text>}
         </Pressable>
-        <Pressable onPress={() => router.push("/Login")}>
+        <Pressable
+          onPress={() => router.push("/Login")}
+          disabled={submitting}
+          accessibilityRole="button"
+          accessibilityLabel="Go to login"
+        >
           <Text style={styles.link}>Already have an account? Login</Text>
         </Pressable>
       </View>
@@ -67,12 +113,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8fafc",
   },
   innerBox: {
     width: "100%",
     maxWidth: 380,
-    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 28,
     shadowColor: "#000",
@@ -85,26 +129,21 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#111827",
     marginBottom: 8,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: "#6b7280",
     marginBottom: 24,
     textAlign: "center",
   },
   input: {
     height: 48,
-    borderColor: "#e5e7eb",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 14,
     marginBottom: 16,
-    backgroundColor: "#f1f5f9",
     fontSize: 16,
-    color: "#111827",
   },
   button: {
     backgroundColor: "#2563eb",

@@ -1,6 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import React from "react";
 import { Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 type SettingItem = 
   | {
@@ -26,12 +27,25 @@ interface SettingsSectionsProps {
 }
 
 export default function SettingsSections({ sections }: SettingsSectionsProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
   return (
     <>
       {sections.map((section, sectionIndex) => (
         <View key={sectionIndex} style={styles.section}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
-          <View style={styles.sectionContent}>
+          <Text style={[styles.sectionTitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
+            {section.title}
+          </Text>
+          <View
+            style={[
+              styles.sectionContent,
+              {
+                backgroundColor: isDark ? "#0b1220" : "#fff",
+                borderColor: isDark ? "#111827" : "#f3f4f6",
+              },
+            ]}
+          >
             {section.items.map((item, itemIndex) => {
               const isToggle = "value" in item;
 
@@ -46,32 +60,52 @@ export default function SettingsSections({ sections }: SettingsSectionsProps) {
                     }}
                   >
                     <View style={styles.settingLeft}>
-                      <View style={styles.settingIconBg}>
+                      <View
+                        style={[
+                          styles.settingIconBg,
+                          { backgroundColor: isDark ? "#111827" : "#ede9fe" },
+                        ]}
+                      >
                         <IconSymbol
                           name={item.icon as any}
                           size={18}
                           color="#4f46e5"
                         />
                       </View>
-                      <Text style={styles.settingLabel}>{item.label}</Text>
+                      <Text
+                        style={[
+                          styles.settingLabel,
+                          { color: isDark ? "#e5e7eb" : "#111827" },
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
                     </View>
                     {isToggle && "value" in item ? (
                       <Switch
                         value={item.value}
                         onValueChange={item.onToggle}
-                        trackColor={{ false: "#d1d5db", true: "#c7d2fe" }}
-                        thumbColor={item.value ? "#4f46e5" : "#9ca3af"}
+                        trackColor={{
+                          false: isDark ? "#334155" : "#d1d5db",
+                          true: "#c7d2fe",
+                        }}
+                        thumbColor={item.value ? "#4f46e5" : isDark ? "#94a3b8" : "#9ca3af"}
                       />
                     ) : (
                       <IconSymbol
                         name="chevron.right"
                         size={20}
-                        color="#d1d5db"
+                        color={isDark ? "#334155" : "#d1d5db"}
                       />
                     )}
                   </Pressable>
                   {itemIndex < section.items.length - 1 && (
-                    <View style={styles.divider} />
+                    <View
+                      style={[
+                        styles.divider,
+                        { backgroundColor: isDark ? "#111827" : "#f3f4f6" },
+                      ]}
+                    />
                   )}
                 </View>
               );

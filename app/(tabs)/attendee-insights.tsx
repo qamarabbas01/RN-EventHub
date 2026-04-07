@@ -4,6 +4,8 @@ import InsightsGrid from "@/components/InsightsGrid";
 import MetricsSection from "@/components/MetricsSection";
 import StatsGrid from "@/components/StatsGrid";
 import TopPerformingEvents from "@/components/TopPerformingEvents";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -43,6 +45,8 @@ const getRetentionDelta = (values: number[]) => {
 };
 
 export default function AttendeeInsights() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const [selectedPeriod, setSelectedPeriod] = useState("6M");
   const periods = ["1M", "3M", "6M", "1Y"];
 
@@ -181,11 +185,11 @@ export default function AttendeeInsights() {
   }, []);
 
   const chartConfig = {
-    backgroundGradientFrom: "#ffffff",
-    backgroundGradientTo: "#ffffff",
+    backgroundGradientFrom: isDark ? "#0b1220" : "#ffffff",
+    backgroundGradientTo: isDark ? "#0b1220" : "#ffffff",
     color: (opacity = 1) => `rgba(79,70,229,${opacity})`,
-    labelColor: (opacity = 1) => `rgba(107,114,128,${opacity})`,
-    propsForBackgroundLines: { stroke: "#f1f5f9", strokeDasharray: "4,4" },
+    labelColor: (opacity = 1) => (isDark ? `rgba(156,163,175,${opacity})` : `rgba(107,114,128,${opacity})`),
+    propsForBackgroundLines: { stroke: isDark ? "#111827" : "#f1f5f9", strokeDasharray: "4,4" },
     fillShadowGradient: "#7c3aed",
     fillShadowGradientOpacity: 0.35,
     decimalPlaces: 0,
@@ -194,7 +198,7 @@ export default function AttendeeInsights() {
       r: "5",
       strokeWidth: "2",
       stroke: "#4f46e5",
-      fill: "#ffffff",
+      fill: isDark ? "#0b1220" : "#ffffff",
     },
   };
 
@@ -311,11 +315,11 @@ export default function AttendeeInsights() {
         : "Engagement is currently low; focus on attendee experience, retention touchpoints, and post-event follow-up.";
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Attendee Insights</Text>
-          <Text style={styles.headerSubtitle}>
+        <View style={[styles.header, { borderBottomColor: isDark ? "#111827" : "#f3f4f6" }]}>
+          <Text style={[styles.headerTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>Attendee Insights</Text>
+          <Text style={[styles.headerSubtitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
             Deep dive into attendee analytics & behavior
           </Text>
         </View>
@@ -327,12 +331,14 @@ export default function AttendeeInsights() {
               onPress={() => setSelectedPeriod(period)}
               style={[
                 styles.periodButton,
+                { backgroundColor: isDark ? "#111827" : "#f3f4f6" },
                 selectedPeriod === period && styles.periodButtonActive,
               ]}
             >
               <Text
                 style={[
                   styles.periodText,
+                  { color: isDark ? "#9ca3af" : "#6b7280" },
                   selectedPeriod === period && styles.periodTextActive,
                 ]}
               >
@@ -348,10 +354,17 @@ export default function AttendeeInsights() {
 
         <InsightsGrid cards={insightCards} />
 
-        <View style={styles.section}>
+        <View
+          style={[
+            styles.section,
+            { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#f3f4f6" },
+          ]}
+        >
           <View style={styles.headerContainer}>
             <View>
-              <Text style={styles.sectionTitle}>Attendance Patterns</Text>
+              <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+                Attendance Patterns
+              </Text>
               <Text style={styles.subtitle}>
                 Peak attendance by day of week
               </Text>
@@ -377,10 +390,17 @@ export default function AttendeeInsights() {
           </View>
         </View>
 
-        <View style={styles.section}>
+        <View
+          style={[
+            styles.section,
+            { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#f3f4f6" },
+          ]}
+        >
           <View style={styles.headerContainer}>
             <View>
-              <Text style={styles.sectionTitle}>Retention Trends</Text>
+              <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+                Retention Trends
+              </Text>
               <Text style={styles.subtitle}>
                 Session retention rate decline
               </Text>
@@ -413,8 +433,21 @@ export default function AttendeeInsights() {
 
         <TopPerformingEvents events={topEvents} />
 
-        <View style={styles.section}>
-          <View style={styles.engagementCard}>
+        <View
+          style={[
+            styles.section,
+            { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#f3f4f6" },
+          ]}
+        >
+          <View
+            style={[
+              styles.engagementCard,
+              {
+                backgroundColor: isDark ? "#0f172a" : "#f0f4ff",
+                borderColor: isDark ? "#111827" : "#e0e7ff",
+              },
+            ]}
+          >
             <View
               style={{
                 flexDirection: "row",
@@ -423,27 +456,52 @@ export default function AttendeeInsights() {
               }}
             >
               <View>
-                <Text style={styles.engagementTitle}>Overall Engagement</Text>
-                <Text style={styles.engagementSubtitle}>{`Score: ${engagementOutOf10}/10`}</Text>
+                <Text style={[styles.engagementTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+                  Overall Engagement
+                </Text>
+                <Text style={[styles.engagementSubtitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
+                  {`Score: ${engagementOutOf10}/10`}
+                </Text>
               </View>
               <View style={styles.scoreCircle}>
                 <Text style={styles.scoreText}>{`${engagementScore}%`}</Text>
               </View>
             </View>
-            <Text style={styles.engagementDesc}>
+            <Text style={[styles.engagementDesc, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
               {engagementDescription}
             </Text>
             <View style={styles.metricsRow}>
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>Repeat Rate</Text>
+              <View
+                style={[
+                  styles.metricBox,
+                  { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e0e7ff" },
+                ]}
+              >
+                <Text style={[styles.metricLabel, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
+                  Repeat Rate
+                </Text>
                 <Text style={styles.metricValue}>{`${repeatRate.toFixed(1)}%`}</Text>
               </View>
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>Net Rating</Text>
+              <View
+                style={[
+                  styles.metricBox,
+                  { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e0e7ff" },
+                ]}
+              >
+                <Text style={[styles.metricLabel, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
+                  Net Rating
+                </Text>
                 <Text style={styles.metricValue}>{`${netRating.toFixed(0)}%`}</Text>
               </View>
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>Satisfaction</Text>
+              <View
+                style={[
+                  styles.metricBox,
+                  { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e0e7ff" },
+                ]}
+              >
+                <Text style={[styles.metricLabel, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
+                  Satisfaction
+                </Text>
                 <Text style={styles.metricValue}>{`${avgSatisfaction.toFixed(1)}★`}</Text>
               </View>
             </View>
@@ -457,20 +515,18 @@ export default function AttendeeInsights() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#eef2ff" },
+  container: { flex: 1 },
   header: {
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: "800",
-    color: "#111827",
     marginBottom: 4,
   },
-  headerSubtitle: { fontSize: 14, color: "#6b7280" },
+  headerSubtitle: { fontSize: 14 },
   periodFilter: {
     flexDirection: "row",
     paddingHorizontal: 16,
@@ -482,23 +538,24 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
-    backgroundColor: "#f3f4f6",
     alignItems: "center",
   },
   periodButtonActive: { backgroundColor: "#4f46e5" },
-  periodText: { fontSize: 12, fontWeight: "600", color: "#6b7280" },
+  periodText: { fontSize: 12, fontWeight: "600" },
   periodTextActive: { color: "#fff" },
   section: {
     marginHorizontal: 16,
     marginVertical: 16,
-    backgroundColor: "#fff",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#f3f4f6",
     paddingTop: 16,
     paddingBottom: 16,
     paddingLeft: 0,
     paddingRight: 0,
+    shadowColor: "#63f23",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
   },
   headerContainer: {
     flexDirection: "row",
@@ -509,7 +566,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#111827",
     letterSpacing: -0.2,
     paddingHorizontal: 16,
   },
@@ -531,21 +587,19 @@ const styles = StyleSheet.create({
   },
   retentionValue: { fontSize: 12, fontWeight: "700", color: "#991b1b" },
   chartWrapper: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "transparent",
     borderRadius: 12,
     overflow: "hidden",
     marginTop: 10,
   },
   chart: { marginVertical: 8, borderRadius: 12 },
   engagementCard: {
-    backgroundColor: "#f0f4ff",
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e0e7ff",
   },
-  engagementTitle: { fontSize: 14, fontWeight: "700", color: "#111827" },
-  engagementSubtitle: { fontSize: 12, color: "#6b7280", marginTop: 2 },
+  engagementTitle: { fontSize: 14, fontWeight: "700" },
+  engagementSubtitle: { fontSize: 12, marginTop: 2 },
   scoreCircle: {
     width: 60,
     height: 60,
@@ -557,24 +611,20 @@ const styles = StyleSheet.create({
   scoreText: { fontSize: 16, fontWeight: "800", color: "#fff" },
   engagementDesc: {
     fontSize: 12,
-    color: "#6b7280",
     marginVertical: 12,
     lineHeight: 18,
   },
   metricsRow: { flexDirection: "row", gap: 10 },
   metricBox: {
     flex: 1,
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e0e7ff",
   },
   metricLabel: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#6b7280",
     marginBottom: 4,
   },
   metricValue: { fontSize: 14, fontWeight: "800", color: "#4f46e5" },

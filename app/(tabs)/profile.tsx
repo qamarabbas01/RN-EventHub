@@ -1,16 +1,19 @@
 import SettingsSections from "@/components/SettingsSections";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import UserStatsGrid from "@/components/UserStatsGrid";
+import { Colors } from "@/constants/theme";
+import { useColorScheme, useColorSchemePreference } from "@/hooks/use-color-scheme";
 import { router } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function Profile() {
+  const colorScheme = useColorScheme();
+  const { setPreference } = useColorSchemePreference();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [eventUpdatesEnabled, setEventUpdatesEnabled] = React.useState(true);
   const [eventRemindersEnabled, setEventRemindersEnabled] = React.useState(true);
   const [newEventsEnabled, setNewEventsEnabled] = React.useState(true);
-  const [darkMode, setDarkMode] = React.useState(false);
 
   const [userData, setUserData] = React.useState({
     name: "Ahmed Khan",
@@ -75,8 +78,8 @@ export default function Profile() {
         {
           icon: "moon.stars.fill",
           label: "Dark Mode",
-          value: darkMode,
-          onToggle: setDarkMode,
+          value: colorScheme === "dark",
+          onToggle: (enabled: boolean) => setPreference(enabled ? "dark" : "light"),
         },
       ],
     },
@@ -112,17 +115,45 @@ export default function Profile() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
+    >
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <View style={styles.profileCard}>
+          <View
+            style={[
+              styles.profileCard,
+              {
+                backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff",
+                borderColor: colorScheme === "dark" ? "#111827" : "#f3f4f6",
+                shadowOpacity: colorScheme === "dark" ? 0.25 : 0.06,
+              },
+            ]}
+          >
             <View style={styles.avatarContainer}>
               <Text style={styles.avatar}>{userData.avatar}</Text>
             </View>
             <View style={styles.userInfo}>
-              <Text style={styles.userName}>{userData.name}</Text>
+              <Text
+                style={[
+                  styles.userName,
+                  { color: colorScheme === "dark" ? "#e5e7eb" : "#111827" },
+                ]}
+              >
+                {userData.name}
+              </Text>
               <Text style={styles.userRole}>{userData.role}</Text>
-              <Text style={styles.userEmail}>{userData.email}</Text>
+              <Text
+                style={[
+                  styles.userEmail,
+                  { color: colorScheme === "dark" ? "#9ca3af" : "#6b7280" },
+                ]}
+              >
+                {userData.email}
+              </Text>
             </View>
             <Pressable style={styles.editButton} onPress={handleEditPress}>
               <IconSymbol name="pencil" size={18} color="#4f46e5" />
@@ -147,35 +178,64 @@ export default function Profile() {
 
       {editModalVisible && (
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff" },
+            ]}
+          >
             <Text style={styles.modalTitle}>Edit Profile</Text>
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Name</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colorScheme === "dark" ? "#0f172a" : "#f9fafb",
+                    borderColor: colorScheme === "dark" ? "#1f2937" : "#e5e7eb",
+                    color: colorScheme === "dark" ? "#e5e7eb" : "#111827",
+                  },
+                ]}
                 value={editName}
                 onChangeText={setEditName}
                 placeholder="Name"
+                placeholderTextColor={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
               />
             </View>
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Role</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colorScheme === "dark" ? "#0f172a" : "#f9fafb",
+                    borderColor: colorScheme === "dark" ? "#1f2937" : "#e5e7eb",
+                    color: colorScheme === "dark" ? "#e5e7eb" : "#111827",
+                  },
+                ]}
                 value={editRole}
                 onChangeText={setEditRole}
                 placeholder="Role"
+                placeholderTextColor={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
               />
             </View>
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Email</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colorScheme === "dark" ? "#0f172a" : "#f9fafb",
+                    borderColor: colorScheme === "dark" ? "#1f2937" : "#e5e7eb",
+                    color: colorScheme === "dark" ? "#e5e7eb" : "#111827",
+                  },
+                ]}
                 value={editEmail}
                 onChangeText={setEditEmail}
                 placeholder="Email"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                placeholderTextColor={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
               />
             </View>
             <View style={styles.modalActions}>
@@ -196,7 +256,6 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#eef2ff",
   },
   header: {
     paddingHorizontal: 16,
@@ -205,11 +264,9 @@ const styles = StyleSheet.create({
   profileCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: "#f3f4f6",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -234,7 +291,6 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#111827",
     letterSpacing: -0.3,
     marginBottom: 2,
   },
@@ -247,7 +303,6 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 11,
     fontWeight: "500",
-    color: "#6b7280",
   },
   editButton: {
     width: 36,

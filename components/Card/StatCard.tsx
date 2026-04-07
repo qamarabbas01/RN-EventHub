@@ -4,10 +4,10 @@ import {
     Pressable,
     StyleSheet,
     Text,
-    useColorScheme,
     View,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface TrendData {
     value: string;

@@ -1,4 +1,8 @@
 import EventForm from '@/components/EventForm';
+import CenteredState from '@/components/ui/CenteredState';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { toFriendlyError } from '@/utils/errors';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { deleteDoc, doc, getDoc } from 'firebase/firestore';
@@ -8,6 +12,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../../firebase';
 
 export default function EventDetails() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const renderDate = (dateVal: any, timeVal?: any) => {
     if (timeVal && typeof timeVal === 'object' && timeVal.seconds) {
       const dateObj = new Date(timeVal.seconds * 1000);
@@ -77,7 +83,8 @@ export default function EventDetails() {
         }
       })
       .catch((err) => {
-        setError("Failed to load event");
+        const friendly = toFriendlyError(err, 'Couldn’t load event');
+        setError(friendly.message);
         setEvent(null);
       })
       .finally(() => setLoading(false));
@@ -95,25 +102,38 @@ export default function EventDetails() {
   };
 
   if (loading) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.notFound}>Loading event...</Text>
-      </View>
-    );
+    return <CenteredState loading title="Loading event" message="Please wait…" />;
   }
   if (error) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.notFound}>{error}</Text>
-      </View>
+      <CenteredState
+        title="Couldn’t load event"
+        message={error}
+        actionLabel="Retry"
+        onActionPress={() => {
+          if (!id) return;
+          setLoading(true);
+          setError("");
+          getDoc(doc(db, "events", String(id)))
+            .then((docSnap) => {
+              if (docSnap.exists()) {
+                setEvent({ id, ...docSnap.data() });
+              } else {
+                setEvent(null);
+              }
+            })
+            .catch((err) => {
+              const friendly = toFriendlyError(err, 'Couldn’t load event');
+              setError(friendly.message);
+              setEvent(null);
+            })
+            .finally(() => setLoading(false));
+        }}
+      />
     );
   }
   if (!event) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.notFound}>Event not found</Text>
-      </View>
-    );
+    return <CenteredState title="Event not found" message="This event may have been removed." actionLabel="Go back" onActionPress={() => router.back()} />;
   }
 
   const statusColors = {
@@ -123,11 +143,17 @@ export default function EventDetails() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.imageWrapper}>
           <Image source={{ uri: safe(event.imageUrl, 'https://via.placeholder.com/800x260?text=No+Image') }} style={styles.image} />
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            activeOpacity={0.85}
+          >
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
           {event.status && statusColors[event.status as keyof typeof statusColors] && (
@@ -138,8 +164,13 @@ export default function EventDetails() {
             </View>
           )}
         </View>
-        <View style={styles.card}>
-          <Text style={styles.title}>{safe(event.title)}</Text>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: isDark ? "#0b1220" : "#fff" },
+          ]}
+        >
+          <Text style={[styles.title, { color: isDark ? "#e5e7eb" : "#1e293b" }]}>{safe(event.title)}</Text>
           <View style={styles.row}>
             <Ionicons name="calendar" size={18} color="#6366f1" style={styles.icon} />
             <Text style={styles.meta}>{renderDate(event.date, event.time)}</Text>
@@ -150,40 +181,54 @@ export default function EventDetails() {
             <Ionicons name="location" size={18} color="#6366f1" style={styles.icon} />
             <Text style={styles.meta}>{safe(event.location)}</Text>
           </View>
-          <Text style={styles.description}>{safe(event.description)}</Text>
+          <Text style={[styles.description, { color: isDark ? "#9ca3af" : "#374151" }]}>
+            {safe(event.description)}
+          </Text>
 
           <View style={styles.detailsSection}>
             <View style={styles.detailRow}>
               <Ionicons name="person" size={18} color="#6366f1" style={styles.icon} />
-              <Text style={styles.detailLabel}>Organizer:</Text>
-              <Text style={styles.detailValue}>{safe(event.organizer)}</Text>
+              <Text style={[styles.detailLabel, { color: isDark ? "#9ca3af" : "#64748b" }]}>Organizer:</Text>
+              <Text style={[styles.detailValue, { color: isDark ? "#e5e7eb" : "#334155" }]}>
+                {safe(event.organizer)}
+              </Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="pricetag" size={18} color="#6366f1" style={styles.icon} />
-              <Text style={styles.detailLabel}>Tags:</Text>
-              <Text style={styles.detailValue}>{safe(event.tags)}</Text>
+              <Text style={[styles.detailLabel, { color: isDark ? "#9ca3af" : "#64748b" }]}>Tags:</Text>
+              <Text style={[styles.detailValue, { color: isDark ? "#e5e7eb" : "#334155" }]}>
+                {safe(event.tags)}
+              </Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="cash" size={18} color="#6366f1" style={styles.icon} />
-              <Text style={styles.detailLabel}>Price:</Text>
-              <Text style={styles.detailValue}>{safe(event.price)}</Text>
+              <Text style={[styles.detailLabel, { color: isDark ? "#9ca3af" : "#64748b" }]}>Price:</Text>
+              <Text style={[styles.detailValue, { color: isDark ? "#e5e7eb" : "#334155" }]}>
+                {safe(event.price)}
+              </Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="call" size={18} color="#6366f1" style={styles.icon} />
-              <Text style={styles.detailLabel}>Contact:</Text>
-              <Text style={styles.detailValue}>{safe(event.contact)}</Text>
+              <Text style={[styles.detailLabel, { color: isDark ? "#9ca3af" : "#64748b" }]}>Contact:</Text>
+              <Text style={[styles.detailValue, { color: isDark ? "#e5e7eb" : "#334155" }]}>
+                {safe(event.contact)}
+              </Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="globe" size={18} color="#6366f1" style={styles.icon} />
-              <Text style={styles.detailLabel}>Website:</Text>
-              <Text style={styles.detailValue}>{safe(event.website)}</Text>
+              <Text style={[styles.detailLabel, { color: isDark ? "#9ca3af" : "#64748b" }]}>Website:</Text>
+              <Text style={[styles.detailValue, { color: isDark ? "#e5e7eb" : "#334155" }]}>
+                {safe(event.website)}
+              </Text>
             </View>
           </View>
 
           <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 24 }}>
             <Pressable
-              style={{ backgroundColor: '#f3f4f6', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center', marginRight: 8 }}
+              style={{ backgroundColor: isDark ? "#111827" : '#f3f4f6', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center', marginRight: 8 }}
               onPress={() => setEditModal(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Edit event"
             >
               <Ionicons name="pencil" size={18} color="#6366f1" style={{ marginRight: 6 }} />
               <Text style={{ color: '#6366f1', fontWeight: '700', fontSize: 15 }}>Edit</Text>
@@ -211,6 +256,8 @@ export default function EventDetails() {
                   ]
                 );
               }}
+              accessibilityRole="button"
+              accessibilityLabel="Delete event"
             >
               <Ionicons name="trash" size={18} color="#ef4444" style={{ marginRight: 6 }} />
               <Text style={{ color: '#ef4444', fontWeight: '700', fontSize: 15 }}>Delete</Text>
@@ -226,7 +273,7 @@ export default function EventDetails() {
         onRequestClose={() => setEditModal(false)}
       >
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <View style={{ width: '100%', backgroundColor: '#fff', borderRadius: 18, padding: 16, marginTop: 90, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}>
+          <View style={{ width: '100%', backgroundColor: isDark ? "#0b1220" : '#fff', borderRadius: 18, padding: 16, marginTop: 90, shadowColor: '#000', shadowOpacity: isDark ? 0.25 : 0.1, shadowRadius: 10 }}>
             <EventForm
               event={event}
               onSuccess={() => {
@@ -247,7 +294,6 @@ export default function EventDetails() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eef2ff',
   },
   ticketsBtn: {
     flexDirection: 'row',
@@ -347,7 +393,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   card: {
-    backgroundColor: '#fff',
     marginHorizontal: 18,
     marginTop: -32,
     borderRadius: 22,
@@ -362,7 +407,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '900',
-    color: '#1e293b',
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -384,7 +428,6 @@ const styles = StyleSheet.create({
   description: {
     marginTop: 18,
     fontSize: 15,
-    color: '#374151',
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -392,7 +435,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   notFound: {
     fontSize: 18,

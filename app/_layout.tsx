@@ -1,15 +1,23 @@
+import { Colors } from '@/constants/theme';
+import { ColorSchemeProvider, useColorScheme } from '@/hooks/use-color-scheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
 export default function RootLayout() {
+  return (
+    <ColorSchemeProvider>
+      <RootLayoutInner />
+    </ColorSchemeProvider>
+  );
+}
+
+function RootLayoutInner() {
   const colorScheme = useColorScheme();
 
   return (
@@ -22,7 +30,7 @@ export default function RootLayout() {
           options={{
             title: "Notifications",
             headerBackButtonDisplayMode: "minimal",
-            headerStyle: { backgroundColor: '#fff' }, headerTitleStyle: { color: '#111827', fontWeight: '600' }, headerShadowVisible: false,
+            headerStyle: { backgroundColor: Colors[colorScheme].background }, headerTitleStyle: { color: Colors[colorScheme].text, fontWeight: '600' }, headerShadowVisible: false,
           }}
         />
         <Stack.Screen
@@ -30,7 +38,7 @@ export default function RootLayout() {
           options={{ headerShown: false }}
         />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }

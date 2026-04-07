@@ -1,6 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface Stat {
   icon: string;
@@ -13,6 +14,8 @@ interface UserStatsGridProps {
 }
 
 export default function UserStatsGrid({ stats }: UserStatsGridProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const colors = [
     { bg: "#ede9fe", icon: "#8b5cf6" },
     { bg: "#f0f4ff", icon: "#3b82f6" },
@@ -22,7 +25,17 @@ export default function UserStatsGrid({ stats }: UserStatsGridProps) {
   return (
     <View style={styles.statsContainer}>
       {stats.map((stat, index) => (
-        <View key={index} style={styles.statCard}>
+        <View
+          key={index}
+          style={[
+            styles.statCard,
+            {
+              backgroundColor: isDark ? "#0b1220" : "#fff",
+              borderColor: isDark ? "#111827" : "#f3f4f6",
+              shadowOpacity: isDark ? 0.18 : 0.04,
+            },
+          ]}
+        >
           <View
             style={[
               styles.statIconBg,
@@ -37,8 +50,12 @@ export default function UserStatsGrid({ stats }: UserStatsGridProps) {
               color={colors[index]?.icon || colors[0].icon}
             />
           </View>
-          <Text style={styles.statValue}>{stat.value}</Text>
-          <Text style={styles.statLabel}>{stat.label}</Text>
+          <Text style={[styles.statValue, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+            {stat.value}
+          </Text>
+          <Text style={[styles.statLabel, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
+            {stat.label}
+          </Text>
         </View>
       ))}
     </View>
@@ -54,12 +71,10 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#f3f4f6",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
@@ -77,14 +92,12 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 16,
     fontWeight: "900",
-    color: "#111827",
     letterSpacing: -0.3,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#6b7280",
     textAlign: "center",
   },
 });
