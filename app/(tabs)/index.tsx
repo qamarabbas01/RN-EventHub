@@ -1,4 +1,6 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
@@ -48,6 +50,8 @@ function isNearby(location: string) {
 
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +83,7 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -99,12 +103,22 @@ export default function HomeScreen() {
               </Text>
             </View>
             <View style={styles.headerIcons}>
-              <TouchableOpacity style={styles.headerIconBtn}>
+              <TouchableOpacity
+                style={[
+                  styles.headerIconBtn,
+                  { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                ]}
+              >
                 <Link href="/notification">
                   <IconSymbol name="bell.fill" size={24} color="#4f46e5" />
                 </Link>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.headerIconBtn}>
+              <TouchableOpacity
+                style={[
+                  styles.headerIconBtn,
+                  { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                ]}
+              >
                 <Image
                   source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
                   style={styles.profilePic}
@@ -116,12 +130,23 @@ export default function HomeScreen() {
 
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={styles.searchBarSection}>
-            <View style={styles.searchInputWrapper}>
+            <View
+              style={[
+                styles.searchInputWrapper,
+                {
+                  backgroundColor: isDark ? "#0b1220" : "#fff",
+                  borderColor: isDark ? "#111827" : "#e2e8f0",
+                },
+              ]}
+            >
               <IconSymbol name="magnifyingglass" color="#9ca3af" />
               <TextInput
-                style={styles.searchInput}
+                style={[
+                  styles.searchInput,
+                  { color: isDark ? "#e5e7eb" : "#1e293b" },
+                ]}
                 placeholder="Search events, concerts, workshops..."
-                placeholderTextColor="#d1d5db"
+                placeholderTextColor={isDark ? "#6b7280" : "#d1d5db"}
               />
             </View>
           </View>
@@ -148,24 +173,36 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.sectionSpacing}>
-          <Text style={styles.sectionTitle}>Featured Events</Text>
+          <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
+            Featured Events
+          </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.featuredRow}>
               {loading ? (
-                <Text>Loading...</Text>
+                <Text style={{ color: isDark ? "#9ca3af" : "#111827" }}>Loading...</Text>
               ) : (
                 events
                   .filter(e => e.featured)
                   .map((event, idx) => (
-                    <View key={event.id || idx} style={styles.featuredCard}>
+                    <View
+                      key={event.id || idx}
+                      style={[
+                        styles.featuredCard,
+                        { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                      ]}
+                    >
                       <Image source={{ uri: event.imageUrl || event.image }} style={styles.featuredImg} />
                       <LinearGradient
                         colors={["rgba(99,102,241,0.7)", "rgba(255,255,255,0.1)"]}
                         style={styles.featuredOverlay}
                       />
                       <View style={styles.featuredContent}>
-                        <Text style={styles.featuredTitle}>{event.title}</Text>
-                        <Text style={styles.featuredMeta}>{event.date} • {event.location}</Text>
+                        <Text style={[styles.featuredTitle, { color: isDark ? "#e5e7eb" : "#1e293b" }]}>
+                          {event.title}
+                        </Text>
+                        <Text style={[styles.featuredMeta, { color: isDark ? "#9ca3af" : "#64748b" }]}>
+                          {event.date} • {event.location}
+                        </Text>
                         <Text style={styles.featuredPrice}>{event.price}</Text>
                       </View>
                     </View>
@@ -176,18 +213,30 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.sectionSpacing}>
-          <Text style={styles.sectionTitle}>Upcoming Events</Text>
+          <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
+            Upcoming Events
+          </Text>
           {loading ? (
-            <Text>Loading...</Text>
+            <Text style={{ color: isDark ? "#9ca3af" : "#111827" }}>Loading...</Text>
           ) : (
             events
               .filter(e => isUpcoming(e.date))
               .map((event, idx) => (
-                <View key={event.id || idx} style={styles.upcomingCard}>
+                <View
+                  key={event.id || idx}
+                  style={[
+                    styles.upcomingCard,
+                    { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                  ]}
+                >
                   <View style={styles.upcomingAccent} />
                   <View style={styles.upcomingContent}>
-                    <Text style={styles.upcomingTitle}>{event.title}</Text>
-                    <Text style={styles.upcomingMeta}>{event.date} • {event.location}</Text>
+                    <Text style={[styles.upcomingTitle, { color: isDark ? "#e5e7eb" : "#1e293b" }]}>
+                      {event.title}
+                    </Text>
+                    <Text style={[styles.upcomingMeta, { color: isDark ? "#9ca3af" : "#64748b" }]}>
+                      {event.date} • {event.location}
+                    </Text>
                   </View>
                 </View>
               ))
@@ -195,20 +244,32 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.sectionSpacing}>
-          <Text style={styles.sectionTitle}>Events Near You</Text>
+          <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
+            Events Near You
+          </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.featuredRow}>
               {loading ? (
-                <Text>Loading...</Text>
+                <Text style={{ color: isDark ? "#9ca3af" : "#111827" }}>Loading...</Text>
               ) : (
                 events
                   .filter(e => isNearby(e.location))
                   .map((event, idx) => (
-                    <View key={event.id || idx} style={styles.nearbyCard}>
+                    <View
+                      key={event.id || idx}
+                      style={[
+                        styles.nearbyCard,
+                        { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                      ]}
+                    >
                       <Image source={{ uri: event.imageUrl || event.image }} style={styles.nearbyImg} />
                       <View style={styles.nearbyContent}>
-                        <Text style={styles.nearbyTitle}>{event.title}</Text>
-                        <Text style={styles.nearbyMeta}>{event.location}</Text>
+                        <Text style={[styles.nearbyTitle, { color: isDark ? "#e5e7eb" : "#1e293b" }]}>
+                          {event.title}
+                        </Text>
+                        <Text style={[styles.nearbyMeta, { color: isDark ? "#9ca3af" : "#64748b" }]}>
+                          {event.location}
+                        </Text>
                       </View>
                     </View>
                   ))
@@ -239,7 +300,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#eef2ff",
   },
   scrollView: {
     flex: 1,

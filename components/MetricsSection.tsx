@@ -2,6 +2,7 @@ import { Link } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import StatCard from './Card/StatCard';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface MetricCard {
   label: string;
@@ -21,10 +22,12 @@ interface MetricsSectionProps {
 }
 
 export default function MetricsSection({ title, viewAlllabel, viewAllLink, viewAllIcon, cards }: MetricsSectionProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   return (
     <View style={styles.section}>
       <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle}>{title}</Text>
+        <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#1f2937" }]}>{title}</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
           {viewAllLink ? (
             <Link href={viewAllLink} asChild>
@@ -65,7 +68,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: '800',
-    color: '#1f2937',
     letterSpacing: -0.3,
   },
   viewAll: {

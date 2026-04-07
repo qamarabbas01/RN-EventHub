@@ -1,8 +1,12 @@
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import React from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 export default function Notification() {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === "dark";
     const [enabled, setEnabled] = React.useState(true);
     const notifications = [
         {
@@ -32,26 +36,38 @@ export default function Notification() {
     ];
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-                <View style={styles.heroCard}>
+                <View
+                    style={[
+                        styles.heroCard,
+                        { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e5e7eb" },
+                    ]}
+                >
                     <View>
-                        <Text style={styles.heroTitle}>Notifications</Text>
-                        <Text style={styles.heroSubtitle}>
+                        <Text style={[styles.heroTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>Notifications</Text>
+                        <Text style={[styles.heroSubtitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
                             Event updates, reminders, and new event alerts in one place.
                         </Text>
                     </View>
-                    <View style={styles.heroIconWrap}>
+                    <View style={[styles.heroIconWrap, { backgroundColor: isDark ? "#111827" : "#ede9fe" }]}>
                         <IconSymbol name="bell.badge.fill" size={22} color="#4f46e5" />
                     </View>
                 </View>
 
-                <View style={styles.toggleCard}>
+                <View
+                    style={[
+                        styles.toggleCard,
+                        { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e5e7eb" },
+                    ]}
+                >
                     <View style={styles.toggleLeft}>
                         <IconSymbol name="bell.fill" size={20} color="#4f46e5" />
                         <View>
-                            <Text style={styles.toggleText}>Enable Notifications</Text>
-                            <Text style={styles.toggleSubtext}>
+                            <Text style={[styles.toggleText, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+                                Enable Notifications
+                            </Text>
+                            <Text style={[styles.toggleSubtext, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
                                 Turn on to stay updated about your events.
                             </Text>
                         </View>
@@ -59,39 +75,56 @@ export default function Notification() {
                     <Switch
                         value={enabled}
                         onValueChange={setEnabled}
-                        trackColor={{ false: "#d1d5db", true: "#c7d2fe" }}
-                        thumbColor={enabled ? "#4f46e5" : "#9ca3af"}
+                        trackColor={{ false: isDark ? "#334155" : "#d1d5db", true: "#c7d2fe" }}
+                        thumbColor={enabled ? "#4f46e5" : isDark ? "#94a3b8" : "#9ca3af"}
                     />
                 </View>
 
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Recent</Text>
+                    <Text style={[styles.sectionTitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>Recent</Text>
                     <View style={styles.countPill}>
                         <Text style={styles.countPillText}>{notifications.length}</Text>
                     </View>
                 </View>
 
                 {!enabled ? (
-                    <View style={styles.card}>
+                    <View
+                        style={[
+                            styles.card,
+                            { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e5e7eb" },
+                        ]}
+                    >
                         <IconSymbol name="bell.slash.fill" size={72} color="#9ca3af" />
-                        <Text style={styles.title}>Notifications Disabled</Text>
-                        <Text style={styles.subtitle}>
+                        <Text style={[styles.title, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+                            Notifications Disabled
+                        </Text>
+                        <Text style={[styles.subtitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
                             Turn on notifications to receive event updates, reminders, and new event alerts.
                         </Text>
                     </View>
                 ) : (
                     <View style={styles.list}>
                         {notifications.map((item) => (
-                            <Pressable key={item.id} style={styles.notificationItem}>
-                                <View style={styles.iconWrap}>
+                            <Pressable
+                                key={item.id}
+                                style={[
+                                    styles.notificationItem,
+                                    { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e5e7eb" },
+                                ]}
+                            >
+                                <View style={[styles.iconWrap, { backgroundColor: isDark ? "#111827" : "#ede9fe" }]}>
                                     <IconSymbol name={item.icon as any} size={18} color="#4f46e5" />
                                 </View>
                                 <View style={styles.contentWrap}>
                                     <View style={styles.itemTopRow}>
-                                        <Text style={styles.itemTitle}>{item.title}</Text>
+                                        <Text style={[styles.itemTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>
+                                            {item.title}
+                                        </Text>
                                         <Text style={styles.itemTime}>{item.time}</Text>
                                     </View>
-                                    <Text style={styles.itemMessage}>{item.message}</Text>
+                                    <Text style={[styles.itemMessage, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
+                                        {item.message}
+                                    </Text>
                                     {item.isNew && (
                                         <View style={styles.newPill}>
                                             <Text style={styles.newPillText}>New</Text>
@@ -103,7 +136,7 @@ export default function Notification() {
                     </View>
                 )}
                 <View style={styles.footerHintWrap}>
-                    <Text style={styles.footerHint}>
+                    <Text style={[styles.footerHint, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
                         Receive notifications for event updates, reminders, and new events.
                     </Text>
                 </View>
@@ -115,7 +148,6 @@ export default function Notification() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#eef2ff',
     },
     content: {
         paddingHorizontal: 16,
@@ -123,10 +155,8 @@ const styles = StyleSheet.create({
         paddingBottom: 28,
     },
     heroCard: {
-        backgroundColor: "#fff",
         borderRadius: 18,
         borderWidth: 1,
-        borderColor: "#e5e7eb",
         padding: 16,
         marginBottom: 14,
         flexDirection: "row",
@@ -136,12 +166,10 @@ const styles = StyleSheet.create({
     heroTitle: {
         fontSize: 18,
         fontWeight: "800",
-        color: "#111827",
         marginBottom: 4,
     },
     heroSubtitle: {
         fontSize: 13,
-        color: "#6b7280",
         lineHeight: 18,
         maxWidth: 240,
     },
@@ -149,15 +177,12 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 12,
-        backgroundColor: "#ede9fe",
         alignItems: "center",
         justifyContent: "center",
     },
     toggleCard: {
-        backgroundColor: "#fff",
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: "#e5e7eb",
         paddingVertical: 14,
         paddingHorizontal: 14,
         marginBottom: 16,
@@ -173,12 +198,10 @@ const styles = StyleSheet.create({
     toggleText: {
         fontSize: 14,
         fontWeight: "700",
-        color: "#111827",
     },
     toggleSubtext: {
         marginTop: 2,
         fontSize: 12,
-        color: "#6b7280",
     },
     sectionHeader: {
         flexDirection: "row",
@@ -189,7 +212,6 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 13,
         fontWeight: "700",
-        color: "#6b7280",
         letterSpacing: 0.4,
         textTransform: "uppercase",
     },
@@ -208,10 +230,8 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     notificationItem: {
-        backgroundColor: "#fff",
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: "#e5e7eb",
         padding: 14,
         flexDirection: "row",
         alignItems: "center",
@@ -220,7 +240,6 @@ const styles = StyleSheet.create({
         width: 34,
         height: 34,
         borderRadius: 10,
-        backgroundColor: "#ede9fe",
         alignItems: "center",
         justifyContent: "center",
         marginRight: 12,
@@ -237,7 +256,6 @@ const styles = StyleSheet.create({
     itemTitle: {
         fontSize: 14,
         fontWeight: "700",
-        color: "#111827",
     },
     itemTime: {
         fontSize: 12,
@@ -246,7 +264,6 @@ const styles = StyleSheet.create({
     },
     itemMessage: {
         fontSize: 13,
-        color: "#6b7280",
         lineHeight: 18,
     },
     newPill: {
@@ -264,10 +281,8 @@ const styles = StyleSheet.create({
     },
     card: {
         marginTop: 8,
-        backgroundColor: "#fff",
         borderRadius: 18,
         borderWidth: 1,
-        borderColor: "#e5e7eb",
         padding: 26,
         alignItems: "center",
         justifyContent: "center",
@@ -276,11 +291,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         marginTop: 16,
-        color: '#111827',
     },
     subtitle: {
         fontSize: 14,
-        color: '#6b7280',
         marginTop: 8,
         textAlign: 'center',
         lineHeight: 20,
@@ -291,7 +304,6 @@ const styles = StyleSheet.create({
     },
     footerHint: {
         fontSize: 12,
-        color: "#6b7280",
         textAlign: "center",
     },
 })

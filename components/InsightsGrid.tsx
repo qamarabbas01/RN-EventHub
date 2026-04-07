@@ -1,6 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface InsightCard {
   icon: string;
@@ -15,10 +16,18 @@ interface InsightsGridProps {
 }
 
 export default function InsightsGrid({ cards }: InsightsGridProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   return (
     <View style={styles.insightsGrid}>
       {cards.map((card, index) => (
-        <View key={index} style={styles.insightCard}>
+        <View
+          key={index}
+          style={[
+            styles.insightCard,
+            { borderColor: isDark ? "#111827" : "#f3f4f6", backgroundColor: isDark ? "#0b1220" : "transparent" },
+          ]}
+        >
           <View
             style={[styles.insightIcon, { backgroundColor: card.bgColor }]}
           >
@@ -28,8 +37,8 @@ export default function InsightsGrid({ cards }: InsightsGridProps) {
               color={card.color}
             />
           </View>
-          <Text style={styles.insightLabel}>{card.label}</Text>
-          <Text style={styles.insightValue}>{card.value}</Text>
+          <Text style={[styles.insightLabel, { color: isDark ? "#9ca3af" : "#6b7280" }]}>{card.label}</Text>
+          <Text style={[styles.insightValue, { color: isDark ? "#e5e7eb" : "#111827" }]}>{card.value}</Text>
         </View>
       ))}
     </View>
@@ -50,7 +59,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#f3f4f6",
   },
   insightIcon: {
     width: 40,
@@ -63,9 +71,8 @@ const styles = StyleSheet.create({
   insightLabel: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#6b7280",
     marginBottom: 3,
     textAlign: "center",
   },
-  insightValue: { fontSize: 14, fontWeight: "800", color: "#111827" },
+  insightValue: { fontSize: 14, fontWeight: "800" },
 });

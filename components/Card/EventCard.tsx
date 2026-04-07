@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface EventCardProps {
   id: string;
@@ -23,6 +24,8 @@ export default function EventCard({
   status = 'upcoming',
   onPress,
 }: EventCardProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const statusColors = {
     upcoming: { bg: '#dbeafe', text: '#0369a1' },
@@ -31,7 +34,11 @@ export default function EventCard({
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={[styles.card, { backgroundColor: isDark ? "#0b1220" : "#fff" }]}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
       <View style={styles.imageContainer}>
         {image ? (
           <>
@@ -42,7 +49,7 @@ export default function EventCard({
             />
           </>
         ) : (
-          <View style={[styles.image, styles.imagePlaceholder]}>
+          <View style={[styles.image, styles.imagePlaceholder, { backgroundColor: isDark ? "#0f172a" : "#f9fafb" }]}>
             <IconSymbol name="calendar" size={48} color="#9ca3af" />
           </View>
         )}
@@ -58,20 +65,22 @@ export default function EventCard({
         </View>
       </View>
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={2}>
+        <Text style={[styles.title, { color: isDark ? "#e5e7eb" : "#1e293b" }]} numberOfLines={2}>
           {title}
         </Text>
         <View style={styles.detailRow}>
           <IconSymbol name="calendar" size={14} color="#6b7280" />
-          <Text style={styles.detailText}>{date}</Text>
+          <Text style={[styles.detailText, { color: isDark ? "#9ca3af" : "#64748b" }]}>{date}</Text>
         </View>
         <View style={styles.detailRow}>
           <IconSymbol name="clock" size={14} color="#6b7280" />
-          <Text style={styles.detailText}>{time}</Text>
+          <Text style={[styles.detailText, { color: isDark ? "#9ca3af" : "#64748b" }]}>{time}</Text>
         </View>
         <View style={styles.detailRow}>
           <IconSymbol name="location.fill" size={14} color="#6b7280" />
-          <Text style={styles.detailText} numberOfLines={1}>{location}</Text>
+          <Text style={[styles.detailText, { color: isDark ? "#9ca3af" : "#64748b" }]} numberOfLines={1}>
+            {location}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -80,7 +89,6 @@ export default function EventCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
     borderRadius: 22,
     overflow: 'hidden',
     marginBottom: 18,
@@ -136,7 +144,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: '900',
-    color: '#1e293b',
     marginBottom: 10,
     lineHeight: 22,
   },
@@ -148,7 +155,6 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 13,
-    color: '#64748b',
     flex: 1,
   },
   footerRow: {

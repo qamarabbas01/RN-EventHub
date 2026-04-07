@@ -1,6 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface Stat {
     icon: string;
@@ -15,17 +16,25 @@ interface StatsGridProps {
 }
 
 export default function StatsGrid({ stats }: StatsGridProps) {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === "dark";
     return (
         <View style={styles.container}>
             {stats.map((stat, index) => (
-                <View key={index} style={styles.card}>
+                <View
+                    key={index}
+                    style={[
+                        styles.card,
+                        { backgroundColor: isDark ? "#0b1220" : "#ffffff" },
+                    ]}
+                >
                     <View style={styles.topRow}>
                         <View style={[styles.iconBox, { backgroundColor: stat.iconColor + "20" }]}>
                             <IconSymbol name={stat.icon as any} size={18} color={stat.iconColor} />
                         </View>
-                        <Text style={styles.label}>{stat.label}</Text>
+                        <Text style={[styles.label, { color: isDark ? "#9ca3af" : "#6b7280" }]}>{stat.label}</Text>
                     </View>
-                    <Text style={styles.number}>{stat.number}</Text>
+                    <Text style={[styles.number, { color: isDark ? "#e5e7eb" : "#111827" }]}>{stat.number}</Text>
                     <Text style={styles.desc}>{stat.desc}</Text>
                 </View>
             ))}
@@ -44,7 +53,6 @@ const styles = StyleSheet.create({
 
     card: {
         width: "48%",
-        backgroundColor: "#ffffff",
         borderRadius: 16,
         padding: 16,
         marginBottom: 14,
@@ -73,14 +81,12 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 12,
         fontWeight: "600",
-        color: "#6b7280",
         flex: 1,
     },
 
     number: {
         fontSize: 24,
         fontWeight: "800",
-        color: "#111827",
         marginBottom: 6,
     },
 

@@ -1,5 +1,7 @@
 import EventCard from "@/components/Card/EventCard";
 import EventForm from "@/components/EventForm";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
@@ -62,6 +64,8 @@ function renderTime(time: any): string {
 const filterTags = ["All", "Upcoming", "Live", "Ended"];
 
 export default function Events() {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === "dark";
     const [activeFilter, setActiveFilter] = useState("All");
     const [search, setSearch] = useState("");
     const [events, setEvents] = useState<any[]>([]);
@@ -106,18 +110,25 @@ export default function Events() {
     });
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Events</Text>
-                    <Text style={styles.headerSubtitle}>Manage your upcoming events</Text>
+                    <Text style={[styles.headerTitle, { color: isDark ? "#e5e7eb" : "#111827" }]}>Events</Text>
+                    <Text style={[styles.headerSubtitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>
+                        Manage your upcoming events
+                    </Text>
                 </View>
 
-                <View style={styles.searchBarWrapper}>
+                <View
+                    style={[
+                        styles.searchBarWrapper,
+                        { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                    ]}
+                >
                     <Ionicons
                         name="search"
                         size={18}
@@ -125,9 +136,9 @@ export default function Events() {
                         style={{ marginLeft: 10, marginRight: 6 }}
                     />
                     <TextInput
-                        style={styles.searchBar}
+                        style={[styles.searchBar, { color: isDark ? "#e5e7eb" : "#111827" }]}
                         placeholder="Search events, workshops..."
-                        placeholderTextColor="#a1a1aa"
+                        placeholderTextColor={isDark ? "#6b7280" : "#a1a1aa"}
                         value={search}
                         onChangeText={setSearch}
                         returnKeyType="search"
@@ -141,12 +152,14 @@ export default function Events() {
                             onPress={() => setActiveFilter(tag)}
                             style={[
                                 styles.filterTag,
+                                { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e5e7eb" },
                                 activeFilter === tag && styles.filterTagActive,
                             ]}
                         >
                             <Text
                                 style={[
                                     styles.filterTagText,
+                                    { color: isDark ? "#9ca3af" : "#6b7280" },
                                     activeFilter === tag && styles.filterTagTextActive,
                                 ]}
                             >
@@ -157,7 +170,7 @@ export default function Events() {
                 </View>
 
                 {loading ? (
-                    <Text style={{ textAlign: "center", marginTop: 32 }}>
+                    <Text style={{ textAlign: "center", marginTop: 32, color: isDark ? "#9ca3af" : "#111827" }}>
                         Loading events...
                     </Text>
                 ) : (
@@ -224,7 +237,18 @@ export default function Events() {
                 }}
             >
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={{ width: '100%', backgroundColor: '#fff', borderRadius: 18, padding: 16, marginTop: 90, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}>
+                    <View
+                        style={{
+                            width: '100%',
+                            backgroundColor: isDark ? "#0b1220" : "#fff",
+                            borderRadius: 18,
+                            padding: 16,
+                            marginTop: 90,
+                            shadowColor: '#000',
+                            shadowOpacity: isDark ? 0.25 : 0.1,
+                            shadowRadius: 10,
+                        }}
+                    >
                         <EventForm
                             event={editingEvent}
                             onSuccess={() => {
@@ -258,7 +282,6 @@ export default function Events() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#eef2ff",
     },
 
     scrollView: {
@@ -278,13 +301,11 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 28,
         fontWeight: "800",
-        color: "#111827",
         marginBottom: 4,
     },
 
     headerSubtitle: {
         fontSize: 14,
-        color: "#6b7280",
     },
 
     filterContainer: {
@@ -297,9 +318,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 20,
-        backgroundColor: "#fff",
         borderWidth: 1,
-        borderColor: "#e5e7eb",
     },
 
     filterTagActive: {
@@ -310,7 +329,6 @@ const styles = StyleSheet.create({
     filterTagText: {
         fontSize: 12,
         fontWeight: "600",
-        color: "#6b7280",
     },
 
     filterTagTextActive: {
@@ -322,7 +340,6 @@ const styles = StyleSheet.create({
     searchBarWrapper: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#fff",
         borderRadius: 18,
         marginBottom: 18,
         marginTop: 2,

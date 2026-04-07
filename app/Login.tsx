@@ -3,8 +3,12 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { auth } from "../firebase";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function LoginScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,23 +25,39 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={styles.innerBox}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to your account</Text>
+      <View style={[styles.innerBox, { backgroundColor: isDark ? "#0b1220" : "#fff" }]}>
+        <Text style={[styles.title, { color: isDark ? "#e5e7eb" : "#111827" }]}>Welcome Back</Text>
+        <Text style={[styles.subtitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>Sign in to your account</Text>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? "#0f172a" : "#f1f5f9",
+              borderColor: isDark ? "#1f2937" : "#e5e7eb",
+              color: isDark ? "#e5e7eb" : "#111827",
+            },
+          ]}
           placeholder="Email"
+          placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
         />
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? "#0f172a" : "#f1f5f9",
+              borderColor: isDark ? "#1f2937" : "#e5e7eb",
+              color: isDark ? "#e5e7eb" : "#111827",
+            },
+          ]}
           placeholder="Password"
+          placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -59,12 +79,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8fafc",
   },
   innerBox: {
     width: "100%",
     maxWidth: 380,
-    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 28,
     shadowColor: "#000",
@@ -77,26 +95,21 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#111827",
     marginBottom: 8,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: "#6b7280",
     marginBottom: 24,
     textAlign: "center",
   },
   input: {
     height: 48,
-    borderColor: "#e5e7eb",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 14,
     marginBottom: 16,
-    backgroundColor: "#f1f5f9",
     fontSize: 16,
-    color: "#111827",
   },
   button: {
     backgroundColor: "#2563eb",

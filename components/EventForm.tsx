@@ -1,4 +1,5 @@
 import { db } from "@/firebase";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
@@ -109,6 +110,8 @@ function parseEventTime(rawTime: any, baseDate: Date | null): Date | null {
 
 
 export default function EventForm({ onSuccess, onCancel, event }: EventFormProps) {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === "dark";
     const parsedDateFromDate = parseEventDate(event?.date);
     const parsedDateFromTime = parseEventDate(event?.time);
     const parsedInitialDate = parsedDateFromDate || parsedDateFromTime;
@@ -254,24 +257,43 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-            <View style={styles.container}>
+        <ScrollView
+            contentContainerStyle={[
+                styles.scrollContainer,
+                { backgroundColor: isDark ? "#0b1220" : "#fff" },
+            ]}
+            showsVerticalScrollIndicator={false}
+        >
+            <View
+                style={[
+                    styles.container,
+                    { backgroundColor: isDark ? "#0b1220" : "#fff", shadowOpacity: isDark ? 0.2 : 0.12 },
+                ]}
+            >
                 <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: -10 }}>
                     <Pressable onPress={onCancel} style={{ padding: 8 }} accessibilityLabel="Close">
                         <Ionicons name="close" size={26} color="#6366f1" />
                     </Pressable>
                 </View>
-                <Text style={styles.title}>{event ? 'Edit Event' : 'Create New Event'}</Text>
+                <Text style={[styles.title, { color: isDark ? "#e5e7eb" : "#222" }]}>
+                    {event ? 'Edit Event' : 'Create New Event'}
+                </Text>
                 <Text style={styles.sectionHeading}>Event Details</Text>
-                <View style={styles.sectionCard}>
+                <View style={[styles.sectionCard, { backgroundColor: isDark ? "#0f172a" : "#f8fafc" }]}>
                     <View style={styles.section}>
                         <Text style={styles.label}>Event Title</Text>
                         <TextInput
                             style={[
                                 styles.input,
+                                {
+                                    backgroundColor: isDark ? "#0b1220" : "#fff",
+                                    borderColor: isDark ? "#1f2937" : "#e5e7eb",
+                                    color: isDark ? "#e5e7eb" : "#111827",
+                                },
                                 focusedInput === 'title' && styles.inputFocused
                             ]}
                             placeholder="Enter event title"
+                            placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={title}
                             onChangeText={setTitle}
                             onFocus={() => setFocusedInput('title')}
@@ -284,6 +306,10 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             <Pressable
                                 style={[
                                     styles.inputBtn,
+                                    {
+                                        backgroundColor: isDark ? "#0b1220" : "#fff",
+                                        borderColor: isDark ? "#1f2937" : "#e5e7eb",
+                                    },
                                     focusedInput === 'date' && styles.inputFocused
                                 ]}
                                 onPress={() => {
@@ -293,7 +319,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 }}
                                 onBlur={() => setFocusedInput(null)}
                             >
-                                <Text style={styles.inputText}>
+                                <Text style={[styles.inputText, { color: isDark ? "#e5e7eb" : "#222" }]}>
                                     {date ? date.toLocaleDateString() : "Select Date"}
                                 </Text>
                             </Pressable>
@@ -303,6 +329,10 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             <Pressable
                                 style={[
                                     styles.inputBtn,
+                                    {
+                                        backgroundColor: isDark ? "#0b1220" : "#fff",
+                                        borderColor: isDark ? "#1f2937" : "#e5e7eb",
+                                    },
                                     focusedInput === 'time' && styles.inputFocused
                                 ]}
                                 onPress={() => {
@@ -312,7 +342,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 }}
                                 onBlur={() => setFocusedInput(null)}
                             >
-                                <Text style={styles.inputText}>
+                                <Text style={[styles.inputText, { color: isDark ? "#e5e7eb" : "#222" }]}>
                                     {time
                                         ? time.toLocaleTimeString([], {
                                             hour: "2-digit",
@@ -370,9 +400,15 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                         <TextInput
                             style={[
                                 styles.input,
+                                {
+                                    backgroundColor: isDark ? "#0b1220" : "#fff",
+                                    borderColor: isDark ? "#1f2937" : "#e5e7eb",
+                                    color: isDark ? "#e5e7eb" : "#111827",
+                                },
                                 focusedInput === 'location' && styles.inputFocused
                             ]}
                             placeholder="Enter location"
+                            placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={location}
                             onChangeText={setLocation}
                             onFocus={() => setFocusedInput('location')}
@@ -384,17 +420,32 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                         <TextInput
                             style={[
                                 styles.input,
+                                {
+                                    backgroundColor: isDark ? "#0b1220" : "#fff",
+                                    borderColor: isDark ? "#1f2937" : "#e5e7eb",
+                                    color: isDark ? "#e5e7eb" : "#111827",
+                                },
                                 focusedInput === 'imageUrl' && styles.inputFocused
                             ]}
                             placeholder="Paste image URL"
+                            placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={imageUrl}
                             onChangeText={setImageUrl}
                             onFocus={() => setFocusedInput('imageUrl')}
                             onBlur={() => setFocusedInput(null)}
                         />
-                        <Pressable style={[styles.inputBtn, { marginTop: 8 }]} onPress={handlePickImage}>
+                        <Pressable
+                            style={[
+                                styles.inputBtn,
+                                { marginTop: 8 },
+                                { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#1f2937" : "#e5e7eb" },
+                            ]}
+                            onPress={handlePickImage}
+                        >
                             <Ionicons name="image-outline" size={18} color="#6366f1" />
-                            <Text style={styles.inputText}>{uploadImage ? "Image Selected" : "Upload Image"}</Text>
+                            <Text style={[styles.inputText, { color: isDark ? "#e5e7eb" : "#222" }]}>
+                                {uploadImage ? "Image Selected" : "Upload Image"}
+                            </Text>
                         </Pressable>
                         {(uploadImage || imageUrl) ? (
                             <View style={{ alignItems: "center", marginTop: 8 }}>
@@ -439,15 +490,21 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                 </View>
 
                 <Text style={styles.sectionHeading}>Description</Text>
-                <View style={styles.sectionCard}>
+                <View style={[styles.sectionCard, { backgroundColor: isDark ? "#0f172a" : "#f8fafc" }]}>
                     <View style={styles.section}>
                         <TextInput
                             style={[
                                 styles.input,
                                 { height: 80, textAlignVertical: 'top' },
+                                {
+                                    backgroundColor: isDark ? "#0b1220" : "#fff",
+                                    borderColor: isDark ? "#1f2937" : "#e5e7eb",
+                                    color: isDark ? "#e5e7eb" : "#111827",
+                                },
                                 focusedInput === 'description' && styles.inputFocused
                             ]}
                             placeholder="Enter event description"
+                            placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={description}
                             onChangeText={setDescription}
                             multiline
@@ -458,7 +515,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                 </View>
 
                 <Text style={styles.sectionHeading}>Organizer Info</Text>
-                <View style={styles.sectionCard}>
+                <View style={[styles.sectionCard, { backgroundColor: isDark ? "#0f172a" : "#f8fafc" }]}>
                     <View style={styles.section}>
                         <Text style={styles.label}>Organizer</Text>
                         <TextInput
@@ -467,6 +524,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 focusedInput === 'organizer' && styles.inputFocused
                             ]}
                             placeholder="Enter organizer name"
+                            placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={organizer}
                             onChangeText={setOrganizer}
                             onFocus={() => setFocusedInput('organizer')}
@@ -481,6 +539,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 focusedInput === 'contact' && styles.inputFocused
                             ]}
                             placeholder="Enter contact info"
+                            placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={contact}
                             onChangeText={setContact}
                             onFocus={() => setFocusedInput('contact')}
@@ -495,6 +554,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 focusedInput === 'website' && styles.inputFocused
                             ]}
                             placeholder="Enter website URL"
+                            placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={website}
                             onChangeText={setWebsite}
                             autoCapitalize="none"
@@ -505,7 +565,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                 </View>
 
                 <Text style={styles.sectionHeading}>Additional Info</Text>
-                <View style={styles.sectionCard}>
+                <View style={[styles.sectionCard, { backgroundColor: isDark ? "#0f172a" : "#f8fafc" }]}>
                     <View style={styles.rowWrap}>
                         <View style={[styles.section, { flex: 1, marginRight: 8 }]}>
                             <Text style={styles.label}>Price (PKR)</Text>
@@ -515,6 +575,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                     focusedInput === 'price' && styles.inputFocused
                                 ]}
                                 placeholder="Enter price in PKR"
+                                placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                                 value={price}
                                 onChangeText={setPrice}
                                 keyboardType="numeric"
@@ -530,6 +591,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                     focusedInput === 'tags' && styles.inputFocused
                                 ]}
                                 placeholder="e.g. MUSIC, ART, TECH"
+                                placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                                 value={tags}
                                 onChangeText={setTags}
                                 onFocus={() => setFocusedInput('tags')}
@@ -575,12 +637,10 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
 
 const styles = StyleSheet.create({
     scrollContainer: {
-        backgroundColor: '#fff',
         minHeight: '100%',
     },
     container: {
         width: "100%",
-        backgroundColor: "#fff",
         borderRadius: 28,
         shadowColor: "#e0e7ef",
         shadowOffset: { width: 0, height: 8 },
@@ -658,11 +718,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         fontSize: 16,
     },
-    inputText: {
-        color: "#222",
-        fontSize: 16,
-        marginLeft: 8,
-    },
+    inputText: { color: "#222", fontSize: 16, marginLeft: 8 },
     pickerWrap: {
         marginTop: 6,
         backgroundColor: "#f8fafc",
