@@ -1,10 +1,11 @@
 import { router } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { auth } from "../firebase";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { toFriendlyError } from "@/utils/errors";
 
 export default function LoginScreen() {
   const colorScheme = useColorScheme();
@@ -12,14 +13,19 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleLogin = async () => {
     setError("");
     try {
+      setSubmitting(true);
       await signInWithEmailAndPassword(auth, email, password);
       router.replace("/profile");
     } catch (err: any) {
-      setError(err.message || "Login failed");
+      const friendly = toFriendlyError(err, "Login failed");
+      setError(friendly.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -46,6 +52,10 @@ export default function LoginScreen() {
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
+          accessibilityLabel="Email"
+          textContentType="emailAddress"
+          autoComplete="email"
+          editable={!submitting}
         />
         <TextInput
           style={[
@@ -61,12 +71,27 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          accessibilityLabel="Password"
+          textContentType="password"
+          autoComplete="password"
+          editable={!submitting}
         />
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Pressable style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
+        <Pressable
+          style={[styles.button, submitting && { opacity: 0.7 }]}
+          onPress={handleLogin}
+          disabled={submitting}
+          accessibilityRole="button"
+          accessibilityLabel={submitting ? "Logging in" : "Login"}
+        >
+          {submitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
         </Pressable>
-        <Pressable onPress={() => router.push("/Register")}> 
+        <Pressable
+          onPress={() => router.push("/Register")}
+          disabled={submitting}
+          accessibilityRole="button"
+          accessibilityLabel="Go to registration"
+        > 
           <Text style={styles.link}>Don&apos;t have an account? Register</Text>
         </Pressable>
       </View>

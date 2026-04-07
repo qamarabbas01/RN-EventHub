@@ -2,12 +2,14 @@ import EventCard from "@/components/Card/EventCard";
 import EventForm from "@/components/EventForm";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { toFriendlyError } from "@/utils/errors";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
+    ActivityIndicator,
     FlatList,
     Modal,
     Pressable,
@@ -70,12 +72,14 @@ export default function Events() {
     const [search, setSearch] = useState("");
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [editingEvent, setEditingEvent] = useState<any | null>(null);
     const router = useRouter();
 
     const fetchEvents = async () => {
         setLoading(true);
+        setLoadError(null);
         try {
             const querySnapshot = await getDocs(collection(db, "events"));
             const eventsData = querySnapshot.docs.map((doc) => ({
@@ -84,7 +88,8 @@ export default function Events() {
             }));
             setEvents(eventsData);
         } catch (error) {
-            console.error("Error fetching events:", error);
+            const friendly = toFriendlyError(error, "Couldn’t load events");
+            setLoadError(friendly.message);
         }
         setLoading(false);
     };
@@ -142,6 +147,7 @@ export default function Events() {
                         value={search}
                         onChangeText={setSearch}
                         returnKeyType="search"
+                        accessibilityLabel="Search events"
                     />
                 </View>
 
@@ -155,6 +161,9 @@ export default function Events() {
                                 { backgroundColor: isDark ? "#0b1220" : "#fff", borderColor: isDark ? "#111827" : "#e5e7eb" },
                                 activeFilter === tag && styles.filterTagActive,
                             ]}
+                            accessibilityRole="button"
+                            accessibilityLabel={`Filter: ${tag}`}
+                            accessibilityState={{ selected: activeFilter === tag }}
                         >
                             <Text
                                 style={[
@@ -170,9 +179,12 @@ export default function Events() {
                 </View>
 
                 {loading ? (
-                    <Text style={{ textAlign: "center", marginTop: 32, color: isDark ? "#9ca3af" : "#111827" }}>
-                        Loading events...
-                    </Text>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 32 }}>
+                        <ActivityIndicator color={isDark ? "#a5b4fc" : "#4f46e5"} />
+                        <Text style={{ marginTop: 10, textAlign: "center", color: isDark ? "#9ca3af" : "#111827", fontWeight: '600' }}>
+                            Loading events…
+                        </Text>
+                    </View>
                 ) : (
                     <FlatList
                         data={filteredEvents}
@@ -272,6 +284,8 @@ export default function Events() {
                     setModalVisible(true);
                 }}
                 activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel="Create a new event"
             >
                 <Ionicons name="add" size={32} color="#fff" />
             </TouchableOpacity>

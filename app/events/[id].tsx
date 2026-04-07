@@ -1,12 +1,14 @@
 import EventForm from '@/components/EventForm';
+import CenteredState from '@/components/ui/CenteredState';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { toFriendlyError } from '@/utils/errors';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { deleteDoc, doc, getDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { Alert, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { db } from '../../firebase';
 
 export default function EventDetails() {
@@ -81,7 +83,8 @@ export default function EventDetails() {
         }
       })
       .catch((err) => {
-        setError("Failed to load event");
+        const friendly = toFriendlyError(err, 'Couldn’t load event');
+        setError(friendly.message);
         setEvent(null);
       })
       .finally(() => setLoading(false));
@@ -99,25 +102,38 @@ export default function EventDetails() {
   };
 
   if (loading) {
-    return (
-      <View style={[styles.centered, { backgroundColor: Colors[colorScheme].background }]}>
-        <Text style={[styles.notFound, { color: isDark ? "#e5e7eb" : "#991b1b" }]}>Loading event...</Text>
-      </View>
-    );
+    return <CenteredState loading title="Loading event" message="Please wait…" />;
   }
   if (error) {
     return (
-      <View style={[styles.centered, { backgroundColor: Colors[colorScheme].background }]}>
-        <Text style={styles.notFound}>{error}</Text>
-      </View>
+      <CenteredState
+        title="Couldn’t load event"
+        message={error}
+        actionLabel="Retry"
+        onActionPress={() => {
+          if (!id) return;
+          setLoading(true);
+          setError("");
+          getDoc(doc(db, "events", String(id)))
+            .then((docSnap) => {
+              if (docSnap.exists()) {
+                setEvent({ id, ...docSnap.data() });
+              } else {
+                setEvent(null);
+              }
+            })
+            .catch((err) => {
+              const friendly = toFriendlyError(err, 'Couldn’t load event');
+              setError(friendly.message);
+              setEvent(null);
+            })
+            .finally(() => setLoading(false));
+        }}
+      />
     );
   }
   if (!event) {
-    return (
-      <View style={[styles.centered, { backgroundColor: Colors[colorScheme].background }]}>
-        <Text style={[styles.notFound, { color: isDark ? "#e5e7eb" : "#991b1b" }]}>Event not found</Text>
-      </View>
-    );
+    return <CenteredState title="Event not found" message="This event may have been removed." actionLabel="Go back" onActionPress={() => router.back()} />;
   }
 
   const statusColors = {
@@ -131,7 +147,13 @@ export default function EventDetails() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.imageWrapper}>
           <Image source={{ uri: safe(event.imageUrl, 'https://via.placeholder.com/800x260?text=No+Image') }} style={styles.image} />
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            activeOpacity={0.85}
+          >
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
           {event.status && statusColors[event.status as keyof typeof statusColors] && (
@@ -205,6 +227,8 @@ export default function EventDetails() {
             <Pressable
               style={{ backgroundColor: isDark ? "#111827" : '#f3f4f6', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center', marginRight: 8 }}
               onPress={() => setEditModal(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Edit event"
             >
               <Ionicons name="pencil" size={18} color="#6366f1" style={{ marginRight: 6 }} />
               <Text style={{ color: '#6366f1', fontWeight: '700', fontSize: 15 }}>Edit</Text>
@@ -232,6 +256,8 @@ export default function EventDetails() {
                   ]
                 );
               }}
+              accessibilityRole="button"
+              accessibilityLabel="Delete event"
             >
               <Ionicons name="trash" size={18} color="#ef4444" style={{ marginRight: 6 }} />
               <Text style={{ color: '#ef4444', fontWeight: '700', fontSize: 15 }}>Delete</Text>

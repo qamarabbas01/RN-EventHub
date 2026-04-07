@@ -1,11 +1,13 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { toFriendlyError } from "@/utils/errors";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Animated,
   Image,
   ScrollView,
@@ -55,6 +57,7 @@ export default function HomeScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -67,6 +70,7 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
+      setLoadError(null);
       try {
         const querySnapshot = await getDocs(collection(db, "events"));
         const eventsData = querySnapshot.docs.map((doc) => ({
@@ -75,7 +79,8 @@ export default function HomeScreen() {
         })) as Event[];
         setEvents(eventsData);
       } catch (error) {
-        console.error("Error fetching events:", error);
+        const friendly = toFriendlyError(error, 'Couldn’t load events');
+        setLoadError(friendly.message);
       }
       setLoading(false);
     };
@@ -106,7 +111,7 @@ export default function HomeScreen() {
               <TouchableOpacity
                 style={[
                   styles.headerIconBtn,
-                  { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                  { backgroundColor: isDark ? "#f5f5f5" : "#fff" },
                 ]}
               >
                 <Link href="/notification">
@@ -118,10 +123,15 @@ export default function HomeScreen() {
                   styles.headerIconBtn,
                   { backgroundColor: isDark ? "#0b1220" : "#fff" },
                 ]}
+                accessibilityRole="imagebutton"
+                accessibilityLabel="Open profile"
+                activeOpacity={0.85}
               >
                 <Image
                   source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
                   style={styles.profilePic}
+                  accessibilityIgnoresInvertColors
+                  accessibilityLabel="Profile photo"
                 />
               </TouchableOpacity>
             </View>
@@ -147,6 +157,7 @@ export default function HomeScreen() {
                 ]}
                 placeholder="Search events, concerts, workshops..."
                 placeholderTextColor={isDark ? "#6b7280" : "#d1d5db"}
+                accessibilityLabel="Search events"
               />
             </View>
           </View>
@@ -179,7 +190,12 @@ export default function HomeScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.featuredRow}>
               {loading ? (
-                <Text style={{ color: isDark ? "#9ca3af" : "#111827" }}>Loading...</Text>
+                <View style={{ width: 200, height: 110, alignItems: 'center', justifyContent: 'center' }}>
+                  <ActivityIndicator color={isDark ? "#a5b4fc" : "#4f46e5"} />
+                  <Text style={{ marginTop: 8, color: isDark ? "#9ca3af" : "#111827", fontWeight: '600' }}>
+                    Loading events…
+                  </Text>
+                </View>
               ) : (
                 events
                   .filter(e => e.featured)
@@ -217,7 +233,12 @@ export default function HomeScreen() {
             Upcoming Events
           </Text>
           {loading ? (
-            <Text style={{ color: isDark ? "#9ca3af" : "#111827" }}>Loading...</Text>
+            <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+              <ActivityIndicator color={isDark ? "#a5b4fc" : "#4f46e5"} />
+              <Text style={{ marginTop: 8, color: isDark ? "#9ca3af" : "#111827", fontWeight: '600' }}>
+                Loading events…
+              </Text>
+            </View>
           ) : (
             events
               .filter(e => isUpcoming(e.date))
@@ -250,7 +271,12 @@ export default function HomeScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.featuredRow}>
               {loading ? (
-                <Text style={{ color: isDark ? "#9ca3af" : "#111827" }}>Loading...</Text>
+                <View style={{ width: 220, height: 120, alignItems: 'center', justifyContent: 'center' }}>
+                  <ActivityIndicator color={isDark ? "#a5b4fc" : "#4f46e5"} />
+                  <Text style={{ marginTop: 8, color: isDark ? "#9ca3af" : "#111827", fontWeight: '600' }}>
+                    Loading events…
+                  </Text>
+                </View>
               ) : (
                 events
                   .filter(e => isNearby(e.location))
@@ -347,7 +373,6 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   headerIconBtn: {
-    backgroundColor: "#fff",
     borderRadius: 50,
     width: 44,
     height: 44,
