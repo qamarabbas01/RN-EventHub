@@ -38,7 +38,7 @@ function RootLayoutInner() {
           options={{ headerShown: false }}
         />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }
