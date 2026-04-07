@@ -1,7 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface Event {
   title: string;
@@ -87,6 +87,10 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     paddingLeft: 0,
     paddingRight: 0,
+    shadowColor: "#63f23",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
   },
   sectionTitle: {
     fontSize: 16,

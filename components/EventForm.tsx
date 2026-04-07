@@ -290,7 +290,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                     borderColor: isDark ? "#1f2937" : "#e5e7eb",
                                     color: isDark ? "#e5e7eb" : "#111827",
                                 },
-                                focusedInput === 'title' && styles.inputFocused
                             ]}
                             placeholder="Enter event title"
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -310,7 +309,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                         backgroundColor: isDark ? "#0b1220" : "#fff",
                                         borderColor: isDark ? "#1f2937" : "#e5e7eb",
                                     },
-                                    focusedInput === 'date' && styles.inputFocused
                                 ]}
                                 onPress={() => {
                                     setShowDatePicker(true);
@@ -333,7 +331,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                         backgroundColor: isDark ? "#0b1220" : "#fff",
                                         borderColor: isDark ? "#1f2937" : "#e5e7eb",
                                     },
-                                    focusedInput === 'time' && styles.inputFocused
                                 ]}
                                 onPress={() => {
                                     setShowTimePicker(true);
@@ -405,7 +402,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                     borderColor: isDark ? "#1f2937" : "#e5e7eb",
                                     color: isDark ? "#e5e7eb" : "#111827",
                                 },
-                                focusedInput === 'location' && styles.inputFocused
                             ]}
                             placeholder="Enter location"
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -425,7 +421,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                     borderColor: isDark ? "#1f2937" : "#e5e7eb",
                                     color: isDark ? "#e5e7eb" : "#111827",
                                 },
-                                focusedInput === 'imageUrl' && styles.inputFocused
                             ]}
                             placeholder="Paste image URL"
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -461,14 +456,14 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                     </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, marginTop: 4 }}>
-                    <Text style={{ fontSize: 15, fontWeight: '600', color: '#6366f1', marginRight: 10 }}>Feature this event</Text>
+                    <Text style={{ fontSize: 15, fontWeight: '600', color: isDark ? "#e5e7eb" : "#222", marginRight: 10 }}>Feature this event</Text>
                     <Pressable
                         onPress={() => setFeatured((f: boolean) => !f)}
                         style={{
                             width: 44,
                             height: 26,
                             borderRadius: 13,
-                            backgroundColor: featured ? '#6366f1' : '#e5e7eb',
+                            backgroundColor: featured ? (isDark ? "#6366f1" : "#222") : (isDark ? "#e5e7eb" : "#f3f4f6"),
                             justifyContent: 'center',
                             padding: 2,
                         }}
@@ -479,9 +474,9 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             width: 22,
                             height: 22,
                             borderRadius: 11,
-                            backgroundColor: '#fff',
+                            backgroundColor: isDark ? "#0b1220" : "#fff",
                             marginLeft: featured ? 18 : 2,
-                            shadowColor: '#6366f1',
+                            shadowColor: isDark ? "#6366f1" : "#222",
                             shadowOffset: { width: 0, height: 1 },
                             shadowOpacity: 0.12,
                             shadowRadius: 2,
@@ -501,7 +496,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                     borderColor: isDark ? "#1f2937" : "#e5e7eb",
                                     color: isDark ? "#e5e7eb" : "#111827",
                                 },
-                                focusedInput === 'description' && styles.inputFocused
                             ]}
                             placeholder="Enter event description"
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -521,7 +515,9 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                         <TextInput
                             style={[
                                 styles.input,
-                                focusedInput === 'organizer' && styles.inputFocused
+                                { color: isDark ? "#e5e7eb" : "#111827" },
+                                { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                                { borderColor: isDark ? "#1f2937" : "#e5e7eb" },
                             ]}
                             placeholder="Enter organizer name"
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -536,7 +532,9 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                         <TextInput
                             style={[
                                 styles.input,
-                                focusedInput === 'contact' && styles.inputFocused
+                                { color: isDark ? "#e5e7eb" : "#111827" },
+                                { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                                { borderColor: isDark ? "#1f2937" : "#e5e7eb" },
                             ]}
                             placeholder="Enter contact info"
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -551,7 +549,9 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                         <TextInput
                             style={[
                                 styles.input,
-                                focusedInput === 'website' && styles.inputFocused
+                                { color: isDark ? "#e5e7eb" : "#111827" },
+                                { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                                { borderColor: isDark ? "#1f2937" : "#e5e7eb" },
                             ]}
                             placeholder="Enter website URL"
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -572,7 +572,9 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             <TextInput
                                 style={[
                                     styles.input,
-                                    focusedInput === 'price' && styles.inputFocused
+                                    { color: isDark ? "#e5e7eb" : "#111827" },
+                                    { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                                    { borderColor: isDark ? "#1f2937" : "#e5e7eb" },
                                 ]}
                                 placeholder="Enter price in PKR"
                                 placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -588,7 +590,9 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             <TextInput
                                 style={[
                                     styles.input,
-                                    focusedInput === 'tags' && styles.inputFocused
+                                    { color: isDark ? "#e5e7eb" : "#111827" },
+                                    { backgroundColor: isDark ? "#0b1220" : "#fff" },
+                                    { borderColor: isDark ? "#1f2937" : "#e5e7eb" },
                                 ]}
                                 placeholder="e.g. MUSIC, ART, TECH"
                                 placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
@@ -641,8 +645,6 @@ const styles = StyleSheet.create({
     },
     container: {
         width: "100%",
-        borderRadius: 28,
-        shadowColor: "#e0e7ef",
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.12,
         shadowRadius: 24,
@@ -695,7 +697,6 @@ const styles = StyleSheet.create({
         borderWidth: 1.5,
         borderRadius: 14,
         paddingHorizontal: 16,
-        backgroundColor: "#fff",
         fontSize: 16,
         marginBottom: 0,
     },

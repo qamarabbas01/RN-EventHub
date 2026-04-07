@@ -153,7 +153,7 @@ export default function HomeScreen() {
         </Animated.View>
 
         <View style={styles.sectionSpacing}>
-          <Text style={styles.sectionTitle}>Categories</Text>
+          <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>Categories</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.categoriesRow}>
               {eventCategories.map((cat) => (

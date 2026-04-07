@@ -1,7 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface Stat {
     icon: string;
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 16,
         justifyContent: "space-between",
+        gap: 14,
     },
 
     card: {
@@ -56,11 +57,10 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 16,
         marginBottom: 14,
-        shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        shadowOffset: { width: 0, height: 4 },
-        elevation: 3,
+        shadowColor: "#63f23",
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        shadowOffset: { width: 0, height: 2 },
     },
 
     topRow: {
