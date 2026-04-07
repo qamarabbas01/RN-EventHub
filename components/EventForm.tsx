@@ -141,7 +141,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
     const [uploadImage, setUploadImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [focusedInput, setFocusedInput] = useState<string | null>(null);
     const [featured, setFeatured] = useState(event?.featured || false);
 
     const isEdit = !!event;
@@ -295,8 +294,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={title}
                             onChangeText={setTitle}
-                            onFocus={() => setFocusedInput('title')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                     </View>
                     <View style={styles.rowWrap}>
@@ -313,9 +310,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 onPress={() => {
                                     setShowDatePicker(true);
                                     setShowTimePicker(false);
-                                    setFocusedInput('date');
                                 }}
-                                onBlur={() => setFocusedInput(null)}
                             >
                                 <Text style={[styles.inputText, { color: isDark ? "#e5e7eb" : "#222" }]}>
                                     {date ? date.toLocaleDateString() : "Select Date"}
@@ -335,9 +330,7 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 onPress={() => {
                                     setShowTimePicker(true);
                                     setShowDatePicker(false);
-                                    setFocusedInput('time');
                                 }}
-                                onBlur={() => setFocusedInput(null)}
                             >
                                 <Text style={[styles.inputText, { color: isDark ? "#e5e7eb" : "#222" }]}>
                                     {time
@@ -407,28 +400,10 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={location}
                             onChangeText={setLocation}
-                            onFocus={() => setFocusedInput('location')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                     </View>
                     <View style={styles.section}>
-                        <Text style={styles.label}>Image (optional)</Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                {
-                                    backgroundColor: isDark ? "#0b1220" : "#fff",
-                                    borderColor: isDark ? "#1f2937" : "#e5e7eb",
-                                    color: isDark ? "#e5e7eb" : "#111827",
-                                },
-                            ]}
-                            placeholder="Paste image URL"
-                            placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
-                            value={imageUrl}
-                            onChangeText={setImageUrl}
-                            onFocus={() => setFocusedInput('imageUrl')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
+                        <Text style={styles.label}>Image</Text>
                         <Pressable
                             style={[
                                 styles.inputBtn,
@@ -502,8 +477,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             value={description}
                             onChangeText={setDescription}
                             multiline
-                            onFocus={() => setFocusedInput('description')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                     </View>
                 </View>
@@ -523,8 +496,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={organizer}
                             onChangeText={setOrganizer}
-                            onFocus={() => setFocusedInput('organizer')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                     </View>
                     <View style={styles.section}>
@@ -540,8 +511,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                             value={contact}
                             onChangeText={setContact}
-                            onFocus={() => setFocusedInput('contact')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                     </View>
                     <View style={styles.section}>
@@ -558,8 +527,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                             value={website}
                             onChangeText={setWebsite}
                             autoCapitalize="none"
-                            onFocus={() => setFocusedInput('website')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                     </View>
                 </View>
@@ -581,8 +548,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 value={price}
                                 onChangeText={setPrice}
                                 keyboardType="numeric"
-                                onFocus={() => setFocusedInput('price')}
-                                onBlur={() => setFocusedInput(null)}
                             />
                         </View>
                         <View style={[styles.section, { flex: 1, marginLeft: 8 }]}>
@@ -598,8 +563,6 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                                 placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
                                 value={tags}
                                 onChangeText={setTags}
-                                onFocus={() => setFocusedInput('tags')}
-                                onBlur={() => setFocusedInput(null)}
                             />
                         </View>
                     </View>
