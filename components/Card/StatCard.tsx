@@ -1,3 +1,4 @@
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import React, { useRef } from "react";
 import {
     Animated,
@@ -7,7 +8,6 @@ import {
     View,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface TrendData {
     value: string;

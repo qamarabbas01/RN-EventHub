@@ -1,8 +1,8 @@
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface EventCardProps {
   id: string;
