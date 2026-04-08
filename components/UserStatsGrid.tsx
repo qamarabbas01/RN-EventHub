@@ -1,7 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface Stat {
   icon: string;

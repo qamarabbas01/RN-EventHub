@@ -1,11 +1,11 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { toFriendlyError } from "@/utils/errors";
 import { router } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { auth } from "../firebase";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { toFriendlyError } from "@/utils/errors";
 
 export default function LoginScreen() {
   const colorScheme = useColorScheme();

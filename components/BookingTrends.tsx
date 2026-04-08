@@ -1,7 +1,7 @@
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 const chartWidth = 700;
 
