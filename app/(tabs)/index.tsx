@@ -3,13 +3,14 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { toFriendlyError } from "@/utils/errors";
 import { LinearGradient } from 'expo-linear-gradient';
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -183,6 +184,7 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
+        {/* Featured Events */}
         <View style={styles.sectionSpacing}>
           <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
             Featured Events
@@ -200,12 +202,15 @@ export default function HomeScreen() {
                 events
                   .filter(e => e.featured)
                   .map((event, idx) => (
-                    <View
+                    <Pressable
                       key={event.id || idx}
                       style={[
                         styles.featuredCard,
                         { backgroundColor: isDark ? "#0b1220" : "#fff" },
                       ]}
+                      onPress={() => {
+                        router.push(`/events/${event.id}`);
+                      }}
                     >
                       <Image source={{ uri: event.imageUrl || event.image }} style={styles.featuredImg} />
                       <LinearGradient
@@ -221,13 +226,14 @@ export default function HomeScreen() {
                         </Text>
                         <Text style={styles.featuredPrice}>{event.price}</Text>
                       </View>
-                    </View>
+                    </Pressable>
                   ))
               )}
             </View>
           </ScrollView>
         </View>
 
+        {/* Upcoming Events*/}
         <View style={styles.sectionSpacing}>
           <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
             Upcoming Events
@@ -243,12 +249,17 @@ export default function HomeScreen() {
             events
               .filter(e => isUpcoming(e.date))
               .map((event, idx) => (
-                <View
+                <Pressable
                   key={event.id || idx}
+                  onPress={() => {
+                    router.push(`/events/${event.id}`);
+                  }}
                   style={[
                     styles.upcomingCard,
                     { backgroundColor: isDark ? "#0b1220" : "#fff" },
                   ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`View details for ${event.title}`}
                 >
                   <View style={styles.upcomingAccent} />
                   <View style={styles.upcomingContent}>
@@ -259,11 +270,12 @@ export default function HomeScreen() {
                       {event.date} • {event.location}
                     </Text>
                   </View>
-                </View>
+                </Pressable>
               ))
           )}
         </View>
 
+        {/* Events Near You */}
         <View style={styles.sectionSpacing}>
           <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
             Events Near You
@@ -281,12 +293,15 @@ export default function HomeScreen() {
                 events
                   .filter(e => isNearby(e.location))
                   .map((event, idx) => (
-                    <View
+                    <Pressable
                       key={event.id || idx}
                       style={[
                         styles.nearbyCard,
                         { backgroundColor: isDark ? "#0b1220" : "#fff" },
                       ]}
+                      onPress={() => {
+                        router.push(`/events/${event.id}`);
+                      }}
                     >
                       <Image source={{ uri: event.imageUrl || event.image }} style={styles.nearbyImg} />
                       <View style={styles.nearbyContent}>
@@ -297,7 +312,7 @@ export default function HomeScreen() {
                           {event.location}
                         </Text>
                       </View>
-                    </View>
+                    </Pressable>
                   ))
               )}
             </View>
