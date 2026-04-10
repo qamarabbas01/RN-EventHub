@@ -184,7 +184,6 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-        {/* Featured Events */}
         <View style={styles.sectionSpacing}>
           <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
             Featured Events
@@ -233,7 +232,6 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-        {/* Upcoming Events*/}
         <View style={styles.sectionSpacing}>
           <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
             Upcoming Events
@@ -275,7 +273,6 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* Events Near You */}
         <View style={styles.sectionSpacing}>
           <Text style={[styles.sectionTitle, { color: isDark ? "#e5e7eb" : "#000" }]}>
             Events Near You
