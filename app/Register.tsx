@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { toFriendlyError } from "@/utils/errors";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
@@ -19,13 +20,24 @@ import { auth } from "../firebase";
 export default function RegisterScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const handleRegister = async () => {
     setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     try {
       setSubmitting(true);
       await createUserWithEmailAndPassword(auth, email, password);
@@ -40,68 +52,159 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={[styles.innerBox, { backgroundColor: isDark ? "#0b1220" : "#fff" }]}>
-        <Text style={[styles.title, { color: isDark ? "#e5e7eb" : "#111827" }]}>Create Account</Text>
-        <Text style={[styles.subtitle, { color: isDark ? "#9ca3af" : "#6b7280" }]}>Sign up to get started</Text>
-        <TextInput
-          style={[
-            styles.input,
-            {
-              backgroundColor: isDark ? "#0f172a" : "#f1f5f9",
-              borderColor: isDark ? "#1f2937" : "#e5e7eb",
-              color: isDark ? "#e5e7eb" : "#111827",
-            },
-          ]}
-          placeholder="Email"
-          placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          accessibilityLabel="Email"
-          textContentType="emailAddress"
-          autoComplete="email"
-          editable={!submitting}
-        />
-        <TextInput
-          style={[
-            styles.input,
-            {
-              backgroundColor: isDark ? "#0f172a" : "#f1f5f9",
-              borderColor: isDark ? "#1f2937" : "#e5e7eb",
-              color: isDark ? "#e5e7eb" : "#111827",
-            },
-          ]}
-          placeholder="Password"
-          placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          accessibilityLabel="Password"
-          textContentType="newPassword"
-          autoComplete="password-new"
-          editable={!submitting}
-        />
-        {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
+      <View
+        style={[
+          styles.innerBox,
+          { backgroundColor: isDark ? "#0b1220" : "#fff" },
+        ]}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Ionicons
+            name="person-add"
+            size={40}
+            color="#2563eb"
+          />
+
+          <Text
+            style={[
+              styles.title,
+              { color: isDark ? "#e5e7eb" : "#111827" },
+            ]}
+          >
+            Create Account
+          </Text>
+
+          <Text
+            style={[
+              styles.subtitle,
+              { color: isDark ? "#9ca3af" : "#6b7280" },
+            ]}
+          >
+            Sign up to get started
+          </Text>
+        </View>
+
+        {/* Name */}
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="person-outline"
+            size={18}
+            color="#9ca3af"
+            style={styles.icon}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            placeholderTextColor="#9ca3af"
+            value={name}
+            onChangeText={setName}
+          />
+        </View>
+
+        {/* Email */}
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="mail-outline"
+            size={18}
+            color="#9ca3af"
+            style={styles.icon}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#9ca3af"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+          />
+        </View>
+
+        {/* Password */}
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="lock-closed-outline"
+            size={18}
+            color="#9ca3af"
+            style={styles.icon}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#9ca3af"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          <Pressable
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Ionicons
+              name={showPassword ? "eye-off" : "eye"}
+              size={18}
+              color="#9ca3af"
+            />
+          </Pressable>
+        </View>
+
+        {/* Confirm Password */}
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="lock-closed-outline"
+            size={18}
+            color="#9ca3af"
+            style={styles.icon}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#9ca3af"
+            secureTextEntry={!showPassword}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+        </View>
+
+        {error ? (
+          <Text style={styles.error}>{error}</Text>
+        ) : null}
+
+        {/* Register Button */}
         <Pressable
-          style={[styles.button, submitting && { opacity: 0.7 }]}
+          style={[
+            styles.button,
+            submitting && { opacity: 0.7 },
+          ]}
           onPress={handleRegister}
           disabled={submitting}
-          accessibilityRole="button"
-          accessibilityLabel={submitting ? "Registering" : "Register"}
         >
-          {submitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Register</Text>}
+          {submitting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>
+              Create Account
+            </Text>
+          )}
         </Pressable>
+
+        {/* Login */}
         <Pressable
           onPress={() => router.push("/Login")}
-          disabled={submitting}
-          accessibilityRole="button"
-          accessibilityLabel="Go to login"
         >
-          <Text style={styles.link}>Already have an account? Login</Text>
+          <Text style={styles.link}>
+            Already have an account? Login
+          </Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>
@@ -112,61 +215,78 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
   },
+
   innerBox: {
-    width: "100%",
-    maxWidth: 380,
-    borderRadius: 16,
+    margin: 20,
     padding: 28,
+    borderRadius: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-    marginHorizontal: 16,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 5,
   },
+
+  header: {
+    alignItems: "center",
+    marginBottom: 25,
+  },
+
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: "700",
-    marginBottom: 8,
-    textAlign: "center",
+    marginTop: 10,
   },
+
   subtitle: {
-    fontSize: 16,
-    marginBottom: 24,
-    textAlign: "center",
+    marginTop: 6,
+    fontSize: 15,
   },
-  input: {
-    height: 48,
+
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 14,
+    borderColor: "#e5e7eb",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 50,
     marginBottom: 16,
+  },
+
+  input: {
+    flex: 1,
     fontSize: 16,
   },
+
+  icon: {
+    marginRight: 8,
+  },
+
   button: {
     backgroundColor: "#2563eb",
-    paddingVertical: 14,
-    borderRadius: 8,
+    paddingVertical: 15,
+    borderRadius: 12,
     alignItems: "center",
-    marginTop: 8,
-    marginBottom: 8,
+    marginTop: 10,
   },
+
   buttonText: {
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
   },
+
+  link: {
+    marginTop: 16,
+    textAlign: "center",
+    color: "#2563eb",
+  },
+
   error: {
     color: "#dc2626",
-    marginBottom: 8,
     textAlign: "center",
-  },
-  link: {
-    color: "#2563eb",
-    textAlign: "center",
-    marginTop: 8,
-    fontSize: 15,
+    marginBottom: 10,
   },
 });
