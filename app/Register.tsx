@@ -64,7 +64,6 @@ export default function RegisterScreen() {
           { backgroundColor: isDark ? "#0b1220" : "#fff" },
         ]}
       >
-        {/* Header */}
         <View style={styles.header}>
           <Ionicons
             name="person-add"
@@ -91,7 +90,6 @@ export default function RegisterScreen() {
           </Text>
         </View>
 
-        {/* Name */}
         <View style={styles.inputContainer}>
           <Ionicons
             name="person-outline"
@@ -109,7 +107,6 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/* Email */}
         <View style={styles.inputContainer}>
           <Ionicons
             name="mail-outline"
@@ -128,7 +125,6 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/* Password */}
         <View style={styles.inputContainer}>
           <Ionicons
             name="lock-closed-outline"
@@ -157,7 +153,6 @@ export default function RegisterScreen() {
           </Pressable>
         </View>
 
-        {/* Confirm Password */}
         <View style={styles.inputContainer}>
           <Ionicons
             name="lock-closed-outline"
@@ -180,7 +175,6 @@ export default function RegisterScreen() {
           <Text style={styles.error}>{error}</Text>
         ) : null}
 
-        {/* Register Button */}
         <Pressable
           style={[
             styles.button,
@@ -198,7 +192,6 @@ export default function RegisterScreen() {
           )}
         </Pressable>
 
-        {/* Login */}
         <Pressable
           onPress={() => router.push("/Login")}
         >

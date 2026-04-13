@@ -55,7 +55,6 @@ export default function LoginScreen() {
           { backgroundColor: isDark ? "#0b1220" : "#fff" },
         ]}
       >
-        {/* Logo / Header */}
         <View style={styles.header}>
           <Ionicons
             name="lock-closed"
@@ -81,7 +80,6 @@ export default function LoginScreen() {
           </Text>
         </View>
 
-        {/* Email */}
         <View style={styles.inputContainer}>
           <Ionicons
             name="mail-outline"
@@ -106,7 +104,6 @@ export default function LoginScreen() {
           />
         </View>
 
-        {/* Password */}
         <View style={styles.inputContainer}>
           <Ionicons
             name="lock-closed-outline"
@@ -141,7 +138,6 @@ export default function LoginScreen() {
           </Pressable>
         </View>
 
-        {/* Forgot Password */}
         <Pressable
           style={styles.forgot}
         >
@@ -150,12 +146,10 @@ export default function LoginScreen() {
           </Text>
         </Pressable>
 
-        {/* Error */}
         {error ? (
           <Text style={styles.error}>{error}</Text>
         ) : null}
 
-        {/* Login Button */}
         <Pressable
           style={[
             styles.button,
@@ -173,7 +167,6 @@ export default function LoginScreen() {
           )}
         </Pressable>
 
-        {/* Register */}
         <Pressable
           onPress={() => router.push("/Register")}
         >
