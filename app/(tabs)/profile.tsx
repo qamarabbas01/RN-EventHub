@@ -26,12 +26,46 @@ export default function Profile() {
   const [editName, setEditName] = React.useState(userData.name);
   const [editRole, setEditRole] = React.useState(userData.role);
   const [editEmail, setEditEmail] = React.useState(userData.email);
+  const [changePasswordVisible, setChangePasswordVisible] = React.useState(false);
+  const [privacyVisible, setPrivacyVisible] = React.useState(false);
+  const [termsVisible, setTermsVisible] = React.useState(false);
+
+  const [currentPassword, setCurrentPassword] = React.useState("");
+  const [newPassword, setNewPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
 
   const stats = [
     { icon: "calendar", label: "Events Created", value: "24" },
     { icon: "person.3", label: "Total Attendees", value: "2,840" },
     { icon: "star.fill", label: "Rating", value: "4.8" },
   ];
+
+  const handleChangePassword = () => {
+    setChangePasswordVisible(true);
+  };
+
+  const handlePrivacy = () => {
+    setPrivacyVisible(true);
+  };
+
+  const handleTerms = () => {
+    setTermsVisible(true);
+  };
+
+  const handleSavePassword = () => {
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    alert("Password Changed Successfully");
+
+    setChangePasswordVisible(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
 
   const sections = [
     {
@@ -86,9 +120,24 @@ export default function Profile() {
     {
       title: "Account",
       items: [
-        { icon: "key.fill", label: "Change Password", action: true as const },
-        { icon: "lock.fill", label: "Privacy Settings", action: true as const },
-        { icon: "doc.fill", label: "Terms & Conditions", action: true as const },
+        {
+          icon: "key.fill",
+          label: "Change Password",
+          action: true as const,
+          onPress: handleChangePassword,
+        },
+        {
+          icon: "lock.fill",
+          label: "Privacy Settings",
+          action: true as const,
+          onPress: handlePrivacy,
+        },
+        {
+          icon: "doc.fill",
+          label: "Terms & Conditions",
+          action: true as const,
+          onPress: handleTerms,
+        },
       ],
     },
   ];
@@ -249,6 +298,142 @@ export default function Profile() {
           </View>
         </View>
       )}
+
+      {changePasswordVisible && (
+        <View style={styles.modalOverlay}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff" },
+            ]}
+          >
+
+            <Text style={styles.modalTitle}>🔐 Change Password</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Current Password"
+              secureTextEntry
+              placeholderTextColor="#9ca3af"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="New Password"
+              secureTextEntry
+              placeholderTextColor="#9ca3af"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              secureTextEntry
+              placeholderTextColor="#9ca3af"
+            />
+
+            <View style={styles.modalActions}>
+
+              <Pressable
+                style={styles.cancelButton}
+                onPress={() => setChangePasswordVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.saveButton}
+                onPress={handleSavePassword}
+              >
+                <Text style={styles.saveButtonText}>Update</Text>
+              </Pressable>
+
+            </View>
+
+          </View>
+        </View>
+      )}
+      {privacyVisible && (
+        <View style={styles.modalOverlay}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff" },
+            ]}
+          >
+
+            <Text style={styles.modalTitle}>🔒 Privacy Settings</Text>
+
+            <View style={{ gap: 12 }}>
+
+              <View style={styles.privacyRow}>
+                <Text style={styles.privacyLabel}>Profile Visibility</Text>
+                <Text style={styles.privacyValue}>Public</Text>
+              </View>
+
+              <View style={styles.privacyRow}>
+                <Text style={styles.privacyLabel}>Email Notifications</Text>
+                <Text style={styles.privacyValue}>Enabled</Text>
+              </View>
+
+              <View style={styles.privacyRow}>
+                <Text style={styles.privacyLabel}>Data Sharing</Text>
+                <Text style={styles.privacyValue}>Disabled</Text>
+              </View>
+
+            </View>
+
+            <Pressable
+              style={[styles.saveButton, { marginTop: 20 }]}
+              onPress={() => setPrivacyVisible(false)}
+            >
+              <Text style={styles.saveButtonText}>Done</Text>
+            </Pressable>
+
+          </View>
+        </View>
+      )}
+
+      {termsVisible && (
+        <View style={styles.modalOverlay}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff" },
+            ]}
+          >
+
+            <Text style={styles.modalTitle}>📄 Terms & Conditions</Text>
+
+            <ScrollView style={{ maxHeight: 220 }}>
+
+              <Text style={styles.termsText}>
+                Welcome to EventHub.
+
+                By using this app you agree to:
+
+                {"\n\n"}• Use responsibly
+                {"\n"}• Respect event organizers
+                {"\n"}• Follow community guidelines
+                {"\n"}• Avoid misuse
+
+                {"\n\n"}EventHub reserves the right to suspend accounts if misuse occurs.
+
+                {"\n\n"}Thank you for using EventHub 🎉
+
+              </Text>
+
+            </ScrollView>
+
+            <Pressable
+              style={[styles.saveButton, { marginTop: 15 }]}
+              onPress={() => setTermsVisible(false)}
+            >
+              <Text style={styles.saveButtonText}>Close</Text>
+            </Pressable>
+
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -345,33 +530,32 @@ const styles = StyleSheet.create({
     color: "#9ca3af",
   },
   modalOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.18)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 100,
   },
   modalContent: {
-    width: '85%',
-    backgroundColor: '#fff',
-    borderRadius: 18,
-    padding: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 6,
+    width: "88%",
+    borderRadius: 24,
+    padding: 22,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 8,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#4f46e5',
+    fontSize: 20,
+    fontWeight: "800",
     marginBottom: 18,
-    textAlign: 'center',
+    textAlign: "center",
+    color: "#4f46e5",
   },
   inputGroup: {
     marginBottom: 14,
@@ -384,41 +568,67 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 14,
-    backgroundColor: '#f9fafb',
-    color: '#111827',
+    borderColor: "#e5e7eb",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    marginBottom: 12,
+    backgroundColor: "#f9fafb",
   },
   modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 18,
-    gap: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
   },
   cancelButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-    borderRadius: 8,
-    backgroundColor: '#f3f4f6',
-    marginRight: 6,
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: "#f3f4f6",
+    alignItems: "center",
+    marginRight: 8,
   },
+
   cancelButtonText: {
-    color: '#6b7280',
-    fontWeight: '600',
-    fontSize: 14,
+    fontWeight: "600",
+    color: "#6b7280",
   },
+
   saveButton: {
     paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 8,
     backgroundColor: '#4f46e5',
   },
+
   saveButtonText: {
-    color: '#fff',
-    fontWeight: '700',
+    fontWeight: "700",
+    color: "#fff",
+  },
+  privacyRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: "#f1f5f9",
+  },
+
+  privacyLabel: {
     fontSize: 14,
+    fontWeight: "600",
+    color: "#6b7280",
+  },
+
+  privacyValue: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#4f46e5",
+  },
+
+  termsText: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: "#6b7280",
   },
 });
