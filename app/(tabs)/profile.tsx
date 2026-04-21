@@ -3,6 +3,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import UserStatsGrid from "@/components/UserStatsGrid";
 import { Colors } from "@/constants/theme";
 import { useColorScheme, useColorSchemePreference } from "@/hooks/use-color-scheme";
+import { useAuth } from "@/hooks/use-auth";
 import { router } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
@@ -10,15 +11,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Profile() {
   const colorScheme = useColorScheme();
   const { setPreference } = useColorSchemePreference();
+  const { user, signOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [eventUpdatesEnabled, setEventUpdatesEnabled] = React.useState(true);
   const [eventRemindersEnabled, setEventRemindersEnabled] = React.useState(true);
   const [newEventsEnabled, setNewEventsEnabled] = React.useState(true);
 
   const [userData, setUserData] = React.useState({
-    name: "Ahmed Khan",
+    name: user?.displayName || "User",
     role: "Event Organizer",
-    email: "ahmed@event.pro",
+    email: user?.email || "user@example.com",
     avatar: "👤",
   });
 
@@ -159,7 +161,19 @@ export default function Profile() {
     setEditModalVisible(false);
   };
 
-  const handleLogout = () => {
+  React.useEffect(() => {
+    if (user) {
+      setUserData({
+        name: user.displayName || "User",
+        role: "Event Organizer",
+        email: user.email || "user@example.com",
+        avatar: "👤",
+      });
+    }
+  }, [user]);
+
+  const handleLogout = async () => {
+    await signOut();
     router.navigate("/Login");
   }
 
@@ -214,7 +228,7 @@ export default function Profile() {
 
         <SettingsSections sections={sections} />
 
-        <Pressable style={styles.logoutButton} onPress={() => handleLogout()}>
+        <Pressable style={styles.logoutButton} onPress={handleLogout}>
           <IconSymbol name="arrow.right.square" size={18} color="#ef4444" />
           <Text style={styles.logoutText}>Logout</Text>
         </Pressable>

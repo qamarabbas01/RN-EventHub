@@ -1,6 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAuth } from "@/hooks/use-auth";
 import { toFriendlyError } from "@/utils/errors";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link, router } from "expo-router";
@@ -54,6 +55,7 @@ function isNearby(location: string) {
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
+  const { user } = useAuth();
   const isDark = colorScheme === "dark";
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [events, setEvents] = useState<Event[]>([]);
@@ -103,7 +105,7 @@ export default function HomeScreen() {
         >
           <View style={styles.headerRow}>
             <View>
-              <Text style={styles.greeting}>Hello Ahmed</Text>
+              <Text style={styles.greeting}>Hello {user?.displayName || user?.email?.split('@')[0] || 'Guest'}</Text>
               <Text style={styles.headerTitle}>
                 Discover Events Around You
               </Text>
@@ -127,13 +129,23 @@ export default function HomeScreen() {
                 accessibilityRole="imagebutton"
                 accessibilityLabel="Open profile"
                 activeOpacity={0.85}
+                onPress={() => router.push("/profile")}
               >
-                <Image
-                  source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
-                  style={styles.profilePic}
-                  accessibilityIgnoresInvertColors
-                  accessibilityLabel="Profile photo"
-                />
+                {user?.photoURL ? (
+                  <Image
+                    source={{ uri: user.photoURL }}
+                    style={styles.profilePic}
+                    accessibilityIgnoresInvertColors
+                    accessibilityLabel="Profile photo"
+                  />
+                ) : (
+                  <Image
+                    source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
+                    style={styles.profilePic}
+                    accessibilityIgnoresInvertColors
+                    accessibilityLabel="Profile photo"
+                  />
+                )}
               </TouchableOpacity>
             </View>
           </View>
