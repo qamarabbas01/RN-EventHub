@@ -15,7 +15,9 @@ type ColorSchemeContextValue = {
 };
 
 const STORAGE_KEY = "eventhub:colorSchemePreference";
-const ColorSchemeContext = React.createContext<ColorSchemeContextValue | null>(null);
+const ColorSchemeContext = React.createContext<ColorSchemeContextValue | null>(
+  null,
+);
 
 export function ColorSchemeProvider({
   children,
@@ -24,7 +26,8 @@ export function ColorSchemeProvider({
 }): React.ReactElement {
   const systemScheme = useRNColorScheme() === "dark" ? "dark" : "light";
   const [hasHydrated, setHasHydrated] = React.useState(false);
-  const [preference, setPreferenceState] = React.useState<SchemePreference>("system");
+  const [preference, setPreferenceState] =
+    React.useState<SchemePreference>("system");
 
   React.useEffect(() => {
     setHasHydrated(true);
@@ -47,14 +50,15 @@ export function ColorSchemeProvider({
     }
   }, []);
 
-  const colorScheme: Scheme = preference === "system" ? systemScheme : preference;
+  const colorScheme: Scheme =
+    preference === "system" ? systemScheme : preference;
   const toggle = React.useCallback(() => {
     setPreference(colorScheme === "dark" ? "light" : "dark");
   }, [colorScheme, setPreference]);
 
   const value = React.useMemo<ColorSchemeContextValue>(
     () => ({ colorScheme, preference, setPreference, toggle }),
-    [colorScheme, preference, setPreference, toggle]
+    [colorScheme, preference, setPreference, toggle],
   );
 
   // Keep static rendering consistent.
@@ -69,7 +73,7 @@ export function ColorSchemeProvider({
           toggle,
         },
       },
-      children
+      children,
     );
   }
 
@@ -91,5 +95,9 @@ export function useColorSchemePreference(): {
   if (!ctx) {
     return { preference: "system", setPreference: () => {}, toggle: () => {} };
   }
-  return { preference: ctx.preference, setPreference: ctx.setPreference, toggle: ctx.toggle };
+  return {
+    preference: ctx.preference,
+    setPreference: ctx.setPreference,
+    toggle: ctx.toggle,
+  };
 }
