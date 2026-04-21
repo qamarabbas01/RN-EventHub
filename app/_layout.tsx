@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/theme';
+import { AuthProvider } from '@/hooks/use-auth';
 import { ColorSchemeProvider, useColorScheme } from '@/hooks/use-color-scheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
@@ -12,7 +13,9 @@ export const unstable_settings = {
 export default function RootLayout() {
   return (
     <ColorSchemeProvider>
-      <RootLayoutInner />
+      <AuthProvider>
+        <RootLayoutInner />
+      </AuthProvider>
     </ColorSchemeProvider>
   );
 }
