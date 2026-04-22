@@ -185,57 +185,47 @@ export default function Profile() {
       ]}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <View
-            style={[
-              styles.profileCard,
-              {
-                backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff",
-                borderColor: colorScheme === "dark" ? "#111827" : "#f3f4f6",
-                shadowOpacity: colorScheme === "dark" ? 0.25 : 0.06,
-              },
-            ]}
-          >
-            <View style={styles.avatarContainer}>
-              <Text style={styles.avatar}>{userData.avatar}</Text>
-            </View>
-            <View style={styles.userInfo}>
-              <Text
-                style={[
-                  styles.userName,
-                  { color: colorScheme === "dark" ? "#e5e7eb" : "#111827" },
-                ]}
-              >
-                {userData.name}
-              </Text>
-              <Text style={styles.userRole}>{userData.role}</Text>
-              <Text
-                style={[
-                  styles.userEmail,
-                  { color: colorScheme === "dark" ? "#9ca3af" : "#6b7280" },
-                ]}
-              >
-                {userData.email}
-              </Text>
+        <View style={[
+          styles.headerBackground,
+          { backgroundColor: colorScheme === "dark" ? "#1e1b4b" : "#4f46e5" }
+        ]}>
+          <View style={styles.headerContent}>
+            <View style={styles.profileCardInner}>
+              <View style={styles.avatarContainer}>
+                <Text style={styles.avatar}>{userData.avatar}</Text>
+              </View>
+              <View style={styles.userInfo}>
+                <Text style={styles.userName}>
+                  {userData.name}
+                </Text>
+                <Text style={styles.userRole}>{userData.role}</Text>
+                <Text style={styles.userEmail}>
+                  {userData.email}
+                </Text>
+              </View>
             </View>
             <Pressable style={styles.editButton} onPress={handleEditPress}>
-              <IconSymbol name="pencil" size={18} color="#4f46e5" />
+              <IconSymbol name="pencil" size={18} color="#fff" />
             </Pressable>
           </View>
         </View>
 
-        <UserStatsGrid stats={stats} />
+        <View style={styles.contentContainer}>
+          <UserStatsGrid stats={stats} />
 
-        <SettingsSections sections={sections} />
+          <View style={styles.settingsContainer}>
+            <SettingsSections sections={sections} />
+          </View>
 
-        <Pressable style={styles.logoutButton} onPress={handleLogout}>
-          <IconSymbol name="arrow.right.square" size={18} color="#ef4444" />
-          <Text style={styles.logoutText}>Logout</Text>
-        </Pressable>
+          <Pressable style={styles.logoutButton} onPress={handleLogout}>
+            <IconSymbol name="arrow.right.square" size={18} color="#ef4444" />
+            <Text style={styles.logoutText}>Logout</Text>
+          </Pressable>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>App Version 1.0.0</Text>
-          <Text style={styles.footerSubtext}>© 2026 EventHub</Text>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>App Version 1.0.0</Text>
+            <Text style={styles.footerSubtext}>© 2026 EventHub</Text>
+          </View>
         </View>
       </ScrollView>
 
@@ -244,7 +234,7 @@ export default function Profile() {
           <View
             style={[
               styles.modalContent,
-              { backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff" },
+              { backgroundColor: colorScheme === "dark" ? "#1e1b4b" : "#fff" },
             ]}
           >
             <Text style={styles.modalTitle}>Edit Profile</Text>
@@ -254,15 +244,15 @@ export default function Profile() {
                 style={[
                   styles.input,
                   {
-                    backgroundColor: colorScheme === "dark" ? "#0f172a" : "#f9fafb",
-                    borderColor: colorScheme === "dark" ? "#1f2937" : "#e5e7eb",
-                    color: colorScheme === "dark" ? "#e5e7eb" : "#111827",
+                    backgroundColor: colorScheme === "dark" ? "#111827" : "#f9fafb",
+                    borderColor: colorScheme === "dark" ? "#374151" : "#e5e7eb",
+                    color: colorScheme === "dark" ? "#f3f4f6" : "#111827",
                   },
                 ]}
                 value={editName}
                 onChangeText={setEditName}
                 placeholder="Name"
-                placeholderTextColor={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
+                placeholderTextColor={colorScheme === "dark" ? "#9ca3af" : "#9ca3af"}
               />
             </View>
             <View style={styles.inputGroup}>
@@ -271,15 +261,15 @@ export default function Profile() {
                 style={[
                   styles.input,
                   {
-                    backgroundColor: colorScheme === "dark" ? "#0f172a" : "#f9fafb",
-                    borderColor: colorScheme === "dark" ? "#1f2937" : "#e5e7eb",
-                    color: colorScheme === "dark" ? "#e5e7eb" : "#111827",
+                    backgroundColor: colorScheme === "dark" ? "#111827" : "#f9fafb",
+                    borderColor: colorScheme === "dark" ? "#374151" : "#e5e7eb",
+                    color: colorScheme === "dark" ? "#f3f4f6" : "#111827",
                   },
                 ]}
                 value={editRole}
                 onChangeText={setEditRole}
                 placeholder="Role"
-                placeholderTextColor={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
+                placeholderTextColor={colorScheme === "dark" ? "#9ca3af" : "#9ca3af"}
               />
             </View>
             <View style={styles.inputGroup}>
@@ -288,9 +278,9 @@ export default function Profile() {
                 style={[
                   styles.input,
                   {
-                    backgroundColor: colorScheme === "dark" ? "#0f172a" : "#f9fafb",
-                    borderColor: colorScheme === "dark" ? "#1f2937" : "#e5e7eb",
-                    color: colorScheme === "dark" ? "#e5e7eb" : "#111827",
+                    backgroundColor: colorScheme === "dark" ? "#111827" : "#f9fafb",
+                    borderColor: colorScheme === "dark" ? "#374151" : "#e5e7eb",
+                    color: colorScheme === "dark" ? "#f3f4f6" : "#111827",
                   },
                 ]}
                 value={editEmail}
@@ -298,12 +288,15 @@ export default function Profile() {
                 placeholder="Email"
                 keyboardType="email-address"
                 autoCapitalize="none"
-                placeholderTextColor={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
+                placeholderTextColor={colorScheme === "dark" ? "#9ca3af" : "#9ca3af"}
               />
             </View>
             <View style={styles.modalActions}>
-              <Pressable style={styles.cancelButton} onPress={() => setEditModalVisible(false)}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Pressable
+                style={[styles.cancelButton, { backgroundColor: colorScheme === "dark" ? "#374151" : "#f3f4f6" }]}
+                onPress={() => setEditModalVisible(false)}
+              >
+                <Text style={[styles.cancelButtonText, { color: colorScheme === "dark" ? "#d1d5db" : "#6b7280" }]}>Cancel</Text>
               </Pressable>
               <Pressable style={styles.saveButton} onPress={handleSaveEdit}>
                 <Text style={styles.saveButtonText}>Save</Text>
@@ -318,51 +311,63 @@ export default function Profile() {
           <View
             style={[
               styles.modalContent,
-              { backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff" },
+              { backgroundColor: colorScheme === "dark" ? "#1e1b4b" : "#fff" },
             ]}
           >
-
-            <Text style={styles.modalTitle}>🔐 Change Password</Text>
-
+            <Text style={styles.modalTitle}>Change Password</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colorScheme === "dark" ? "#111827" : "#f9fafb",
+                  borderColor: colorScheme === "dark" ? "#374151" : "#e5e7eb",
+                  color: colorScheme === "dark" ? "#f3f4f6" : "#111827",
+                },
+              ]}
               placeholder="Current Password"
               secureTextEntry
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={colorScheme === "dark" ? "#9ca3af" : "#9ca3af"}
             />
-
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colorScheme === "dark" ? "#111827" : "#f9fafb",
+                  borderColor: colorScheme === "dark" ? "#374151" : "#e5e7eb",
+                  color: colorScheme === "dark" ? "#f3f4f6" : "#111827",
+                },
+              ]}
               placeholder="New Password"
               secureTextEntry
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={colorScheme === "dark" ? "#9ca3af" : "#9ca3af"}
             />
-
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colorScheme === "dark" ? "#111827" : "#f9fafb",
+                  borderColor: colorScheme === "dark" ? "#374151" : "#e5e7eb",
+                  color: colorScheme === "dark" ? "#f3f4f6" : "#111827",
+                },
+              ]}
               placeholder="Confirm Password"
               secureTextEntry
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={colorScheme === "dark" ? "#9ca3af" : "#9ca3af"}
             />
-
             <View style={styles.modalActions}>
-
               <Pressable
-                style={styles.cancelButton}
+                style={[styles.cancelButton, { backgroundColor: colorScheme === "dark" ? "#374151" : "#f3f4f6" }]}
                 onPress={() => setChangePasswordVisible(false)}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={[styles.cancelButtonText, { color: colorScheme === "dark" ? "#d1d5db" : "#6b7280" }]}>Cancel</Text>
               </Pressable>
-
               <Pressable
                 style={styles.saveButton}
                 onPress={handleSavePassword}
               >
                 <Text style={styles.saveButtonText}>Update</Text>
               </Pressable>
-
             </View>
-
           </View>
         </View>
       )}
@@ -371,38 +376,30 @@ export default function Profile() {
           <View
             style={[
               styles.modalContent,
-              { backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff" },
+              { backgroundColor: colorScheme === "dark" ? "#1e1b4b" : "#fff" },
             ]}
           >
-
-            <Text style={styles.modalTitle}>🔒 Privacy Settings</Text>
-
-            <View style={{ gap: 12 }}>
-
-              <View style={styles.privacyRow}>
-                <Text style={styles.privacyLabel}>Profile Visibility</Text>
+            <Text style={styles.modalTitle}>Privacy Settings</Text>
+            <View style={{ gap: 0 }}>
+              <View style={[styles.privacyRow, { borderBottomWidth: StyleSheet.hairlineWidth }]}>
+                <Text style={[styles.privacyLabel, { color: colorScheme === "dark" ? "#e5e7eb" : "#374151" }]}>Profile Visibility</Text>
                 <Text style={styles.privacyValue}>Public</Text>
               </View>
-
-              <View style={styles.privacyRow}>
-                <Text style={styles.privacyLabel}>Email Notifications</Text>
+              <View style={[styles.privacyRow, { borderBottomWidth: StyleSheet.hairlineWidth }]}>
+                <Text style={[styles.privacyLabel, { color: colorScheme === "dark" ? "#e5e7eb" : "#374151" }]}>Email Notifications</Text>
                 <Text style={styles.privacyValue}>Enabled</Text>
               </View>
-
               <View style={styles.privacyRow}>
-                <Text style={styles.privacyLabel}>Data Sharing</Text>
+                <Text style={[styles.privacyLabel, { color: colorScheme === "dark" ? "#e5e7eb" : "#374151" }]}>Data Sharing</Text>
                 <Text style={styles.privacyValue}>Disabled</Text>
               </View>
-
             </View>
-
             <Pressable
               style={[styles.saveButton, { marginTop: 20 }]}
               onPress={() => setPrivacyVisible(false)}
             >
               <Text style={styles.saveButtonText}>Done</Text>
             </Pressable>
-
           </View>
         </View>
       )}
@@ -412,14 +409,11 @@ export default function Profile() {
           <View
             style={[
               styles.modalContent,
-              { backgroundColor: colorScheme === "dark" ? "#0b1220" : "#fff" },
+              { backgroundColor: colorScheme === "dark" ? "#1e1b4b" : "#fff" },
             ]}
           >
-
-            <Text style={styles.modalTitle}>📄 Terms & Conditions</Text>
-
+            <Text style={styles.modalTitle}>Terms & Conditions</Text>
             <ScrollView style={{ maxHeight: 220 }}>
-
               <Text style={styles.termsText}>
                 Welcome to EventHub.
 
@@ -433,18 +427,14 @@ export default function Profile() {
                 {"\n\n"}EventHub reserves the right to suspend accounts if misuse occurs.
 
                 {"\n\n"}Thank you for using EventHub 🎉
-
               </Text>
-
             </ScrollView>
-
             <Pressable
               style={[styles.saveButton, { marginTop: 15 }]}
               onPress={() => setTermsVisible(false)}
             >
               <Text style={styles.saveButtonText}>Close</Text>
             </Pressable>
-
           </View>
         </View>
       )}
@@ -456,60 +446,77 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
+  headerBackground: {
     paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
-  profileCard: {
+  headerContent: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+  },
+  profileCardInner: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
+    flex: 1,
   },
   avatarContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "#ede9fe",
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
   },
   avatar: {
-    fontSize: 32,
+    fontSize: 36,
   },
   userInfo: {
     flex: 1,
   },
   userName: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: "800",
     letterSpacing: -0.3,
-    marginBottom: 2,
-  },
-  userRole: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#8b5cf6",
+    color: "#fff",
     marginBottom: 4,
   },
+  userRole: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.85)",
+    marginBottom: 6,
+  },
   userEmail: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: "500",
+    color: "rgba(255, 255, 255, 0.7)",
   },
   editButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#f3f4f6",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  contentContainer: {
+    paddingHorizontal: 16,
+    marginTop: -20,
+  },
+  settingsContainer: {
+    marginTop: 20,
   },
   logoutButton: {
     flexDirection: "row",
@@ -522,15 +529,18 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderColor: "#ef4444",
+    backgroundColor: "transparent",
   },
   logoutText: {
     fontSize: 14,
     fontWeight: "700",
     color: "#ef4444",
+    letterSpacing: -0.2,
   },
   footer: {
     alignItems: "center",
     paddingVertical: 24,
+    paddingBottom: 40,
   },
   footerText: {
     fontSize: 12,
@@ -549,81 +559,83 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
   },
   modalContent: {
-    width: "88%",
+    width: "90%",
     borderRadius: 24,
-    padding: 22,
+    padding: 24,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 8,
+    shadowOpacity: 0.25,
+    shadowRadius: 24,
+    elevation: 12,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "800",
-    marginBottom: 18,
+    marginBottom: 20,
     textAlign: "center",
     color: "#4f46e5",
   },
   inputGroup: {
-    marginBottom: 14,
+    marginBottom: 16,
   },
   inputLabel: {
     fontSize: 13,
     fontWeight: '600',
     color: '#6b7280',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   input: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: "#e5e7eb",
     borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: 15,
-    marginBottom: 12,
     backgroundColor: "#f9fafb",
   },
   modalActions: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
+    marginTop: 8,
+    gap: 12,
   },
   cancelButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderRadius: 12,
     backgroundColor: "#f3f4f6",
     alignItems: "center",
-    marginRight: 8,
   },
 
   cancelButtonText: {
     fontWeight: "600",
     color: "#6b7280",
+    fontSize: 15,
   },
 
   saveButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-    borderRadius: 8,
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
     backgroundColor: '#4f46e5',
+    alignItems: "center",
   },
 
   saveButtonText: {
     fontWeight: "700",
     color: "#fff",
+    fontSize: 15,
   },
   privacyRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderColor: "#f1f5f9",
   },
@@ -631,7 +643,7 @@ const styles = StyleSheet.create({
   privacyLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#6b7280",
+    color: "#374151",
   },
 
   privacyValue: {
@@ -642,7 +654,7 @@ const styles = StyleSheet.create({
 
   termsText: {
     fontSize: 13,
-    lineHeight: 20,
-    color: "#6b7280",
+    lineHeight: 22,
+    color: "#4b5563",
   },
 });

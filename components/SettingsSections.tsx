@@ -119,15 +119,15 @@ export default function SettingsSections({ sections }: SettingsSectionsProps) {
 
 const styles = StyleSheet.create({
   section: {
-    marginHorizontal: 16,
-    marginBottom: 20,
+    marginHorizontal: 0,
+    marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "700",
-    color: "#6b7280",
-    letterSpacing: 0.5,
+    letterSpacing: 1,
     marginBottom: 8,
+    marginHorizontal: 16,
     textTransform: "uppercase",
   },
   sectionContent: {
@@ -141,29 +141,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 14,
+    paddingVertical: 16,
     paddingHorizontal: 16,
   },
   settingLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 14,
   },
   settingIconBg: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     backgroundColor: "#ede9fe",
     justifyContent: "center",
     alignItems: "center",
   },
   settingLabel: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "600",
     color: "#111827",
   },
   divider: {
-    height: 1,
+    height: StyleSheet.hairlineWidth,
     backgroundColor: "#f3f4f6",
     marginHorizontal: 16,
   },
