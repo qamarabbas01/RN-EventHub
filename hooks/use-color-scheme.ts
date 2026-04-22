@@ -16,7 +16,9 @@ type ColorSchemeContextValue = {
 
 const STORAGE_KEY = "eventhub:colorSchemePreference";
 
-const ColorSchemeContext = React.createContext<ColorSchemeContextValue | null>(null);
+const ColorSchemeContext = React.createContext<ColorSchemeContextValue | null>(
+  null,
+);
 
 export function ColorSchemeProvider({
   children,
@@ -24,7 +26,8 @@ export function ColorSchemeProvider({
   children: React.ReactNode;
 }): React.ReactElement {
   const systemScheme = useSystemColorScheme() === "dark" ? "dark" : "light";
-  const [preference, setPreferenceState] = React.useState<SchemePreference>("system");
+  const [preference, setPreferenceState] =
+    React.useState<SchemePreference>("system");
   const [hasLoaded, setHasLoaded] = React.useState(false);
 
   React.useEffect(() => {
@@ -50,7 +53,8 @@ export function ColorSchemeProvider({
     AsyncStorage.setItem(STORAGE_KEY, pref).catch(() => {});
   }, []);
 
-  const colorScheme: Scheme = preference === "system" ? systemScheme : preference;
+  const colorScheme: Scheme =
+    preference === "system" ? systemScheme : preference;
 
   const toggle = React.useCallback(() => {
     setPreference(colorScheme === "dark" ? "light" : "dark");
@@ -63,7 +67,7 @@ export function ColorSchemeProvider({
       setPreference,
       toggle,
     }),
-    [colorScheme, preference, setPreference, toggle]
+    [colorScheme, preference, setPreference, toggle],
   );
 
   // Avoid a flash on first render by sticking to light until storage is loaded.
@@ -78,7 +82,7 @@ export function ColorSchemeProvider({
           toggle,
         },
       },
-      children
+      children,
     );
   }
 

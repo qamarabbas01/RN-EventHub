@@ -1,7 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAuth } from "@/hooks/use-auth";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { toFriendlyError } from "@/utils/errors";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link, router } from "expo-router";
