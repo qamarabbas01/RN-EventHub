@@ -29,6 +29,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="my-tickets"
+        options={{
+          title: 'My Tickets',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="ticket" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="attendee-insights"
         options={{
           title: 'Attendee Insights',
