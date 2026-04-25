@@ -1,20 +1,45 @@
 import EventForm from '@/components/EventForm';
 import CenteredState from '@/components/ui/CenteredState';
 import { Colors } from '@/constants/theme';
+import { useAuth } from '@/hooks/use-auth';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { toFriendlyError } from '@/utils/errors';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { deleteDoc, doc, getDoc } from 'firebase/firestore';
-import React, { useState } from 'react';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from 'firebase/firestore';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../../firebase';
+import { scheduleEventReminder, sendBookingConfirmation } from '../../services/notifications';
 
 export default function EventDetails() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const renderDate = (dateVal: any, timeVal?: any) => {
+  const { user } = useAuth();
+  const router = useRouter();
+  const { id } = useLocalSearchParams();
+
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [editModal, setEditModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<any | null>(null);
+  const [hasBooked, setHasBooked] = useState(false);
+  const [bookingLoading, setBookingLoading] = useState(false);
+
+  // Date/Time formatters
+  const renderDate = (dateVal: any, timeVal?: any): string => {
     if (timeVal && typeof timeVal === 'object' && timeVal.seconds) {
       const dateObj = new Date(timeVal.seconds * 1000);
       return dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
@@ -40,7 +65,7 @@ export default function EventDetails() {
     return 'N/A';
   };
 
-  const renderTime = (val: any) => {
+  const renderTime = (val: any): string => {
     if (!val) return 'N/A';
     if (typeof val === 'object' && val.seconds) {
       const dateObj = new Date(val.seconds * 1000);
@@ -63,32 +88,6 @@ export default function EventDetails() {
     }
     return 'N/A';
   };
-  const { id } = useLocalSearchParams();
-  const router = useRouter();
-  const [event, setEvent] = React.useState<any>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState("");
-  const [editModal, setEditModal] = useState(false);
-
-  React.useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    setError("");
-    getDoc(doc(db, "events", String(id)))
-      .then((docSnap) => {
-        if (docSnap.exists()) {
-          setEvent({ id, ...docSnap.data() });
-        } else {
-          setEvent(null);
-        }
-      })
-      .catch((err) => {
-        const friendly = toFriendlyError(err, 'Couldn’t load event');
-        setError(friendly.message);
-        setEvent(null);
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
 
   const safe = (val: any, fallback = 'N/A') => {
     if (val === null || val === undefined || val === '') return fallback;
@@ -101,34 +100,144 @@ export default function EventDetails() {
     return val;
   };
 
+  // Fetch event
+  const fetchEvent = useCallback(async () => {
+    if (!id) return;
+    setLoading(true);
+    setError("");
+    try {
+      const docSnap = await getDoc(doc(db, "events", String(id)));
+      if (docSnap.exists()) {
+        setEvent({ id, ...docSnap.data() });
+      } else {
+        setEvent(null);
+      }
+    } catch (err) {
+      const friendly = toFriendlyError(err, "Couldn't load event");
+      setError(friendly.message);
+      setEvent(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchEvent();
+  }, [fetchEvent]);
+
+  // Check if current user already booked
+  useEffect(() => {
+    if (!user || !event) return;
+    const checkBooking = async () => {
+      try {
+        const q = query(
+          collection(db, 'bookings'),
+          where('eventId', '==', event.id),
+          where('userId', '==', user.uid)
+        );
+        const snap = await getDocs(q);
+        setHasBooked(!snap.empty);
+      } catch (e) {
+        console.error('Booking check error:', e);
+      }
+    };
+    checkBooking();
+  }, [user, event]);
+
+  const isOrganizer = !event?.createdBy || event.createdBy === user?.uid;
+
+  // Booking handler
+  const handleBookEvent = async () => {
+    if (!user || !event) return;
+    setBookingLoading(true);
+    try {
+      // Parse event date object
+      let eventDateObj: Date;
+      if (typeof event.date === 'string') {
+        eventDateObj = new Date(event.date);
+      } else if (event.date?.seconds) {
+        eventDateObj = new Date(event.date.seconds * 1000);
+      } else {
+        eventDateObj = new Date();
+      }
+
+      // Parse time string into hours/minutes
+      let hours = 0, minutes = 0;
+      const timeStr = event.time;
+      if (typeof timeStr === 'string') {
+        const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);
+        if (match) {
+          let h = parseInt(match[1]);
+          const m = parseInt(match[2]);
+          const period = match[3].toUpperCase();
+          if (period === 'PM' && h < 12) h += 12;
+          if (period === 'AM' && h === 12) h = 0;
+          hours = h;
+          minutes = m;
+        } else {
+          const parts = timeStr.split(':');
+          if (parts.length >= 2) {
+            hours = parseInt(parts[0]);
+            minutes = parseInt(parts[1]);
+          }
+        }
+      }
+      const eventTimeObj = new Date();
+      eventTimeObj.setHours(hours, minutes, 0);
+
+      const bookingData = {
+        eventId: event.id,
+        eventTitle: event.title,
+        eventDate: event.date,
+        eventTime: event.time,
+        userId: user.uid,
+        userName: user.displayName || user.email?.split('@')[0] || 'Guest',
+        userEmail: user.email || '',
+        bookedAt: serverTimestamp(),
+        checkInStatus: false,
+      };
+       const docRef = await addDoc(collection(db, 'bookings'), bookingData);
+       setHasBooked(true);
+       // Send local notifications (best effort, don't block booking)
+       try {
+         await sendBookingConfirmation(event.title, docRef.id);
+         await scheduleEventReminder(event.id, event.title, eventDateObj, eventTimeObj);
+       } catch (notifErr) {
+         console.log('Notification scheduling failed:', notifErr);
+       }
+       // Store notification in Firestore for in-app list
+       try {
+         await addDoc(collection(db, 'notifications'), {
+           userId: user.uid,
+           title: 'Booking Confirmed',
+           message: `Your booking for "${event.title}" is confirmed.`,
+           type: 'confirmation',
+           read: false,
+           createdAt: serverTimestamp(),
+           eventId: event.id,
+         });
+       } catch (notifErr) {
+         console.log('Notification storage failed:', notifErr);
+       }
+       Alert.alert('Success', 'Your booking is confirmed!');
+    } catch (err: any) {
+      console.error(err);
+      Alert.alert('Error', err.message || 'Failed to book event');
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
   if (loading) {
     return <CenteredState loading title="Loading event" message="Please wait…" />;
   }
   if (error) {
     return (
       <CenteredState
-        title="Couldn’t load event"
+        title="Couldn't load event"
         message={error}
         actionLabel="Retry"
-        onActionPress={() => {
-          if (!id) return;
-          setLoading(true);
-          setError("");
-          getDoc(doc(db, "events", String(id)))
-            .then((docSnap) => {
-              if (docSnap.exists()) {
-                setEvent({ id, ...docSnap.data() });
-              } else {
-                setEvent(null);
-              }
-            })
-            .catch((err) => {
-              const friendly = toFriendlyError(err, 'Couldn’t load event');
-              setError(friendly.message);
-              setEvent(null);
-            })
-            .finally(() => setLoading(false));
-        }}
+        onActionPress={fetchEvent}
       />
     );
   }
@@ -144,7 +253,10 @@ export default function EventDetails() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.imageWrapper}>
           <Image source={{ uri: safe(event.imageUrl, 'https://via.placeholder.com/800x260?text=No+Image') }} style={styles.image} />
           <TouchableOpacity
@@ -164,12 +276,7 @@ export default function EventDetails() {
             </View>
           )}
         </View>
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: isDark ? "#0b1220" : "#fff" },
-          ]}
-        >
+        <View style={[styles.card, { backgroundColor: isDark ? "#0b1220" : "#fff" }]}>
           <Text style={[styles.title, { color: isDark ? "#e5e7eb" : "#1e293b" }]}>{safe(event.title)}</Text>
           <View style={styles.row}>
             <Ionicons name="calendar" size={18} color="#6366f1" style={styles.icon} />
@@ -223,48 +330,74 @@ export default function EventDetails() {
             </View>
           </View>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 24 }}>
-            <Pressable
-              style={{ backgroundColor: isDark ? "#111827" : '#f3f4f6', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center', marginRight: 8 }}
-              onPress={() => setEditModal(true)}
-              accessibilityRole="button"
-              accessibilityLabel="Edit event"
-            >
-              <Ionicons name="pencil" size={18} color="#6366f1" style={{ marginRight: 6 }} />
-              <Text style={{ color: '#6366f1', fontWeight: '700', fontSize: 15 }}>Edit</Text>
-            </Pressable>
-            <Pressable
-              style={{ backgroundColor: '#fee2e2', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}
-              onPress={() => {
-                Alert.alert(
-                  'Delete Event',
-                  'Are you sure you want to delete this event?',
-                  [
-                    { text: 'Cancel', style: 'cancel' },
-                    {
-                      text: 'Delete',
-                      style: 'destructive',
-                      onPress: async () => {
-                        await deleteDoc(doc(db, 'events', event.id));
-                        if (router.canGoBack()) {
-                          router.back();
-                        } else {
-                          router.replace('/(tabs)/events');
-                        }
+          {isOrganizer && (
+            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 24 }}>
+              <Pressable
+                style={{ backgroundColor: isDark ? "#111827" : '#f3f4f6', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center', marginRight: 8 }}
+                onPress={() => setEditModal(true)}
+                accessibilityRole="button"
+                accessibilityLabel="Edit event"
+              >
+                <Ionicons name="pencil" size={18} color="#6366f1" style={{ marginRight: 6 }} />
+                <Text style={{ color: '#6366f1', fontWeight: '700', fontSize: 15 }}>Edit</Text>
+              </Pressable>
+              <Pressable
+                style={{ backgroundColor: '#fee2e2', paddingVertical: 10, paddingHorizontal: 22, borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}
+                onPress={() => {
+                  Alert.alert(
+                    'Delete Event',
+                    'Are you sure you want to delete this event?',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress: async () => {
+                          await deleteDoc(doc(db, 'events', event.id));
+                          if (router.canGoBack()) {
+                            router.back();
+                          } else {
+                            router.replace('/(tabs)/events');
+                          }
+                        },
                       },
-                    },
-                  ]
-                );
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="Delete event"
-            >
-              <Ionicons name="trash" size={18} color="#ef4444" style={{ marginRight: 6 }} />
-              <Text style={{ color: '#ef4444', fontWeight: '700', fontSize: 15 }}>Delete</Text>
-            </Pressable>
-          </View>
+                    ]
+                  );
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Delete event"
+              >
+                <Ionicons name="trash" size={18} color="#ef4444" style={{ marginRight: 6 }} />
+                <Text style={{ color: '#ef4444', fontWeight: '700', fontSize: 15 }}>Delete</Text>
+              </Pressable>
+            </View>
+          )}
         </View>
       </ScrollView>
+
+      <View style={styles.ticketsBtnWrapper}>
+        <Pressable
+          style={styles.ticketsBtn}
+          onPress={() => {
+            if (isOrganizer) {
+              router.push(`/events/${event.id}/attendees`);
+            } else if (!hasBooked && !bookingLoading) {
+              handleBookEvent();
+            }
+          }}
+          disabled={!isOrganizer && (hasBooked || bookingLoading)}
+        >
+          <Text style={styles.ticketsBtnText}>
+            {bookingLoading
+              ? 'Booking...'
+              : isOrganizer
+                ? 'Manage Attendees'
+                : hasBooked
+                  ? 'Already Booked'
+                  : 'Book Event'}
+          </Text>
+        </Pressable>
+      </View>
 
       <Modal
         visible={editModal}

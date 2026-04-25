@@ -1,9 +1,10 @@
 import { db } from "@/firebase";
+import { useAuth } from "@/hooks/use-auth";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import {
     ActivityIndicator,
@@ -112,6 +113,7 @@ function parseEventTime(rawTime: any, baseDate: Date | null): Date | null {
 export default function EventForm({ onSuccess, onCancel, event }: EventFormProps) {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === "dark";
+    const { user } = useAuth();
     const parsedDateFromDate = parseEventDate(event?.date);
     const parsedDateFromTime = parseEventDate(event?.time);
     const parsedInitialDate = parsedDateFromDate || parsedDateFromTime;
@@ -229,6 +231,8 @@ export default function EventForm({ onSuccess, onCancel, event }: EventFormProps
                 website,
                 status: "upcoming",
                 featured,
+                createdBy: user?.uid || null,
+                ...(event ? {} : { createdAt: serverTimestamp() }),
             };
             if (event && event.id) {
                 await updateDoc(doc(db, "events", event.id), eventData);

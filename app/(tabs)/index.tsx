@@ -328,7 +328,10 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-        <View style={styles.sectionSpacing}>
+        <Pressable
+            style={styles.sectionSpacing}
+            onPress={() => router.push('/(tabs)/my-tickets')}
+        >
           <LinearGradient
             colors={["#6366f1", "#a5b4fc"]}
             start={{ x: 0, y: 0 }}
@@ -341,7 +344,7 @@ export default function HomeScreen() {
               <Text style={styles.ticketsSubtitle}>View your booked events</Text>
             </View>
           </LinearGradient>
-        </View>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
