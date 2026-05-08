@@ -8,13 +8,13 @@ import {
     doc,
     getDoc,
     getDocs,
+    orderBy,
     query,
+    serverTimestamp,
     updateDoc,
     where,
-    orderBy,
-    serverTimestamp,
 } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     Alert,
     Pressable,
@@ -22,7 +22,6 @@ import {
     Share,
     StyleSheet,
     Text,
-    TouchableOpacity,
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -48,12 +47,7 @@ export default function EventAttendees() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (!id) return;
-        fetchEventAndBookings();
-    }, [id]);
-
-    const fetchEventAndBookings = async () => {
+    const fetchEventAndBookings = useCallback(async () => {
         try {
                 const eventDoc = await getDoc(doc(db, 'events', String(id)));
                 if (eventDoc.exists()) {
@@ -61,14 +55,12 @@ export default function EventAttendees() {
                     const eventData = { id: eventDoc.id, ...rawData } as any;
                     setEvent(eventData);
 
-                    // Verify organizer access
                     if (eventData.createdBy && eventData.createdBy !== user?.uid) {
                         Alert.alert('Access Denied', 'Only the organizer can view attendees.');
                         router.back();
                         return;
                     }
 
-                // Fetch bookings
                 const q = query(
                     collection(db, 'bookings'),
                     where('eventId', '==', String(id)),
@@ -90,7 +82,12 @@ export default function EventAttendees() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id, router, user?.uid]);
+
+    useEffect(() => {
+        if (!id) return;
+        fetchEventAndBookings();
+    }, [id, fetchEventAndBookings]);
 
     const toggleCheckIn = async (booking: Booking) => {
         try {
@@ -98,7 +95,6 @@ export default function EventAttendees() {
                 checkInStatus: !booking.checkInStatus,
                 checkedInAt: !booking.checkInStatus ? serverTimestamp() : null,
             });
-            // Update local state
             setBookings(prev =>
                 prev.map(b =>
                     b.id === booking.id
@@ -106,7 +102,7 @@ export default function EventAttendees() {
                         : b
                 )
             );
-        } catch (error) {
+        } catch {
             Alert.alert('Error', 'Failed to update check-in status');
         }
     };
