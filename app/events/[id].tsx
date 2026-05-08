@@ -34,11 +34,9 @@ export default function EventDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editModal, setEditModal] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<any | null>(null);
   const [hasBooked, setHasBooked] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
 
-  // Date/Time formatters
   const renderDate = (dateVal: any, timeVal?: any): string => {
     if (timeVal && typeof timeVal === 'object' && timeVal.seconds) {
       const dateObj = new Date(timeVal.seconds * 1000);
@@ -100,7 +98,6 @@ export default function EventDetails() {
     return val;
   };
 
-  // Fetch event
   const fetchEvent = useCallback(async () => {
     if (!id) return;
     setLoading(true);
@@ -125,7 +122,6 @@ export default function EventDetails() {
     fetchEvent();
   }, [fetchEvent]);
 
-  // Check if current user already booked
   useEffect(() => {
     if (!user || !event) return;
     const checkBooking = async () => {
@@ -146,12 +142,10 @@ export default function EventDetails() {
 
   const isOrganizer = !event?.createdBy || event.createdBy === user?.uid;
 
-  // Booking handler
   const handleBookEvent = async () => {
     if (!user || !event) return;
     setBookingLoading(true);
     try {
-      // Parse event date object
       let eventDateObj: Date;
       if (typeof event.date === 'string') {
         eventDateObj = new Date(event.date);
@@ -161,7 +155,6 @@ export default function EventDetails() {
         eventDateObj = new Date();
       }
 
-      // Parse time string into hours/minutes
       let hours = 0, minutes = 0;
       const timeStr = event.time;
       if (typeof timeStr === 'string') {
@@ -198,14 +191,12 @@ export default function EventDetails() {
       };
        const docRef = await addDoc(collection(db, 'bookings'), bookingData);
        setHasBooked(true);
-       // Send local notifications (best effort, don't block booking)
        try {
          await sendBookingConfirmation(event.title, docRef.id);
          await scheduleEventReminder(event.id, event.title, eventDateObj, eventTimeObj);
        } catch (notifErr) {
          console.log('Notification scheduling failed:', notifErr);
        }
-       // Store notification in Firestore for in-app list
        try {
          await addDoc(collection(db, 'notifications'), {
            userId: user.uid,
